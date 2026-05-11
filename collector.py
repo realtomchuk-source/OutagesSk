@@ -1,0 +1,226 @@
+import json
+import time
+import re
+import sys
+import traceback
+from datetime import datetime, timedelta
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
+
+# Фікс для Windows консолі (щоб коректно відображалися українські літери та емодзі)
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+except AttributeError:
+    pass
+
+# ------------------------------------------------------------
+# 1. Завантаження довідника населених пунктів
+# ------------------------------------------------------------
+with open("data/villages.json", "r", encoding="utf-8") as f:
+    villages = json.load(f)
+
+# ------------------------------------------------------------
+# 2. Налаштування Selenium (безголовий режим)
+# ------------------------------------------------------------
+options = Options()
+options.add_argument("--headless")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-gpu")
+options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+
+print("Запуск браузера...")
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+wait = WebDriverWait(driver, 10)
+
+all_records = []  # сюди зберемо всі знайдені записи
+
+try:
+    # ------------------------------------------------------------
+    # 3. Відкриваємо сайт
+    # ------------------------------------------------------------
+    driver.get("https://hoe.com.ua/shutdown/all")
+    time.sleep(2)
+
+    # ------------------------------------------------------------
+    # 4. Обробка вкладки "Аварійні" (TypeId=1)
+    # ------------------------------------------------------------
+    print("Обробляю аварійні відключення...")
+    emergency_select = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#panel_emergancy select.select-rem")))
+    Select(emergency_select).select_by_value("12")
+    time.sleep(3)  # чекаємо AJAX
+
+    # Розгортаємо всі "Показати вулиці"
+    for btn in driver.find_elements(By.CSS_SELECTOR, "#panel_emergancy a.show-street"):
+        try:
+            btn.click()
+            time.sleep(0.2)
+        except:
+            pass
+
+    # Парсимо HTML
+    emergency_html = driver.find_element(By.ID, "panel_emergancy").get_attribute("outerHTML")
+    soup = BeautifulSoup(emergency_html, "html.parser")
+    table = soup.find("table", class_="table-shutdowns")
+    if table:
+        rows = table.find_all("tr")
+        i = 0
+        while i < len(rows):
+            row = rows[i]
+            city_tag = row.find("p", class_="city")
+            if not city_tag:
+                i += 1
+                continue
+
+            city_text = city_tag.get_text(strip=True)
+            # Визначаємо населений пункт за довідником
+            settlement = None
+            for v in villages:
+                if v in city_text:
+                    settlement = v
+                    break
+            if not settlement:
+                i += 1
+                continue
+
+            # Тип (з наступної комірки)
+            tds = row.find_all("td")
+            work_type = "Аварійні"
+            if len(tds) >= 2:
+                work_type = tds[1].get_text(strip=True)
+
+            # Дати та час
+            stimes = row.find_all("div", class_="stime")
+            created_date = stimes[0].get_text(strip=True) if len(stimes) > 0 else ""
+            start_str = stimes[1].get_text(strip=True) if len(stimes) > 1 else ""
+            end_str = stimes[2].get_text(strip=True) if len(stimes) > 2 else ""
+
+            # Збираємо вулиці (наступний рядок з класом street)
+            streets = []
+            streets_detailed = []
+            if i + 1 < len(rows) and "street" in rows[i + 1].get("class", []):
+                street_row = rows[i + 1]
+                for p in street_row.find_all("p"):
+                    strong = p.find("strong")
+                    if strong:
+                        street_name = strong.get_text(strip=True)
+                        streets.append(street_name)
+                        # Гарантовано витягуємо номери будинків, відрізаючи назву вулиці від загального тексту
+                        full_text = p.get_text(separator=" ", strip=True)
+                        houses = full_text.replace(street_name, "").strip(" ,")
+                        streets_detailed.append({"name": street_name, "houses": houses})
+                i += 2  # перестрибуємо рядок з вулицями
+            else:
+                i += 1
+
+            # Формуємо запис
+            all_records.append({
+                "settlement": settlement,
+                "type": work_type,
+                "created_date": created_date,
+                "start_datetime": start_str,
+                "end_datetime": end_str,
+                "streets": streets,
+                "streets_detailed": streets_detailed
+            })
+
+    # ------------------------------------------------------------
+    # 5. Обробка вкладки "Планові" (TypeId=2)
+    # ------------------------------------------------------------
+    print("Обробляю планові відключення...")
+    planned_tab = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='#panel_planned']")))
+    driver.execute_script("arguments[0].click();", planned_tab)
+    time.sleep(1)
+
+    planned_select = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#panel_planned select.select-rem")))
+    Select(planned_select).select_by_value("12")
+    time.sleep(3)
+
+    for btn in driver.find_elements(By.CSS_SELECTOR, "#panel_planned a.show-street"):
+        try:
+            btn.click()
+            time.sleep(0.2)
+        except:
+            pass
+
+    planned_html = driver.find_element(By.ID, "panel_planned").get_attribute("outerHTML")
+    soup = BeautifulSoup(planned_html, "html.parser")
+    table = soup.find("table", class_="table-shutdowns")
+    if table:
+        rows = table.find_all("tr")
+        i = 0
+        while i < len(rows):
+            row = rows[i]
+            city_tag = row.find("p", class_="city")
+            if not city_tag:
+                i += 1
+                continue
+
+            city_text = city_tag.get_text(strip=True)
+            settlement = None
+            for v in villages:
+                if v in city_text:
+                    settlement = v
+                    break
+            if not settlement:
+                i += 1
+                continue
+
+            tds = row.find_all("td")
+            work_type = "Планові"
+            if len(tds) >= 2:
+                work_type = tds[1].get_text(strip=True)
+
+            stimes = row.find_all("div", class_="stime")
+            created_date = stimes[0].get_text(strip=True) if len(stimes) > 0 else ""
+            start_str = stimes[1].get_text(strip=True) if len(stimes) > 1 else ""
+            end_str = stimes[2].get_text(strip=True) if len(stimes) > 2 else ""
+
+            streets = []
+            streets_detailed = []
+            if i + 1 < len(rows) and "street" in rows[i + 1].get("class", []):
+                street_row = rows[i + 1]
+                for p in street_row.find_all("p"):
+                    strong = p.find("strong")
+                    if strong:
+                        street_name = strong.get_text(strip=True)
+                        streets.append(street_name)
+                        # Гарантовано витягуємо номери будинків, відрізаючи назву вулиці від загального тексту
+                        full_text = p.get_text(separator=" ", strip=True)
+                        houses = full_text.replace(street_name, "").strip(" ,")
+                        streets_detailed.append({"name": street_name, "houses": houses})
+                i += 2
+            else:
+                i += 1
+
+            all_records.append({
+                "settlement": settlement,
+                "type": work_type,
+                "created_date": created_date,
+                "start_datetime": start_str,
+                "end_datetime": end_str,
+                "streets": streets,
+                "streets_detailed": streets_detailed
+            })
+
+    # ------------------------------------------------------------
+    # 6. Зберігаємо результат
+    # ------------------------------------------------------------
+    with open("data/outages_snapshot.json", "w", encoding="utf-8") as f:
+        json.dump(all_records, f, ensure_ascii=False, indent=2)
+
+    print(f"✅ Готово! Зібрано {len(all_records)} записів. Дані збережено в data/outages_snapshot.json")
+
+except Exception as e:
+    print(f"\n❌ СТАЛАСЯ ПОМИЛКА під час збору даних: {e}")
+    traceback.print_exc()
+finally:
+    driver.quit()
