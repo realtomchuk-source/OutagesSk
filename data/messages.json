@@ -1,11 +1,27 @@
 [
   {
+    "id": "2026-05-17_tg",
+    "date": "2026-05-17",
+    "type": "telegram_post",
+    "target": null,
+    "content": "🔕 На 17.05.2026 відключення не заплановані.",
+    "created_at": "2026-05-16T05:48:24.758270"
+  },
+  {
     "id": "2026-05-16_tg",
     "date": "2026-05-16",
     "type": "telegram_post",
     "target": null,
     "content": "🔕 На 16.05.2026 відключення не заплановані.",
     "created_at": "2026-05-15T06:27:06.137652"
+  },
+  {
+    "id": "2026-05-16_feed",
+    "date": "2026-05-16",
+    "type": "feed",
+    "target": null,
+    "content": "<!DOCTYPE html>\n<html lang=\"uk\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Відключення електроенергії</title>\n    <style>\n        .type-emergency {\n            color: darkred;\n            font-weight: bold;\n        }\n        .type-planned {\n            color: darkgoldenrod;\n            font-weight: bold;\n        }\n    </style>\n</head>\n<body>\n    <h3>⚡ Відключення на сьогодні та завтра</h3>\n\n    <h4>Сьогодні, 16.05.2026</h4>\n    <ul>\n        <li>✅ Відключення не зафіксовані.</li>\n    </ul>\n\n    <h4>Завтра, 17.05.2026</h4>\n    <ul>\n        <li>✅ Відключення не зафіксовані.</li>\n    </ul>\n\n</body>\n</html>",
+    "created_at": "2026-05-16T05:48:24.758254"
   },
   {
     "id": "2026-05-15_tg",
