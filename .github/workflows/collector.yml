@@ -1,0 +1,33 @@
+name: Collector (Parser)
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Завантаження репозиторію
+        uses: actions/checkout@v4
+
+      - name: Налаштування Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Встановлення залежностей
+        run: pip install -r requirements.txt
+
+      - name: Запуск collector.py та збереження
+        run: |
+          python collector.py
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/outages_snapshot.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🔄 Авто-оновлення: outages_snapshot.json" && git push)
