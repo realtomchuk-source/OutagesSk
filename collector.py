@@ -109,14 +109,33 @@ try:
             if i + 1 < len(rows) and "street" in rows[i + 1].get("class", []):
                 street_row = rows[i + 1]
                 for p in street_row.find_all("p"):
-                    strong = p.find("strong")
-                    if strong:
-                        street_name = strong.get_text(strip=True)
+                    house_span = p.find("span", class_="house")
+                    if house_span:
+                        houses = house_span.get_text(strip=True)
+                        house_span.decompose()  # Видаляємо тег з номерами, щоб залишилась лише вулиця
+                        
+                        strong = p.find("strong")
+                        if strong:
+                            street_name = strong.get_text(strip=True).strip(" ,")
+                        else:
+                            street_name = p.get_text(strip=True).strip(" ,")
+                            
                         streets.append(street_name)
-                        # Гарантовано витягуємо номери будинків, відрізаючи назву вулиці від загального тексту
-                        full_text = p.get_text(separator=" ", strip=True)
-                        houses = full_text.replace(street_name, "").strip(" ,")
                         streets_detailed.append({"name": street_name, "houses": houses})
+                    else:
+                        # Fallback (якщо структура зміниться)
+                        strong = p.find("strong")
+                        if strong:
+                            street_name = strong.get_text(strip=True)
+                            streets.append(street_name)
+                            full_text = p.get_text(separator=" ", strip=True)
+                            houses = full_text.replace(street_name, "").strip(" ,")
+                            streets_detailed.append({"name": street_name, "houses": houses})
+                        else:
+                            street_name = p.get_text(strip=True).strip(" ,")
+                            if street_name:
+                                streets.append(street_name)
+                                streets_detailed.append({"name": street_name, "houses": ""})
                 i += 2  # перестрибуємо рядок з вулицями
             else:
                 i += 1
@@ -189,14 +208,33 @@ try:
             if i + 1 < len(rows) and "street" in rows[i + 1].get("class", []):
                 street_row = rows[i + 1]
                 for p in street_row.find_all("p"):
-                    strong = p.find("strong")
-                    if strong:
-                        street_name = strong.get_text(strip=True)
+                    house_span = p.find("span", class_="house")
+                    if house_span:
+                        houses = house_span.get_text(strip=True)
+                        house_span.decompose()  # Видаляємо тег з номерами, щоб залишилась лише вулиця
+                        
+                        strong = p.find("strong")
+                        if strong:
+                            street_name = strong.get_text(strip=True).strip(" ,")
+                        else:
+                            street_name = p.get_text(strip=True).strip(" ,")
+                            
                         streets.append(street_name)
-                        # Гарантовано витягуємо номери будинків, відрізаючи назву вулиці від загального тексту
-                        full_text = p.get_text(separator=" ", strip=True)
-                        houses = full_text.replace(street_name, "").strip(" ,")
                         streets_detailed.append({"name": street_name, "houses": houses})
+                    else:
+                        # Fallback (якщо структура зміниться)
+                        strong = p.find("strong")
+                        if strong:
+                            street_name = strong.get_text(strip=True)
+                            streets.append(street_name)
+                            full_text = p.get_text(separator=" ", strip=True)
+                            houses = full_text.replace(street_name, "").strip(" ,")
+                            streets_detailed.append({"name": street_name, "houses": houses})
+                        else:
+                            street_name = p.get_text(strip=True).strip(" ,")
+                            if street_name:
+                                streets.append(street_name)
+                                streets_detailed.append({"name": street_name, "houses": ""})
                 i += 2
             else:
                 i += 1
@@ -219,8 +257,63 @@ try:
 
     print(f"✅ Готово! Зібрано {len(all_records)} записів. Дані збережено в data/outages_snapshot.json")
 
+    # ------------------------------------------------------------
+    # 7. Оновлення Архіву (archive.json)
+    # ------------------------------------------------------------
+    archive_path = "data/archive.json"
+    archive_records = []
+    try:
+        with open(archive_path, "r", encoding="utf-8") as f:
+            archive_records = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+
+    # Створюємо унікальний підпис (ключ) для кожного запису без вулиць
+    def get_rec_signature(rec):
+        return f"{rec.get('settlement')}-{rec.get('type')}-{rec.get('start_datetime')}-{rec.get('end_datetime')}"
+
+    # Створюємо словник для швидкого пошуку існуючих записів
+    archive_dict = {get_rec_signature(r): r for r in archive_records}
+    
+    for rec in all_records:
+        sig = get_rec_signature(rec)
+        if sig in archive_dict:
+            # Оновлюємо масив вулиць (можливо Обленерго додали нові будинки)
+            archive_dict[sig]["streets"] = rec.get("streets", [])
+            archive_dict[sig]["streets_detailed"] = rec.get("streets_detailed", [])
+        else:
+            # Додаємо новий запис
+            archive_records.append(rec)
+            archive_dict[sig] = rec
+
+    # Очищення старих записів (>40 днів)
+    cutoff_date = datetime.now() - timedelta(days=40)
+    filtered_archive = []
+    for rec in archive_records:
+        start_str = rec.get("start_datetime", "")
+        # Фікс формату дати якщо немає пробілу
+        if len(start_str) >= 5 and not " " in start_str[-6:]:
+            start_str = f"{start_str[:-5]} {start_str[-5:]}"
+            
+        try:
+            dt = datetime.strptime(start_str, "%d.%m.%Y %H:%M")
+            if dt >= cutoff_date:
+                filtered_archive.append(rec)
+        except ValueError:
+            filtered_archive.append(rec)
+
+    with open(archive_path, "w", encoding="utf-8") as f:
+        json.dump(filtered_archive, f, ensure_ascii=False, indent=2)
+    print(f"✅ Архів оновлено (всього {len(filtered_archive)} записів у archive.json)")
+
+
 except Exception as e:
     print(f"\n❌ СТАЛАСЯ ПОМИЛКА під час збору даних: {e}")
     traceback.print_exc()
-finally:
     driver.quit()
+    sys.exit(1)
+finally:
+    try:
+        driver.quit()
+    except:
+        pass

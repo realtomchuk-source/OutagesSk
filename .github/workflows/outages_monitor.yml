@@ -1,0 +1,38 @@
+name: Outages Monitor
+
+on:
+  schedule:
+    - cron: '0 * * * *' # 1 раз на годину (на початку кожної години)
+  workflow_dispatch: # Дозволяє ручний запуск з інтерфейсу GitHub
+
+jobs:
+  run-parser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Collector (Parser)
+        run: python collector.py
+
+      - name: Run Formatter (AI & TG)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: python formatter.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/outages_snapshot.json data/archive.json data/messages.json data/analytics.json auth_config.js || true
+          git commit -m "Update outages and messages" || echo "No changes to commit"
+          git push
