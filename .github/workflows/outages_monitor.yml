@@ -8,6 +8,9 @@ on:
     - cron: '0 * * * *' # 1 раз на годину (на початку кожної години)
   workflow_dispatch: # Дозволяє ручний запуск з інтерфейсу GitHub
 
+permissions:
+  contents: write
+
 jobs:
   run-parser:
     runs-on: ubuntu-latest
