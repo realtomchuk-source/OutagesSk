@@ -34,6 +34,16 @@ try:
 except FileNotFoundError:
     outages = []
 
+try:
+    with open("data/districts.json", "r", encoding="utf-8") as f:
+        districts_raw = json.load(f)
+        districts = {}
+        for d_name, villages in districts_raw.items():
+            for v in villages:
+                districts[v] = d_name
+except FileNotFoundError:
+    districts = {}
+
 # ------------------------------------------------------------
 # Допоміжні функції
 # ------------------------------------------------------------
@@ -350,9 +360,16 @@ else:
 # Автоматичний запуск Щотижневої Аналітики
 # ------------------------------------------------------------
 now = datetime.now()
-# Якщо сьогодні понеділок (weekday() == 0) і час від 08:00 до 08:59
-if now.weekday() == 0 and now.hour == 8:
-    print("Понеділок, 08:00 - Запуск Щотижневої Аналітики...")
+if now.weekday() == 0:
+    try:
+        with open("data/analytics.json", "r", encoding="utf-8") as f:
+            last_date_str = json.load(f).get("date", "2000-01-01 00:00")
+            last_date = datetime.strptime(last_date_str, "%Y-%m-%d %H:%M").date()
+    except Exception:
+        last_date = None
+        
+    if last_date != now.date():
+        print("Понеділок - Запуск Щотижневої Аналітики...")
     try:
         import analytics
         analytics.generate_weekly_report()
