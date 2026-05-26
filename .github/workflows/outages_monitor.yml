@@ -33,6 +33,7 @@ jobs:
       - name: Run Formatter (AI & TG)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: python formatter.py
 

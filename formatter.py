@@ -307,7 +307,13 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
 {raw_text}
 """
     print(f"Генерую Telegram-пост (ШІ): {typ_str} на {target_date.strftime('%d.%m.%Y')}...")
-    return generate_with_validation(prompt, filtered), text_hash
+    ai_result = generate_with_validation(prompt, filtered)
+    if ai_result:
+        return ai_result, text_hash
+    else:
+        print(f"[WARN] ШІ недоступний (ліміти або помилка). Використовую резервний шаблон для {typ_str}.")
+        fallback_text = intro_phrase + "\n\n" + raw_text + "\n\nПросимо завчасно зарядити пристрої та з розумінням поставитись до тимчасових незручностей."
+        return fallback_text, text_hash
 
 today_str = today.strftime("%Y-%m-%d")
 tomorrow_str = tomorrow.strftime("%Y-%m-%d")
