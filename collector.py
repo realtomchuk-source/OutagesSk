@@ -3,6 +3,7 @@ import time
 import re
 import sys
 import traceback
+import os
 from datetime import datetime, timedelta
 
 from selenium import webdriver
@@ -43,6 +44,8 @@ wait = WebDriverWait(driver, 10)
 
 all_records = []  # сюди зберемо всі знайдені записи
 
+os.makedirs("html_dumps", exist_ok=True)
+
 try:
     # ------------------------------------------------------------
     # 3. Відкриваємо сайт
@@ -68,6 +71,12 @@ try:
 
     # Парсимо HTML
     emergency_html = driver.find_element(By.ID, "panel_emergancy").get_attribute("outerHTML")
+    
+    # Зберігаємо сирий HTML-зліпок для глибокого аналізу
+    dump_filename = f"html_dumps/emergency_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+    with open(dump_filename, "w", encoding="utf-8") as f:
+        f.write(emergency_html)
+        
     soup = BeautifulSoup(emergency_html, "html.parser")
     table = soup.find("table", class_="table-shutdowns")
     if table:
@@ -171,6 +180,12 @@ try:
             pass
 
     planned_html = driver.find_element(By.ID, "panel_planned").get_attribute("outerHTML")
+    
+    # Зберігаємо сирий HTML-зліпок для глибокого аналізу
+    dump_filename = f"html_dumps/planned_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+    with open(dump_filename, "w", encoding="utf-8") as f:
+        f.write(planned_html)
+        
     soup = BeautifulSoup(planned_html, "html.parser")
     table = soup.find("table", class_="table-shutdowns")
     if table:
@@ -281,8 +296,12 @@ try:
             # Оновлюємо масив вулиць (можливо Обленерго додали нові будинки)
             archive_dict[sig]["streets"] = rec.get("streets", [])
             archive_dict[sig]["streets_detailed"] = rec.get("streets_detailed", [])
+            # Оновлюємо last_seen_at, щоб бачити, коли запис ще був актуальним
+            archive_dict[sig]["last_seen_at"] = datetime.now().isoformat()
         else:
-            # Додаємо новий запис
+            # Додаємо новий запис із фіксацією точного часу виявлення
+            rec["first_seen_at"] = datetime.now().isoformat()
+            rec["last_seen_at"] = datetime.now().isoformat()
             archive_records.append(rec)
             archive_dict[sig] = rec
 
