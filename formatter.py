@@ -255,7 +255,7 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
         
         district_name = ""
         if settlement != "Старокостянтинів":
-            district_name = districts.get(settlement, "Невідомий") + " СО"
+            district_name = districts.get(settlement, "Невідомий")
         else:
             district_name = "Місто Старокостянтинів"
             
