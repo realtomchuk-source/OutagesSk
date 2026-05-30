@@ -59,7 +59,9 @@ try:
     print("Обробляю аварійні відключення...")
     emergency_select = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#panel_emergancy select.select-rem")))
     Select(emergency_select).select_by_value("12")
-    time.sleep(3)  # чекаємо AJAX
+    time.sleep(1)  # чекаємо поки почнеться AJAX (з'явиться loader)
+    WebDriverWait(driver, 30).until(lambda d: "loader" not in d.find_element(By.ID, "panel_emergancy").get_attribute("class"))
+    time.sleep(1)  # пауза для повної відмальовки ДОМ
 
     # Розгортаємо всі "Показати вулиці"
     for btn in driver.find_elements(By.CSS_SELECTOR, "#panel_emergancy a.show-street"):
@@ -170,7 +172,9 @@ try:
 
     planned_select = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#panel_planned select.select-rem")))
     Select(planned_select).select_by_value("12")
-    time.sleep(3)
+    time.sleep(1)
+    WebDriverWait(driver, 30).until(lambda d: "loader" not in d.find_element(By.ID, "panel_planned").get_attribute("class"))
+    time.sleep(1)
 
     for btn in driver.find_elements(By.CSS_SELECTOR, "#panel_planned a.show-street"):
         try:
