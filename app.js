@@ -43,6 +43,8 @@ async function showDashboard() {
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('feed')">Стрічка</button>
                 <button class="tab" onclick="switchTab('telegram')">Telegram</button>
+                <button class="tab" onclick="switchTab('analytics')">Аналітика</button>
+                <button class="tab" onclick="switchTab('streets')">Вулиці (Словник)</button>
                 <button class="tab" onclick="switchTab('archive')">Архів</button>
                 <button class="tab" onclick="switchTab('raw')">Сирі дані</button>
             </div>
@@ -122,19 +124,7 @@ function renderDashboard() {
         </div>
     `;
 
-    // Додаємо блок Аналітики
-    if (window.analyticsData && window.analyticsData.content) {
-        document.getElementById('dashboardWidgets').innerHTML += `
-            <div style="margin-top: 20px; padding: 20px; background: var(--bg); border: 1px solid var(--primary); border-radius: var(--radius);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-                    <h3 style="margin:0; color:var(--primary);">🤖 Щотижнева аналітика від ШІ</h3>
-                    <span style="font-size:12px; color:#888;">Сформовано: ${escapeHtml(window.analyticsData.date)}</span>
-                </div>
-                <div style="font-size:14px; line-height:1.6; white-space:pre-wrap;">${escapeHtml(window.analyticsData.content)}</div>
-                <button class="btn btn-primary" style="margin-top:15px;" onclick="copyToClipboard(this.previousElementSibling.innerText)">📋 Копіювати для Telegram</button>
-            </div>
-        `;
-    }
+    // Аналітика перенесена в окрему вкладку
 }
 
 window.switchTab = function(tab) {
@@ -144,6 +134,8 @@ window.switchTab = function(tab) {
                                      (tab === 'raw' && t.textContent === 'Сирі дані') || 
                                      (tab === 'feed' && t.textContent === 'Стрічка') ||
                                      (tab === 'telegram' && t.textContent === 'Telegram') ||
+                                     (tab === 'analytics' && t.textContent === 'Аналітика') ||
+                                     (tab === 'streets' && t.textContent.includes('Вулиці')) ||
                                      (tab === 'archive' && t.textContent === 'Архів'));
     });
     renderTab(tab);
@@ -154,6 +146,8 @@ function renderTab(tab) {
     if (!container) return;
     if (tab === 'feed') renderFeed(container);
     else if (tab === 'telegram') renderTelegram(container);
+    else if (tab === 'analytics') renderAnalytics(container);
+    else if (tab === 'streets') renderStreets(container);
     else if (tab === 'archive') renderArchive(container);
     else if (tab === 'raw') renderRaw(container);
 }
@@ -414,6 +408,77 @@ function renderRaw(container) {
         });
         html += `</tbody></table></div>`;
     }
+    container.innerHTML = html;
+}
+
+function renderAnalytics(container) {
+    if (window.analyticsData && window.analyticsData.content) {
+        container.innerHTML = `
+            <h3>🤖 Щотижнева аналітика від ШІ</h3>
+            <div style="margin-top: 20px; padding: 20px; background: var(--bg); border: 1px solid var(--primary); border-radius: var(--radius);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                    <span style="font-size:12px; color:#888;">Сформовано: ${escapeHtml(window.analyticsData.date)}</span>
+                </div>
+                <div style="font-size:14px; line-height:1.6; white-space:pre-wrap;">${escapeHtml(window.analyticsData.content)}</div>
+                <button class="btn btn-primary" style="margin-top:15px;" onclick="copyToClipboard(this.previousElementSibling.innerText)">📋 Копіювати для Telegram</button>
+            </div>
+            <p style="margin-top: 20px; font-size: 13px; color: #666;">
+                <i>* Візуалізація та розширена аналітика знаходяться в процесі розробки.</i>
+            </p>
+        `;
+    } else {
+        container.innerHTML = `<h3>Аналітика</h3><p class="empty">Немає даних для аналітики або звіт ще не сформований.</p>`;
+    }
+}
+
+function renderStreets(container) {
+    let allStreets = new Set();
+    archiveOutages.forEach(rec => {
+        if (rec.streets_detailed) {
+            rec.streets_detailed.forEach(s => allStreets.add(s.name.trim()));
+        } else if (rec.streets) {
+            rec.streets.forEach(s => allStreets.add(s.trim()));
+        }
+    });
+
+    let streetsArray = Array.from(allStreets).sort();
+    
+    let html = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+            <h3>Словник вулиць (${streetsArray.length} знайдено)</h3>
+            <input type="text" id="streetSearch" placeholder="Пошук вулиці..." onkeyup="filterStreets()" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); width: 250px;">
+        </div>
+        <p style="font-size: 13px; color: #888; margin-bottom: 20px;">
+            Цей список містить усі унікальні вулиці, які коли-небудь з'являлися у графіках Обленерго. Ви можете використовувати його для пошуку старих назв (наприклад, "вул. Леніна") та їх виявлення.
+        </p>
+    `;
+
+    if (streetsArray.length === 0) {
+        html += '<p class="empty">Немає зібраних даних про вулиці (архів порожній).</p>';
+    } else {
+        html += `<ul id="streetsList" style="list-style-type: none; padding: 0; max-height: 600px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg);">`;
+        streetsArray.forEach(street => {
+            html += `<li style="padding: 10px 15px; border-bottom: 1px solid var(--border);">${escapeHtml(street)}</li>`;
+        });
+        html += `</ul>`;
+    }
+    
+    // Додаємо скрипт для пошуку в window
+    if (!window.filterStreets) {
+        window.filterStreets = function() {
+            let input = document.getElementById("streetSearch").value.toLowerCase();
+            let li = document.getElementById("streetsList").getElementsByTagName("li");
+            for (let i = 0; i < li.length; i++) {
+                let txtValue = li[i].textContent || li[i].innerText;
+                if (txtValue.toLowerCase().indexOf(input) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        };
+    }
+
     container.innerHTML = html;
 }
 

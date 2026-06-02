@@ -34,6 +34,42 @@ try:
 except FileNotFoundError:
     outages = []
 
+# ------------------------------------------------------------
+# Телеметрія змін (Smart Monitor)
+# ------------------------------------------------------------
+has_cardinal_changes = True
+try:
+    with open("data/previous_snapshot.json", "r", encoding="utf-8") as f:
+        previous_outages = json.load(f)
+        
+    # Порівняння за допомогою хешування JSON-рядків (ігноруючи порядок)
+    # Щоб не реагувати на дрібниці, порівнюємо відсортовані представлення
+    curr_str = json.dumps(sorted(outages, key=lambda x: str(x)), sort_keys=True)
+    prev_str = json.dumps(sorted(previous_outages, key=lambda x: str(x)), sort_keys=True)
+    
+    if curr_str == prev_str:
+        has_cardinal_changes = False
+        print("[TELEMETRY] Кардинальних змін на сайті немає. Використовуються попередні дані.")
+    else:
+        print("[TELEMETRY] Виявлено зміни на сайті Обленерго!")
+        # Записуємо лог
+        log_entry = {"time": datetime.now().isoformat(), "msg": "Detected changes in outages_snapshot"}
+        try:
+            with open("data/changelog.json", "r", encoding="utf-8") as clog:
+                changelog = json.load(clog)
+        except (FileNotFoundError, json.JSONDecodeError):
+            changelog = []
+        changelog.append(log_entry)
+        with open("data/changelog.json", "w", encoding="utf-8") as clog:
+            json.dump(changelog, clog, ensure_ascii=False, indent=2)
+
+except FileNotFoundError:
+    print("[TELEMETRY] Немає previous_snapshot.json, створюємо.")
+
+# Зберігаємо поточний снепшот як попередній для наступного запуску
+with open("data/previous_snapshot.json", "w", encoding="utf-8") as f:
+    json.dump(outages, f, ensure_ascii=False, indent=2)
+
 try:
     with open("data/districts.json", "r", encoding="utf-8") as f:
         districts_raw = json.load(f)
