@@ -469,10 +469,13 @@ function renderStreets(container) {
     let html = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
             <h3>Словник вулиць (${streetsArray.length} знайдено)</h3>
-            <input type="text" id="streetSearch" placeholder="Пошук вулиці..." onkeyup="filterStreets()" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); width: 250px;">
+            <div>
+                <input type="text" id="streetSearch" placeholder="Пошук вулиці..." onkeyup="filterStreets()" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); width: 250px; margin-right: 10px;">
+                <button class="btn btn-primary" onclick="saveStreetsToGitHub()" style="background-color: #28a745;">💾 Зберегти зміни на GitHub</button>
+            </div>
         </div>
         <p style="font-size: 13px; color: #888; margin-bottom: 20px;">
-            Увага! Щоб перевести вулицю в "Сумнівні", видаліть її з файлу <code>data/official_streets.json</code> на GitHub.
+            Керуйте списком прямо тут. Натисніть "Обілити", щоб перенести вулицю до офіційного словника. Потім обов'язково натисніть "Зберегти зміни".
         </p>
     `;
 
@@ -486,7 +489,10 @@ function renderStreets(container) {
             <h4 style="margin-top: 0; color: #28a745;">✅ Офіційні вулиці (${official.length})</h4>
             <ul class="streets-list" style="list-style-type: none; padding: 0; max-height: 500px; overflow-y: auto;">`;
         official.forEach(street => {
-            html += `<li style="padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 14px;">${escapeHtml(street)}</li>`;
+            html += `<li style="display:flex; justify-content:space-between; align-items:center; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 14px;">
+                <span>${escapeHtml(street)}</span>
+                <button onclick="toggleStreetStatus('${escapeHtml(street).replace(/'/g, "\\'")}', false)" style="background:transparent; border:none; cursor:pointer; font-size:16px;" title="В сумнівні">❌</button>
+            </li>`;
         });
         html += `</ul></div>`;
         
@@ -498,7 +504,10 @@ function renderStreets(container) {
             html += `<p style="font-size:13px; color:#666;">Немає сумнівних вулиць. Усі вулиці є в довіднику.</p>`;
         } else {
             doubtful.forEach(street => {
-                html += `<li style="padding: 8px 10px; border-bottom: 1px solid #ffdcdc; font-size: 14px; color: var(--danger);"><strong>${escapeHtml(street)}</strong></li>`;
+                html += `<li style="display:flex; justify-content:space-between; align-items:center; padding: 8px 10px; border-bottom: 1px solid #ffdcdc; font-size: 14px; color: var(--danger);">
+                    <strong>${escapeHtml(street)}</strong>
+                    <button onclick="toggleStreetStatus('${escapeHtml(street).replace(/'/g, "\\'")}', true)" class="btn" style="padding:4px 8px; font-size:12px; background:var(--bg); border:1px solid #ccc; color:#333;">✅ Обілити</button>
+                </li>`;
             });
         }
         html += `</ul></div>`;
@@ -513,11 +522,39 @@ function renderStreets(container) {
             let lis = document.querySelectorAll(".streets-list li");
             lis.forEach(li => {
                 let txtValue = li.textContent || li.innerText;
+                // Видаляємо текст кнопок при пошуку
+                txtValue = txtValue.replace('✅ Обілити', '').replace('❌', '');
                 if (txtValue.toLowerCase().indexOf(input) > -1) {
                     li.style.display = "";
                 } else {
                     li.style.display = "none";
                 }
+            });
+        };
+    }
+
+    if (!window.toggleStreetStatus) {
+        window.toggleStreetStatus = function(street, toOfficial) {
+            if (toOfficial) {
+                if (!officialStreets.includes(street)) {
+                    officialStreets.push(street);
+                }
+            } else {
+                officialStreets = officialStreets.filter(s => s !== street);
+            }
+            officialStreets.sort();
+            renderStreets(document.getElementById('tabContent'));
+        };
+    }
+
+    if (!window.saveStreetsToGitHub) {
+        window.saveStreetsToGitHub = function() {
+            const jsonStr = JSON.stringify(officialStreets, null, 2);
+            navigator.clipboard.writeText(jsonStr).then(() => {
+                alert('✅ Новий словник скопійовано в буфер обміну!\n\nЗараз відкриється сторінка редагування на GitHub.\nВставте туди скопійований текст (Ctrl+V) і натисніть "Commit changes".');
+                window.open('https://github.com/realtomchuk-source/OutagesSk/edit/main/data/official_streets.json', '_blank');
+            }).catch(err => {
+                alert('Помилка копіювання: ' + err);
             });
         };
     }
