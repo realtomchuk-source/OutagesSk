@@ -62,6 +62,7 @@ let messages = [];
 let updateLog = [];
 let rawOutages = [];
 let archiveOutages = [];
+let officialStreets = [];
 
 window.loadData = async function() {
     try {
@@ -82,6 +83,11 @@ window.loadData = async function() {
         try {
             const anResp = await fetch(`data/analytics.json?t=${Date.now()}`);
             if (anResp.ok) window.analyticsData = await anResp.json();
+        } catch(e) {}
+        
+        try {
+            const offResp = await fetch(`data/official_streets.json?t=${Date.now()}`);
+            if (offResp.ok) officialStreets = await offResp.json();
         } catch(e) {}
 
         renderDashboard();
@@ -443,39 +449,76 @@ function renderStreets(container) {
 
     let streetsArray = Array.from(allStreets).sort();
     
+    // Розділяємо на офіційні та сумнівні
+    let official = [];
+    let doubtful = [];
+    
+    if (officialStreets && officialStreets.length > 0) {
+        streetsArray.forEach(street => {
+            if (officialStreets.includes(street)) {
+                official.push(street);
+            } else {
+                doubtful.push(street);
+            }
+        });
+    } else {
+        // Якщо довідник не завантажився або порожній, всі йдуть в сумнівні
+        doubtful = streetsArray;
+    }
+    
     let html = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
             <h3>Словник вулиць (${streetsArray.length} знайдено)</h3>
             <input type="text" id="streetSearch" placeholder="Пошук вулиці..." onkeyup="filterStreets()" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); width: 250px;">
         </div>
         <p style="font-size: 13px; color: #888; margin-bottom: 20px;">
-            Цей список містить усі унікальні вулиці, які коли-небудь з'являлися у графіках Обленерго. Ви можете використовувати його для пошуку старих назв (наприклад, "вул. Леніна") та їх виявлення.
+            Увага! Щоб перевести вулицю в "Сумнівні", видаліть її з файлу <code>data/official_streets.json</code> на GitHub.
         </p>
     `;
 
     if (streetsArray.length === 0) {
         html += '<p class="empty">Немає зібраних даних про вулиці (архів порожній).</p>';
     } else {
-        html += `<ul id="streetsList" style="list-style-type: none; padding: 0; max-height: 600px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg);">`;
-        streetsArray.forEach(street => {
-            html += `<li style="padding: 10px 15px; border-bottom: 1px solid var(--border);">${escapeHtml(street)}</li>`;
+        html += `<div style="display: flex; gap: 20px; align-items: flex-start;">`;
+        
+        // Блок Офіційних
+        html += `<div style="flex: 1; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); padding: 15px;">
+            <h4 style="margin-top: 0; color: #28a745;">✅ Офіційні вулиці (${official.length})</h4>
+            <ul class="streets-list" style="list-style-type: none; padding: 0; max-height: 500px; overflow-y: auto;">`;
+        official.forEach(street => {
+            html += `<li style="padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 14px;">${escapeHtml(street)}</li>`;
         });
-        html += `</ul>`;
+        html += `</ul></div>`;
+        
+        // Блок Сумнівних
+        html += `<div style="flex: 1; border: 1px solid var(--danger); border-radius: var(--radius); background: #fff5f5; padding: 15px;">
+            <h4 style="margin-top: 0; color: var(--danger);">⚠️ Сумнівні вулиці (${doubtful.length})</h4>
+            <ul class="streets-list" style="list-style-type: none; padding: 0; max-height: 500px; overflow-y: auto;">`;
+        if (doubtful.length === 0) {
+            html += `<p style="font-size:13px; color:#666;">Немає сумнівних вулиць. Усі вулиці є в довіднику.</p>`;
+        } else {
+            doubtful.forEach(street => {
+                html += `<li style="padding: 8px 10px; border-bottom: 1px solid #ffdcdc; font-size: 14px; color: var(--danger);"><strong>${escapeHtml(street)}</strong></li>`;
+            });
+        }
+        html += `</ul></div>`;
+        
+        html += `</div>`;
     }
     
     // Додаємо скрипт для пошуку в window
     if (!window.filterStreets) {
         window.filterStreets = function() {
             let input = document.getElementById("streetSearch").value.toLowerCase();
-            let li = document.getElementById("streetsList").getElementsByTagName("li");
-            for (let i = 0; i < li.length; i++) {
-                let txtValue = li[i].textContent || li[i].innerText;
+            let lis = document.querySelectorAll(".streets-list li");
+            lis.forEach(li => {
+                let txtValue = li.textContent || li.innerText;
                 if (txtValue.toLowerCase().indexOf(input) > -1) {
-                    li[i].style.display = "";
+                    li.style.display = "";
                 } else {
-                    li[i].style.display = "none";
+                    li.style.display = "none";
                 }
-            }
+            });
         };
     }
 
