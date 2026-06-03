@@ -396,7 +396,10 @@ function renderFeed(container) {
             let tomorrowObj = feedData.days.find(d => d.date === tomorrowDateStr);
             
             let currentParts = [];
-            if (todayObj && todayObj.actual_content) currentParts.push(todayObj.actual_content);
+            if (todayObj && todayObj.actual_content) {
+                let cleanToday = todayObj.actual_content.replace(/^\[СЬОГОДНІ\]\s*/, "");
+                currentParts.push(cleanToday);
+            }
             if (tomorrowObj && tomorrowObj.actual_content) currentParts.push(tomorrowObj.actual_content);
             
             feedData.current_feed = currentParts.join(" | ");

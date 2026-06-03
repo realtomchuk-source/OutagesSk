@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, time
 from dotenv import load_dotenv
 import hashlib
 import sys
+import re
 
 try:
     import google.generativeai as genai
@@ -321,17 +322,18 @@ for target_date in target_dates:
 
 feed_data["days"] = new_days
 
-# Формуємо поточну стрічку
+# Формуємо поточну стрічку (актуальну на тепер, очищену від [СЬОГОДНІ])
 today_day = next((d for d in new_days if d["date"] == today.strftime("%Y-%m-%d")), None)
 tomorrow_day = next((d for d in new_days if d["date"] == tomorrow.strftime("%Y-%m-%d")), None)
 
 current_parts = []
 if today_day and today_day["actual_content"]:
-    current_parts.append(today_day["actual_content"])
+    clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
+    current_parts.append(clean_today)
 if tomorrow_day and tomorrow_day["actual_content"]:
     current_parts.append(tomorrow_day["actual_content"])
 
-feed_data["current_feed"] = " | ".join(current_parts) if current_parts else "[СЬОГОДНІ] Відключення не зафіксовані."
+feed_data["current_feed"] = " | ".join(current_parts) if current_parts else "Відключення не зафіксовані."
 feed_data["last_updated"] = datetime.now().isoformat()
 
 # Очищення історії (зберігаємо за останні 60 днів)
@@ -339,9 +341,15 @@ cutoff_dt = datetime.now() - timedelta(days=60)
 feed_data["days"] = [d for d in feed_data["days"] if datetime.strptime(d["date"], "%Y-%m-%d") >= cutoff_dt.replace(hour=0, minute=0, second=0, microsecond=0)]
 feed_data["anomalies_log"] = [a for a in feed_data["anomalies_log"] if datetime.fromisoformat(a["timestamp"]) >= cutoff_dt]
 
+# Зберігаємо структурований JSON
 with open(FEED_PATH, "w", encoding="utf-8") as f:
     json.dump(feed_data, f, ensure_ascii=False, indent=2)
 print("[SUCCESS] feed.json збережено")
+
+# Зберігаємо чистий плоский текст у feed.txt для іншого додатка
+with open("data/feed.txt", "w", encoding="utf-8") as txt_f:
+    txt_f.write(feed_data["current_feed"])
+print("[SUCCESS] feed.txt збережено")
 
 # Для сумісності зшиваємо feed_today та feed_tomorrow
 day_after_tomorrow_day = next((d for d in new_days if d["date"] == (today + timedelta(days=2)).strftime("%Y-%m-%d")), None)
