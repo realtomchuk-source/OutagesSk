@@ -228,23 +228,129 @@ def generate_feed_text(items, label):
 # ------------------------------------------------------------
 today = datetime.now().date()
 tomorrow = today + timedelta(days=1)
-day_after_tomorrow = today + timedelta(days=2)
 
-# Фільтруємо дані
+# Фільтруємо дані для Telegram-постів
 items_today = [r for r in outages if is_active_on_date(r, today)]
 items_tomorrow = [r for r in outages if is_active_on_date(r, tomorrow)]
-items_day_after = [r for r in outages if is_active_on_date(r, day_after_tomorrow)]
 
-# Стрічка на сьогодні (Сьогодні + Завтра)
-feed_today_parts = []
-if items_today: feed_today_parts.append(generate_feed_text(items_today, "СЬОГОДНІ"))
-if items_tomorrow: feed_today_parts.append(generate_feed_text(items_tomorrow, "ЗАВТРА"))
-feed_today_content = " | ".join(feed_today_parts) if feed_today_parts else "[СЬОГОДНІ] Відключення не зафіксовані."
+# ------------------------------------------------------------
+# Робота з data/feed.json (Динамічна стрічка та тижнева сітка)
+# ------------------------------------------------------------
+FEED_PATH = "data/feed.json"
 
-# Стрічка на завтра (Завтра + Післязавтра)
+try:
+    with open(FEED_PATH, "r", encoding="utf-8") as f:
+        feed_data = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    feed_data = {
+        "current_feed": "",
+        "last_updated": "",
+        "days": [],
+        "anomalies_log": []
+    }
+
+if "days" not in feed_data: feed_data["days"] = []
+if "anomalies_log" not in feed_data: feed_data["anomalies_log"] = []
+
+# Отримуємо дати на наступні 7 днів (сьогодні + 6 днів)
+target_dates = [today + timedelta(days=i) for i in range(7)]
+new_days = []
+current_time_str = datetime.now().strftime("%H:%M")
+
+for target_date in target_dates:
+    date_str = target_date.strftime("%Y-%m-%d")
+    items_for_date = [r for r in outages if is_active_on_date(r, target_date)]
+    
+    # Визначаємо, чи день за межами горизонту парсингу (> 5 днів)
+    is_outside_horizon = (target_date - today).days > 4
+    
+    if not items_for_date and is_outside_horizon:
+        label = "СЬОГОДНІ" if target_date == today else ("ЗАВТРА" if target_date == tomorrow else target_date.strftime("%d.%m.%Y"))
+        new_text = f"[{label}] Немає даних (очікується оновлення)"
+    else:
+        label = "СЬОГОДНІ" if target_date == today else ("ЗАВТРА" if target_date == tomorrow else ("ПІСЛЯЗАВТРА" if target_date == today + timedelta(days=2) else target_date.strftime("%d.%m.%Y")))
+        new_text = generate_feed_text(items_for_date, label)
+        
+    existing_day = next((d for d in feed_data["days"] if d["date"] == date_str), None)
+    
+    if existing_day:
+        history = existing_day.get("history", [])
+        last_version = history[-1]["content"] if history else ""
+        
+        # Порівнюємо контент без мітки оновлення (Оновлено о ...)
+        clean_last = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", last_version)
+        clean_new = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", new_text)
+        
+        if clean_last != clean_new:
+            # Зміна контенту протягом доби є аномалією
+            marked_text = f"{new_text} (Оновлено о {current_time_str})"
+            history.append({
+                "timestamp": datetime.now().isoformat(),
+                "content": marked_text,
+                "is_anomaly": True
+            })
+            feed_data["anomalies_log"].append({
+                "date": date_str,
+                "timestamp": datetime.now().isoformat(),
+                "old_text": last_version,
+                "new_text": marked_text
+            })
+            planned_content = existing_day.get("planned_content", clean_new)
+            actual_content = marked_text
+        else:
+            planned_content = existing_day.get("planned_content", clean_new)
+            actual_content = last_version
+            
+        new_days.append({
+            "date": date_str,
+            "planned_content": planned_content,
+            "actual_content": actual_content,
+            "history": history
+        })
+    else:
+        new_days.append({
+            "date": date_str,
+            "planned_content": new_text,
+            "actual_content": new_text,
+            "history": [{
+                "timestamp": datetime.now().isoformat(),
+                "content": new_text,
+                "is_anomaly": False
+            }]
+        })
+
+feed_data["days"] = new_days
+
+# Формуємо поточну стрічку
+today_day = next((d for d in new_days if d["date"] == today.strftime("%Y-%m-%d")), None)
+tomorrow_day = next((d for d in new_days if d["date"] == tomorrow.strftime("%Y-%m-%d")), None)
+
+current_parts = []
+if today_day and today_day["actual_content"]:
+    current_parts.append(today_day["actual_content"])
+if tomorrow_day and tomorrow_day["actual_content"]:
+    current_parts.append(tomorrow_day["actual_content"])
+
+feed_data["current_feed"] = " | ".join(current_parts) if current_parts else "[СЬОГОДНІ] Відключення не зафіксовані."
+feed_data["last_updated"] = datetime.now().isoformat()
+
+# Очищення історії (зберігаємо за останні 60 днів)
+cutoff_dt = datetime.now() - timedelta(days=60)
+feed_data["days"] = [d for d in feed_data["days"] if datetime.strptime(d["date"], "%Y-%m-%d") >= cutoff_dt.replace(hour=0, minute=0, second=0, microsecond=0)]
+feed_data["anomalies_log"] = [a for a in feed_data["anomalies_log"] if datetime.fromisoformat(a["timestamp"]) >= cutoff_dt]
+
+with open(FEED_PATH, "w", encoding="utf-8") as f:
+    json.dump(feed_data, f, ensure_ascii=False, indent=2)
+print("[SUCCESS] feed.json збережено")
+
+# Для сумісності зшиваємо feed_today та feed_tomorrow
+day_after_tomorrow_day = next((d for d in new_days if d["date"] == (today + timedelta(days=2)).strftime("%Y-%m-%d")), None)
+feed_today_content = feed_data["current_feed"]
 feed_tomorrow_parts = []
-if items_tomorrow: feed_tomorrow_parts.append(generate_feed_text(items_tomorrow, "ЗАВТРА"))
-if items_day_after: feed_tomorrow_parts.append(generate_feed_text(items_day_after, "ПІСЛЯЗАВТРА"))
+if tomorrow_day and tomorrow_day["actual_content"]:
+    feed_tomorrow_parts.append(tomorrow_day["actual_content"])
+if day_after_tomorrow_day and day_after_tomorrow_day["actual_content"]:
+    feed_tomorrow_parts.append(day_after_tomorrow_day["actual_content"])
 feed_tomorrow_content = " | ".join(feed_tomorrow_parts) if feed_tomorrow_parts else "[ЗАВТРА] Відключення не зафіксовані."
 
 # ------------------------------------------------------------

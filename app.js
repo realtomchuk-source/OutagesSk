@@ -59,6 +59,7 @@ async function showDashboard() {
 
 let currentTab = 'feed';
 let messages = [];
+let feedData = { current_feed: "", last_updated: "", days: [], anomalies_log: [] };
 let updateLog = [];
 let rawOutages = [];
 let archiveOutages = [];
@@ -88,6 +89,11 @@ window.loadData = async function() {
         try {
             const offResp = await fetch(`data/official_streets.json?t=${Date.now()}`);
             if (offResp.ok) officialStreets = await offResp.json();
+        } catch(e) {}
+
+        try {
+            const feedResp = await fetch(`data/feed.json?t=${Date.now()}`);
+            if (feedResp.ok) feedData = await feedResp.json();
         } catch(e) {}
 
         renderDashboard();
@@ -164,36 +170,251 @@ function getFeedContent(type) {
 }
 
 function renderFeed(container) {
-    let todayStr = getFeedContent('feed_today');
-    let tomorrowStr = getFeedContent('feed_tomorrow');
-
-    container.innerHTML = `
-        <h3>Стрічка (Ковзне вікно)</h3>
-        
-        <h4 style="margin-top:20px;">Стрічка на сьогодні</h4>
-        <div class="ticker-wrapper"><div class="ticker-marquee js-ticker">${escapeHtml(todayStr)}</div></div>
-        <textarea class="feed-textarea" readonly>${escapeHtml(todayStr)}</textarea>
-        <button class="btn btn-primary" onclick="copyToClipboard(this.previousElementSibling.value)">📋 Копіювати текст</button>
-
-        <h4 style="margin-top:30px;">Стрічка на завтра</h4>
-        <div class="ticker-wrapper"><div class="ticker-marquee js-ticker">${escapeHtml(tomorrowStr)}</div></div>
-        <textarea class="feed-textarea" readonly>${escapeHtml(tomorrowStr)}</textarea>
-        <button class="btn btn-primary" onclick="copyToClipboard(this.previousElementSibling.value)">📋 Копіювати текст</button>
-    `;
+    // 1. Отримуємо актуальні дані для поточного дня та наступного
+    const todayStr = feedData.current_feed || 'Дані відсутні';
     
-    // Анімація для стрічки
-    document.querySelectorAll('.js-ticker').forEach(ticker => {
-        ticker.innerHTML += " &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; " + ticker.innerHTML;
-        let pos = 0;
-        function step() {
-            if (!document.body.contains(ticker)) return;
-            pos += 1;
-            if (pos >= ticker.scrollWidth / 2) pos = 0;
-            ticker.scrollLeft = pos;
-            requestAnimationFrame(step);
-        }
-        requestAnimationFrame(step);
-    });
+    // Для завтра шукаємо в масиві days
+    const tomorrowDateStr = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+    const tomorrowDayObj = feedData.days && feedData.days.find(d => d.date === tomorrowDateStr);
+    const tomorrowStr = tomorrowDayObj ? tomorrowDayObj.actual_content : 'Дані відсутні';
+
+    let html = `
+        <h3>Стрічка новин (Актуальна)</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+            <div>
+                <h4 style="margin-bottom: 8px;">Стрічка на сьогодні (Актуальна)</h4>
+                <textarea class="feed-textarea" style="height: 120px;" readonly>${escapeHtml(todayStr)}</textarea>
+                <button class="btn btn-primary" onclick="copyToClipboard(this.previousElementSibling.value)">📋 Копіювати текст</button>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 8px;">Стрічка на завтра (Планова)</h4>
+                <textarea class="feed-textarea" style="height: 120px;" readonly>${escapeHtml(tomorrowStr)}</textarea>
+                <button class="btn btn-primary" onclick="copyToClipboard(this.previousElementSibling.value)">📋 Копіювати текст</button>
+            </div>
+        </div>
+
+        <h4 class="feed-section-title">Тижнева сітка стрічки новин (7 днів)</h4>
+        <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 15px;">
+            Натисніть на картку будь-якого дня, щоб переглянути повний текст, історію змін або внести ручні правки.
+        </p>
+        <div class="feed-grid">
+    `;
+
+    // 2. Будуємо 7 карток
+    const daysOfWeek = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П’ятниця', 'Субота'];
+    const todayStr_local = new Date().toLocaleDateString('en-CA');
+    
+    if (feedData.days && feedData.days.length > 0) {
+        feedData.days.forEach(day => {
+            const dateObj = new Date(day.date);
+            const weekday = daysOfWeek[dateObj.getDay()];
+            const formattedDate = dateObj.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long' });
+            
+            // Визначаємо статус
+            let statusText = "Немає відключень";
+            let badgeClass = "badge-success";
+            
+            if (day.actual_content.includes("Немає даних")) {
+                statusText = "Немає даних";
+                badgeClass = "badge-secondary";
+            } else if (day.actual_content.includes("Планові знеструмлення") || day.actual_content.includes("Аварійні знеструмлення")) {
+                statusText = "Є відключення";
+                badgeClass = "badge-danger";
+            }
+            
+            const historyCount = day.history ? day.history.length : 0;
+            const cleanContent = day.actual_content;
+            
+            html += `
+                <div class="feed-card" onclick="openFeedDayDetails('${day.date}')">
+                    <div>
+                        <div class="feed-card-header">
+                            <div>
+                                <div class="feed-card-title">${escapeHtml(weekday)}</div>
+                                <div class="feed-card-subtitle">${escapeHtml(formattedDate)}</div>
+                            </div>
+                            <span class="feed-card-badge ${badgeClass}">${statusText}</span>
+                        </div>
+                        <div class="feed-card-body">${escapeHtml(cleanContent)}</div>
+                    </div>
+                    <div class="feed-card-footer">
+                        <span>Дата: ${day.date}</span>
+                        <span class="feed-card-changes">${historyCount} верс.</span>
+                    </div>
+                </div>
+            `;
+        });
+    } else {
+        html += `<div class="empty" style="grid-column: 1/-1; padding: 20px; text-align: center;">Дані тижневої сітки відсутні. Спробуйте запустити парсер.</div>`;
+    }
+
+    html += `</div>`;
+
+    // 3. Блок статистики аномалій
+    const anomaliesThisWeek = feedData.anomalies_log ? feedData.anomalies_log.length : 0;
+    html += `
+        <h4 class="feed-section-title">Аналітика раптових змін (Аномалій) за тиждень</h4>
+        <div class="dashboard-widgets" style="margin-top: 10px;">
+            <div class="widget">
+                <div class="widget-title">Раптові зміни протягом доби</div>
+                <div class="widget-value ${anomaliesThisWeek > 0 ? 'warning' : ''}">${anomaliesThisWeek}</div>
+            </div>
+            <div class="widget" style="grid-column: span 2;">
+                <div class="widget-title">Статус телеметрії</div>
+                <div class="widget-value" style="font-size: 16px; margin-top: 10px; font-weight: normal; text-align: left;">
+                    Останнє оновлення стрічки: <strong>${feedData.last_updated ? new Date(feedData.last_updated).toLocaleString('uk-UA') : 'Невідомо'}</strong>.<br>
+                    Стрічка оновлюється автоматично кожні 2 години на GitHub Actions.
+                </div>
+            </div>
+        </div>
+    `;
+
+    if (feedData.anomalies_log && feedData.anomalies_log.length > 0) {
+        html += `
+            <h5>Журнал раптових змін (Останні оновлення):</h5>
+            <div class="anomalies-list">
+        `;
+        // Показуємо останні 10 логів
+        [...feedData.anomalies_log].reverse().slice(0, 10).forEach(log => {
+            const logTime = new Date(log.timestamp).toLocaleString('uk-UA');
+            const oldText = log.old_text || '';
+            const newText = log.new_text || '';
+            html += `
+                <div class="anomaly-log-item">
+                    <div class="anomaly-log-meta">📅 Дата події: ${log.date} | ⏱ Зафіксовано: ${logTime}</div>
+                    <div class="anomaly-log-diff">
+                        <div class="diff-old">Було: ${escapeHtml(oldText)}</div>
+                        <div class="diff-new">Стало: ${escapeHtml(newText)}</div>
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+    } else {
+        html += `<p style="font-size: 13px; color: var(--secondary-text); font-style: italic; margin-top: 10px;">Аномальних (раптових) змін у стрічці протягом тижня не зафіксовано. Обленерго працює за планом.</p>`;
+    }
+
+    container.innerHTML = html;
+
+    // 4. Оголошуємо функції відкриття деталей дня в глобальній області
+    if (!window.openFeedDayDetails) {
+        window.openFeedDayDetails = function(dateStr) {
+            const day = feedData.days.find(d => d.date === dateStr);
+            if (!day) return;
+
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'feed-modal-overlay';
+            modalOverlay.id = 'feedDayModal';
+
+            const dateObj = new Date(day.date);
+            const formattedDate = dateObj.toLocaleDateString('uk-UA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+            let historyHtml = '';
+            if (day.history && day.history.length > 0) {
+                [...day.history].reverse().forEach(h => {
+                    const time = new Date(h.timestamp).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+                    const date = new Date(h.timestamp).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit' });
+                    let badge = '';
+                    if (h.is_anomaly) badge = '<span class="feed-history-badge">Аномалія</span>';
+                    if (h.is_manual_edit) badge = '<span class="feed-history-badge manual">Вручну</span>';
+                    
+                    historyHtml += `
+                        <div class="feed-history-item">
+                            <div class="feed-history-meta">
+                                <span>📅 ${date} о ${time}</span>
+                                ${badge}
+                            </div>
+                            <div>${escapeHtml(h.content)}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                historyHtml = '<div style="font-size: 13px; color: var(--secondary-text); font-style: italic;">Історія змін відсутня.</div>';
+            }
+
+            modalOverlay.innerHTML = `
+                <div class="feed-modal">
+                    <div class="feed-modal-header">
+                        <h3>Стрічка: ${escapeHtml(formattedDate)}</h3>
+                        <button class="feed-modal-close" onclick="closeFeedModal()">&times;</button>
+                    </div>
+                    <div class="feed-modal-body">
+                        <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 6px;">Редагувати текст стрічки:</label>
+                        <textarea id="editFeedText" class="feed-textarea" style="height: 110px; margin-bottom: 12px; font-family: sans-serif;">${escapeHtml(day.actual_content)}</textarea>
+                        
+                        <div class="feed-history-title">Історія версій та авто-оновлень дня:</div>
+                        <div class="feed-history-list">
+                            ${historyHtml}
+                        </div>
+                    </div>
+                    <div class="feed-modal-footer">
+                        <button class="btn" style="background:#ccc; color:#333;" onclick="closeFeedModal()">Скасувати</button>
+                        <button class="btn btn-primary" onclick="saveFeedDayChanges('${day.date}')">💾 Зберегти зміни на GitHub</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modalOverlay);
+        };
+    }
+
+    if (!window.closeFeedModal) {
+        window.closeFeedModal = function() {
+            const modal = document.getElementById('feedDayModal');
+            if (modal) modal.remove();
+        };
+    }
+
+    if (!window.saveFeedDayChanges) {
+        window.saveFeedDayChanges = function(dateStr) {
+            const newText = document.getElementById('editFeedText').value.trim();
+            if (!newText) {
+                alert('Текст не може бути порожнім!');
+                return;
+            }
+
+            const day = feedData.days.find(d => d.date === dateStr);
+            if (!day) return;
+
+            // Зберігаємо нову версію
+            day.actual_content = newText;
+            if (!day.history) day.history = [];
+            
+            day.history.push({
+                timestamp: new Date().toISOString(),
+                content: newText,
+                is_anomaly: false,
+                is_manual_edit: true
+            });
+
+            // Динамічно оновлюємо головну стрічку, якщо редагували Сьогодні чи Завтра
+            const todayDateStr = new Date().toLocaleDateString('en-CA');
+            const tomorrowDateStr = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+            
+            let todayObj = feedData.days.find(d => d.date === todayDateStr);
+            let tomorrowObj = feedData.days.find(d => d.date === tomorrowDateStr);
+            
+            let currentParts = [];
+            if (todayObj && todayObj.actual_content) currentParts.push(todayObj.actual_content);
+            if (tomorrowObj && tomorrowObj.actual_content) currentParts.push(tomorrowObj.actual_content);
+            
+            feedData.current_feed = currentParts.join(" | ");
+            feedData.last_updated = new Date().toISOString();
+
+            // Копіюємо JSON в буфер і пропонуємо користувачу зберегти його на GitHub
+            const jsonStr = JSON.stringify(feedData, null, 2);
+            navigator.clipboard.writeText(jsonStr).then(() => {
+                alert('✅ Дані оновлено та новий файл feed.json скопійовано в буфер обміну!\n\nЗараз відкриється сторінка редагування на GitHub.\nВставте туди скопійований текст (Ctrl+V) і натисніть "Commit changes".');
+                closeFeedModal();
+                window.open('https://github.com/realtomchuk-source/OutagesSk/edit/main/data/feed.json', '_blank');
+                // Перемальовуємо поточну вкладку
+                renderFeed(document.getElementById('tabContent'));
+            }).catch(err => {
+                alert('Помилка копіювання в буфер: ' + err);
+            });
+        };
+    }
 }
 
 function renderTelegram(container) {
