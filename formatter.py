@@ -192,6 +192,31 @@ def generate_with_validation(prompt, items, max_retries=2):
     return content + "\n\n[УВАГА] Можливо, ШІ переніс не всі вулиці. Перевірте джерело."
 
 # ------------------------------------------------------------
+# Допоміжні функції для очищення адрес стрічки
+# ------------------------------------------------------------
+def clean_house_numbers(houses_str):
+    if not houses_str:
+        return ""
+    parts = [p.strip() for p in houses_str.split(",") if p.strip()]
+    cleaned_parts = []
+    for p in parts:
+        p_lower = p.lower()
+        if any(x in p_lower for x in ["опора", "будка", "каб", "оп"]):
+            continue
+        if p_lower in ["гараж", "блок", "бл."]:
+            continue
+        if any(p_lower.startswith(x) for x in ["гараж ", "бlock ", "бл. "]) or p_lower.startswith("гараж") or p_lower.startswith("блок"):
+            continue
+        # Залишаємо лише число, дріб/дефіс та літеру (наприклад "32/15", "97", "8")
+        match = re.match(r"^(\d+(?:[/\-][а-яА-Яa-zA-Z0-9]+)?|[а-яА-Яa-zA-Z]\d+)", p)
+        if match:
+            cleaned_parts.append(match.group(1))
+        else:
+            if not any(x in p_lower for x in ["гараж", "блок", "бл.", "опора", "оп"]):
+                cleaned_parts.append(p)
+    return ", ".join(cleaned_parts)
+
+# ------------------------------------------------------------
 # Генерація Стрічки (Алгоритмічна, без ШІ)
 # ------------------------------------------------------------
 def generate_feed_text(items, label):
@@ -199,30 +224,74 @@ def generate_feed_text(items, label):
         return f"[{label}] Відключення не зафіксовані."
         
     # Групування: ключ = (Тип, Місто, Час)
+    # Значення = список очищених назв вулиць з будинками
     grouped = {}
     for rec in items:
         settlement = rec.get("settlement", "Невідомо")
-        typ = "Аварійні знеструмлення" if "Аварійні" in rec.get("type", "") else "Планові знеструмлення"
+        typ = "Аварійні" if "Аварійні" in rec.get("type", "") else "Планові"
         time_range = extract_time_range(rec)
         
         key = (typ, settlement, time_range)
         if key not in grouped:
-            grouped[key] = set()
-        for s in rec.get("streets", []):
-            grouped[key].add(s)
+            grouped[key] = {}
+            
+        streets_detailed = rec.get("streets_detailed", [])
+        if streets_detailed:
+            for s in streets_detailed:
+                name = s.get("name", "").strip()
+                if not name:
+                    continue
+                # Пропускаємо вулиці, що містять технічні слова в назві
+                if any(x in name.lower() for x in ["гараж", "опора", "будка"]):
+                    continue
+                    
+                houses_str = s.get("houses", "").strip()
+                cleaned_houses = clean_house_numbers(houses_str)
+                
+                # Якщо спочатку були будинки, але після очищення всі вони ігноровані (наприклад, тільки гаражі/опори)
+                if houses_str and not cleaned_houses:
+                    if any(x in houses_str.lower() for x in ["гараж", "опора", "будка", "бл."]):
+                        continue # Пропускаємо вулицю повністю
+                
+                if name not in grouped[key]:
+                    grouped[key][name] = set()
+                if cleaned_houses:
+                    for hp in cleaned_houses.split(", "):
+                        grouped[key][name].add(hp)
+        else:
+            # Fallback
+            for name in rec.get("streets", []):
+                name = name.strip()
+                if not name or any(x in name.lower() for x in ["гараж", "опора", "будка"]):
+                    continue
+                if name not in grouped[key]:
+                    grouped[key][name] = set()
             
     # Сортування
-    sorted_keys = sorted(grouped.keys(), key=lambda k: (0 if k[0] == "Аварійні знеструмлення" else 1, 0 if k[1] == "Старокостянтинів" else 1, k[1], k[2]))
+    sorted_keys = sorted(grouped.keys(), key=lambda k: (0 if k[0] == "Аварійні" else 1, 0 if k[1] == "Старокостянтинів" else 1, k[1], k[2]))
     
     parts = []
     for k in sorted_keys:
         typ, settlement, time_range = k
-        street_count = len(grouped[k])
-        street_str = f"{street_count} вулиць" if street_count > 4 else f"{street_count} вулиці"
-        if street_count == 1: street_str = "1 вулиця"
-        parts.append(f"{typ}: {settlement} ({time_range} - {street_str})")
+        streets_dict = grouped[k]
         
-    return f"[{label}] " + " | ".join(parts)
+        street_parts = []
+        for s_name in sorted(streets_dict.keys()):
+            houses_set = streets_dict[s_name]
+            if houses_set:
+                sorted_houses = sorted(list(houses_set), key=lambda x: (int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 9999, x))
+                if len(sorted_houses) <= 5:
+                    street_parts.append(f"{s_name} ({', '.join(sorted_houses)})")
+                else:
+                    street_parts.append(f"{s_name} (частково)")
+            else:
+                street_parts.append(s_name)
+                
+        if street_parts:
+            streets_str = "; ".join(street_parts)
+            parts.append(f"{typ} ({settlement}, {time_range}): {streets_str}")
+            
+    return f"[{label}] " + " | ".join(parts) if parts else f"[{label}] Відключення не зафіксовані."
 
 # ------------------------------------------------------------
 # Підготовка дат
