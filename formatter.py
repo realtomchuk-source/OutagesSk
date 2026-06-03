@@ -289,7 +289,7 @@ def generate_feed_text(items, label):
                 
         if street_parts:
             streets_str = "; ".join(street_parts)
-            parts.append(f"{typ} ({settlement}, {time_range}): {streets_str}")
+            parts.append(f"{typ}: {settlement} ({time_range}): {streets_str}")
             
     return f"[{label}] " + " | ".join(parts) if parts else f"[{label}] Відключення не зафіксовані."
 
