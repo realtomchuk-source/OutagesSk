@@ -27,6 +27,17 @@ GOOGLE_MODEL = "gemini-2.0-flash"
 OPENROUTER_MODEL = "google/gemini-2.0-flash-001"
 
 # ------------------------------------------------------------
+# Налаштування системного часу для Києва
+# ------------------------------------------------------------
+def get_kyiv_now():
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("Europe/Kyiv")).replace(tzinfo=None)
+    except Exception:
+        # Резервний варіант: якщо середовище підтримує TZ env, datetime.now() буде правильним
+        return datetime.now()
+
+# ------------------------------------------------------------
 # Завантаження даних
 # ------------------------------------------------------------
 try:
@@ -54,7 +65,7 @@ try:
     else:
         print("[TELEMETRY] Виявлено зміни на сайті Обленерго!")
         # Записуємо лог
-        log_entry = {"time": datetime.now().isoformat(), "msg": "Detected changes in outages_snapshot"}
+        log_entry = {"time": get_kyiv_now().isoformat(), "msg": "Detected changes in outages_snapshot"}
         try:
             with open("data/changelog.json", "r", encoding="utf-8") as clog:
                 changelog = json.load(clog)
@@ -228,7 +239,7 @@ def generate_feed_text(items, label):
     grouped = {}
     for rec in items:
         settlement = rec.get("settlement", "Невідомо")
-        typ = "Аварійні" if "Аварійні" in rec.get("type", "") else "Планові"
+        typ = "Аварійні знеструмлення" if "Аварійні" in rec.get("type", "") else "Планові знеструмлення"
         time_range = extract_time_range(rec)
         
         key = (typ, settlement, time_range)
@@ -268,7 +279,7 @@ def generate_feed_text(items, label):
                     grouped[key][name] = set()
             
     # Сортування
-    sorted_keys = sorted(grouped.keys(), key=lambda k: (0 if k[0] == "Аварійні" else 1, 0 if k[1] == "Старокостянтинів" else 1, k[1], k[2]))
+    sorted_keys = sorted(grouped.keys(), key=lambda k: (0 if "Аварійні" in k[0] else 1, 0 if k[1] == "Старокостянтинів" else 1, k[1], k[2]))
     
     parts = []
     for k in sorted_keys:
@@ -294,10 +305,19 @@ def generate_feed_text(items, label):
     return f"[{label}] " + " | ".join(parts) if parts else f"[{label}] Відключення не зафіксовані."
 
 # ------------------------------------------------------------
-# Підготовка дат
+# Підготовка дат та перехідного вікна
 # ------------------------------------------------------------
-today = datetime.now().date()
+now_kyiv = get_kyiv_now()
+
+# Якщо година 23:00 - 23:59, зміщуємо референсний день на наступну добу
+if now_kyiv.hour == 23:
+    today = now_kyiv.date() + timedelta(days=1)
+else:
+    today = now_kyiv.date()
 tomorrow = today + timedelta(days=1)
+
+# Пауза для аномалій (перехідне вікно з 23:00 до 01:00)
+is_transition_window = (now_kyiv.hour == 23) or (now_kyiv.hour == 0)
 
 # Фільтруємо дані для Telegram-постів
 items_today = [r for r in outages if is_active_on_date(r, today)]
@@ -325,7 +345,7 @@ if "anomalies_log" not in feed_data: feed_data["anomalies_log"] = []
 # Отримуємо дати на наступні 7 днів (сьогодні + 6 днів)
 target_dates = [today + timedelta(days=i) for i in range(7)]
 new_days = []
-current_time_str = datetime.now().strftime("%H:%M")
+current_time_str = now_kyiv.strftime("%H:%M")
 
 for target_date in target_dates:
     date_str = target_date.strftime("%Y-%m-%d")
@@ -343,51 +363,68 @@ for target_date in target_dates:
         
     existing_day = next((d for d in feed_data["days"] if d["date"] == date_str), None)
     
-    if existing_day:
-        history = existing_day.get("history", [])
-        last_version = history[-1]["content"] if history else ""
-        
-        # Порівнюємо контент без мітки оновлення (Оновлено о ...)
-        clean_last = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", last_version)
-        clean_new = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", new_text)
-        
-        if clean_last != clean_new:
-            # Зміна контенту протягом доби є аномалією
-            marked_text = f"{new_text} (Оновлено о {current_time_str})"
-            history.append({
-                "timestamp": datetime.now().isoformat(),
-                "content": marked_text,
-                "is_anomaly": True
-            })
-            feed_data["anomalies_log"].append({
-                "date": date_str,
-                "timestamp": datetime.now().isoformat(),
-                "old_text": last_version,
-                "new_text": marked_text
-            })
-            planned_content = existing_day.get("planned_content", clean_new)
-            actual_content = marked_text
-        else:
-            planned_content = existing_day.get("planned_content", clean_new)
-            actual_content = last_version
-            
-        new_days.append({
-            "date": date_str,
-            "planned_content": planned_content,
-            "actual_content": actual_content,
-            "history": history
-        })
-    else:
+    if is_transition_window:
+        # У перехідний час формуємо стартову позицію: жодних аномалій, чистий контент
         new_days.append({
             "date": date_str,
             "planned_content": new_text,
             "actual_content": new_text,
+            "baseline_created_at": now_kyiv.strftime("%H:%M"),
             "history": [{
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": now_kyiv.isoformat(),
                 "content": new_text,
                 "is_anomaly": False
             }]
         })
+    else:
+        if existing_day:
+            history = existing_day.get("history", [])
+            last_version = history[-1]["content"] if history else ""
+            baseline_created_at = existing_day.get("baseline_created_at", "")
+            
+            # Порівнюємо контент без міток часу
+            clean_last = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", last_version)
+            clean_new = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", new_text)
+            
+            planned_content = existing_day.get("planned_content", clean_new)
+            actual_content = clean_new
+            
+            if clean_last != clean_new:
+                # Зміна контенту є аномалією
+                history.append({
+                    "timestamp": now_kyiv.isoformat(),
+                    "content": clean_new,
+                    "is_anomaly": True
+                })
+                feed_data["anomalies_log"].append({
+                    "date": date_str,
+                    "timestamp": now_kyiv.isoformat(),
+                    "old_text": last_version,
+                    "new_text": clean_new
+                })
+            else:
+                # Історія залишається незмінною, actual_content дорівнює останній версії з історії
+                actual_content = clean_last
+                
+            new_days.append({
+                "date": date_str,
+                "planned_content": planned_content,
+                "actual_content": actual_content,
+                "baseline_created_at": baseline_created_at,
+                "history": history
+            })
+        else:
+            new_days.append({
+                "date": date_str,
+                "planned_content": new_text,
+                "actual_content": new_text,
+                "baseline_created_at": "",
+                "history": [{
+                    "timestamp": now_kyiv.isoformat(),
+                    "content": new_text,
+                    "is_anomaly": False
+                }]
+            })
 
 feed_data["days"] = new_days
 
@@ -402,11 +439,36 @@ if today_day and today_day["actual_content"]:
 if tomorrow_day and tomorrow_day["actual_content"]:
     current_parts.append(tomorrow_day["actual_content"])
 
-feed_data["current_feed"] = " | ".join(current_parts) if current_parts else "Відключення не зафіксовані."
-feed_data["last_updated"] = datetime.now().isoformat()
+# Збираємо фінальний текст стрічки
+combined_feed = " | ".join(current_parts) if current_parts else "Відключення не зафіксовані."
+
+# Визначаємо, чи потрібно додати мітку оновлення на самий початок стрічки
+update_time_str = ""
+if not is_transition_window:
+    anomaly_timestamps = []
+    # Шукаємо аномалії в історії Сьогодні та Завтра
+    for day in [today_day, tomorrow_day]:
+        if day:
+            for h in day.get("history", []):
+                if h.get("is_anomaly") or h.get("is_manual_edit"):
+                    anomaly_timestamps.append(h["timestamp"])
+    if anomaly_timestamps:
+        latest_ts_str = max(anomaly_timestamps)
+        try:
+            latest_dt = datetime.fromisoformat(latest_ts_str)
+            update_time_str = latest_dt.strftime("%H:%M")
+        except Exception:
+            pass
+
+if update_time_str:
+    feed_data["current_feed"] = f"(Оновлено о {update_time_str}) {combined_feed}"
+else:
+    feed_data["current_feed"] = combined_feed
+
+feed_data["last_updated"] = now_kyiv.isoformat()
 
 # Очищення історії (зберігаємо за останні 60 днів)
-cutoff_dt = datetime.now() - timedelta(days=60)
+cutoff_dt = now_kyiv - timedelta(days=60)
 feed_data["days"] = [d for d in feed_data["days"] if datetime.strptime(d["date"], "%Y-%m-%d") >= cutoff_dt.replace(hour=0, minute=0, second=0, microsecond=0)]
 feed_data["anomalies_log"] = [a for a in feed_data["anomalies_log"] if datetime.fromisoformat(a["timestamp"]) >= cutoff_dt]
 
@@ -449,7 +511,7 @@ def add_message(m_id, m_date, m_type, m_content, m_hash=None):
             "type": m_type,
             "content": m_content,
             "hash": m_hash,
-            "created_at": datetime.now().isoformat()
+            "created_at": get_kyiv_now().isoformat()
         }
 
 # ------------------------------------------------------------
@@ -554,7 +616,7 @@ add_message(f"{tomorrow_str}_tg_planned", tomorrow_str, "tg_planned", tg_tomorro
 add_message(f"{tomorrow_str}_tg_emergency", tomorrow_str, "tg_emergency", tg_tomorrow_emergency, hash_tme)
 
 # Garbage Collection: Видаляємо старі повідомлення (>40 днів)
-cutoff_date = datetime.now() - timedelta(days=40)
+cutoff_date = get_kyiv_now() - timedelta(days=40)
 filtered_messages = []
 for m in messages_dict.values():
     try:
@@ -584,7 +646,7 @@ else:
 # ------------------------------------------------------------
 # Автоматичний запуск Щотижневої Аналітики
 # ------------------------------------------------------------
-now = datetime.now()
+now = get_kyiv_now()
 if now.weekday() == 0:
     try:
         with open("data/analytics.json", "r", encoding="utf-8") as f:

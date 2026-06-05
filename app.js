@@ -218,13 +218,15 @@ function renderFeed(container) {
             if (day.actual_content.includes("Немає даних")) {
                 statusText = "Немає даних";
                 badgeClass = "badge-secondary";
-            } else if (day.actual_content.includes("Планові знеструмлення") || day.actual_content.includes("Аварійні знеструмлення")) {
+            } else if (day.actual_content.includes("Планові") || day.actual_content.includes("Аварійні")) {
                 statusText = "Є відключення";
                 badgeClass = "badge-danger";
             }
             
             const historyCount = day.history ? day.history.length : 0;
             const cleanContent = day.actual_content;
+            
+            const baselineInfo = day.baseline_created_at ? `<span class="feed-card-baseline" title="Стартова база сформована" style="color:var(--success-color); font-size:12px; font-weight:bold; margin-left: 8px;">⏱ База: ${escapeHtml(day.baseline_created_at)}</span>` : '';
             
             html += `
                 <div class="feed-card" onclick="openFeedDayDetails('${day.date}')">
@@ -238,8 +240,8 @@ function renderFeed(container) {
                         </div>
                         <div class="feed-card-body">${escapeHtml(cleanContent)}</div>
                     </div>
-                    <div class="feed-card-footer">
-                        <span>Дата: ${day.date}</span>
+                    <div class="feed-card-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Дата: ${day.date} ${baselineInfo}</span>
                         <span class="feed-card-changes">${historyCount} верс.</span>
                     </div>
                 </div>
@@ -253,6 +255,10 @@ function renderFeed(container) {
 
     // 3. Блок статистики аномалій
     const anomaliesThisWeek = feedData.anomalies_log ? feedData.anomalies_log.length : 0;
+    
+    const todayDayObj = feedData.days && feedData.days.find(d => d.date === todayStr_local);
+    const baselineTimeStr = todayDayObj && todayDayObj.baseline_created_at ? todayDayObj.baseline_created_at : 'немає даних';
+    
     html += `
         <h4 class="feed-section-title">Аналітика раптових змін (Аномалій) за тиждень</h4>
         <div class="dashboard-widgets" style="margin-top: 10px;">
@@ -262,8 +268,9 @@ function renderFeed(container) {
             </div>
             <div class="widget" style="grid-column: span 2;">
                 <div class="widget-title">Статус телеметрії</div>
-                <div class="widget-value" style="font-size: 16px; margin-top: 10px; font-weight: normal; text-align: left;">
+                <div class="widget-value" style="font-size: 14px; margin-top: 8px; font-weight: normal; text-align: left; line-height: 1.4;">
                     Останнє оновлення стрічки: <strong>${feedData.last_updated ? new Date(feedData.last_updated).toLocaleString('uk-UA') : 'Невідомо'}</strong>.<br>
+                    Стартова база на сьогодні сформована о: <strong>${escapeHtml(baselineTimeStr)}</strong> (в проміжку 23:00-01:00).<br>
                     Стрічка оновлюється автоматично кожні 2 години на GitHub Actions.
                 </div>
             </div>
@@ -333,6 +340,10 @@ function renderFeed(container) {
                 historyHtml = '<div style="font-size: 13px; color: var(--secondary-text); font-style: italic;">Історія змін відсутня.</div>';
             }
 
+            const baselineText = day.baseline_created_at ? 
+                `<div style="font-size: 13px; color: var(--success-color); margin-top: 5px; font-weight: bold; background: rgba(40,167,69,0.1); padding: 8px; border-radius: 4px; border: 1px solid rgba(40,167,69,0.2);">⏱ Стартову базу для цієї доби сформовано о ${escapeHtml(day.baseline_created_at)} (в проміжку 23:00-01:00)</div>` : 
+                `<div style="font-size: 13px; color: var(--secondary-text); margin-top: 5px; font-style: italic; background: rgba(0,0,0,0.02); padding: 8px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05);">⏱ Стартову базу для цієї доби не сформовано у перехідному вікні (23:00-01:00)</div>`;
+
             modalOverlay.innerHTML = `
                 <div class="feed-modal">
                     <div class="feed-modal-header">
@@ -340,7 +351,8 @@ function renderFeed(container) {
                         <button class="feed-modal-close" onclick="closeFeedModal()">&times;</button>
                     </div>
                     <div class="feed-modal-body">
-                        <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 6px;">Редагувати текст стрічки:</label>
+                        ${baselineText}
+                        <label style="font-size: 13px; font-weight: bold; display: block; margin-top: 12px; margin-bottom: 6px;">Редагувати текст стрічки:</label>
                         <textarea id="editFeedText" class="feed-textarea" style="height: 110px; margin-bottom: 12px; font-family: sans-serif;">${escapeHtml(day.actual_content)}</textarea>
                         
                         <div class="feed-history-title">Історія версій та авто-оновлень дня:</div>
@@ -397,12 +409,45 @@ function renderFeed(container) {
             
             let currentParts = [];
             if (todayObj && todayObj.actual_content) {
-                let cleanToday = todayObj.actual_content.replace(/^\[СЬОГОДНІ\]\s*/, "");
+                // Видаляємо [СЬОГОДНІ] та мітку оновлення якщо вони були
+                let cleanToday = todayObj.actual_content.replace(/^\[СЬОГОДНІ\]\s*/, "").replace(/\s*\(Оновлено о \d{2}:\d{2}\)/g, "");
                 currentParts.push(cleanToday);
             }
-            if (tomorrowObj && tomorrowObj.actual_content) currentParts.push(tomorrowObj.actual_content);
+            if (tomorrowObj && tomorrowObj.actual_content) {
+                let cleanTomorrow = tomorrowObj.actual_content.replace(/\s*\(Оновлено о \d{2}:\d{2}\)/g, "");
+                currentParts.push(cleanTomorrow);
+            }
             
-            feedData.current_feed = currentParts.join(" | ");
+            let combinedFeed = currentParts.join(" | ");
+            
+            // Збираємо всі мітки часу з Сьогодні та Завтра
+            let anomalyTimestamps = [];
+            [todayObj, tomorrowObj].forEach(dObj => {
+                if (dObj && dObj.history) {
+                    dObj.history.forEach(h => {
+                        if (h.is_anomaly || h.is_manual_edit) {
+                            anomalyTimestamps.push(h.timestamp);
+                        }
+                    });
+                }
+            });
+            
+            let updateTimeStr = "";
+            if (anomalyTimestamps.length > 0) {
+                let latestTs = anomalyTimestamps.reduce((max, ts) => ts > max ? ts : max, anomalyTimestamps[0]);
+                try {
+                    let d = new Date(latestTs);
+                    let hh = String(d.getHours()).padStart(2, '0');
+                    let mm = String(d.getMinutes()).padStart(2, '0');
+                    updateTimeStr = `${hh}:${mm}`;
+                } catch(e) {}
+            }
+            
+            if (updateTimeStr) {
+                feedData.current_feed = `(Оновлено о ${updateTimeStr}) ${combinedFeed}`;
+            } else {
+                feedData.current_feed = combinedFeed;
+            }
             feedData.last_updated = new Date().toISOString();
 
             // Копіюємо JSON в буфер і пропонуємо користувачу зберегти його на GitHub
