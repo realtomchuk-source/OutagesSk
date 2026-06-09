@@ -1,6 +1,22 @@
 [
   {
     "settlement": "Старокостянтинів",
+    "type": "Аварійні",
+    "created_date": "09.06.2026",
+    "start_datetime": "09.06.202609:57",
+    "end_datetime": "09.06.202620:00",
+    "streets": [
+      "вул. Вишнева"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Вишнева",
+        "houses": "7, 10, 11, 14, 15"
+      }
+    ]
+  },
+  {
+    "settlement": "Старокостянтинів",
     "type": "Планові",
     "created_date": "05.06.2026",
     "start_datetime": "09.06.202609:22",
