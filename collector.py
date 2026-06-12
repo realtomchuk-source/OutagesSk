@@ -28,6 +28,32 @@ except AttributeError:
 with open("data/villages.json", "r", encoding="utf-8") as f:
     villages = json.load(f)
 
+def extract_settlement(city_text, villages_list):
+    text = city_text.strip()
+    hromada_match = re.search(r'\((.*?)\)', text)
+    if hromada_match:
+        hromada = hromada_match.group(1).strip()
+        # Якщо в дужках вказана інша громада (не Старокостянтинівська), ігноруємо її
+        if "Старокостянтинівська" not in hromada:
+            return None
+        name_part = text.split('(')[0].strip()
+    else:
+        name_part = text
+        
+    # Видаляємо префікси м., с., смт.
+    name_part = re.sub(r'^(м|с|смт)\.\s*', '', name_part).strip()
+    
+    # Шукаємо точний збіг у довіднику villages
+    if name_part in villages_list:
+        return name_part
+        
+    # Якщо точного збігу немає, робимо перевірку по підрядку як fallback
+    for v in villages_list:
+        if v in name_part:
+            return v
+            
+    return None
+
 # ------------------------------------------------------------
 # 2. Налаштування Selenium (безголовий режим)
 # ------------------------------------------------------------
@@ -92,12 +118,7 @@ try:
                 continue
 
             city_text = city_tag.get_text(strip=True)
-            # Визначаємо населений пункт за довідником
-            settlement = None
-            for v in villages:
-                if v in city_text:
-                    settlement = v
-                    break
+            settlement = extract_settlement(city_text, villages)
             if not settlement:
                 i += 1
                 continue
@@ -203,11 +224,7 @@ try:
                 continue
 
             city_text = city_tag.get_text(strip=True)
-            settlement = None
-            for v in villages:
-                if v in city_text:
-                    settlement = v
-                    break
+            settlement = extract_settlement(city_text, villages)
             if not settlement:
                 i += 1
                 continue

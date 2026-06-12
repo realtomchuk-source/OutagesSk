@@ -13,6 +13,13 @@ function escapeHtml(str) {
     return str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+function formatDateISO(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 async function login() {
     app.innerHTML = `
         <div class="card">
@@ -93,8 +100,14 @@ window.loadData = async function() {
 
         try {
             const feedResp = await fetch(`data/feed.json?t=${Date.now()}`);
-            if (feedResp.ok) feedData = await feedResp.json();
-        } catch(e) {}
+            if (feedResp.ok) {
+                feedData = await feedResp.json();
+            } else {
+                console.error(`Failed to fetch feed.json: ${feedResp.status} ${feedResp.statusText}`);
+            }
+        } catch(e) {
+            console.error("Error loading feed.json:", e);
+        }
 
         renderDashboard();
         renderTab(currentTab);
@@ -174,7 +187,7 @@ function renderFeed(container) {
     const todayStr = feedData.current_feed || 'Дані відсутні';
     
     // Для завтра шукаємо в масиві days
-    const tomorrowDateStr = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+    const tomorrowDateStr = formatDateISO(new Date(Date.now() + 86400000));
     const tomorrowDayObj = feedData.days && feedData.days.find(d => d.date === tomorrowDateStr);
     const tomorrowStr = tomorrowDayObj ? tomorrowDayObj.actual_content : 'Дані відсутні';
 
@@ -203,7 +216,7 @@ function renderFeed(container) {
 
     // 2. Будуємо 7 карток
     const daysOfWeek = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П’ятниця', 'Субота'];
-    const todayStr_local = new Date().toLocaleDateString('en-CA');
+    const todayStr_local = formatDateISO(new Date());
     
     if (feedData.days && feedData.days.length > 0) {
         feedData.days.forEach(day => {
@@ -401,8 +414,8 @@ function renderFeed(container) {
             });
 
             // Динамічно оновлюємо головну стрічку, якщо редагували Сьогодні чи Завтра
-            const todayDateStr = new Date().toLocaleDateString('en-CA');
-            const tomorrowDateStr = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+            const todayDateStr = formatDateISO(new Date());
+            const tomorrowDateStr = formatDateISO(new Date(Date.now() + 86400000));
             
             let todayObj = feedData.days.find(d => d.date === todayDateStr);
             let tomorrowObj = feedData.days.find(d => d.date === tomorrowDateStr);
@@ -479,7 +492,7 @@ function renderTelegram(container) {
     types.forEach(t => {
         let d = new Date();
         d.setDate(d.getDate() + t.dateOffset);
-        let dbDateStr = d.toLocaleDateString('en-CA'); // YYYY-MM-DD
+        let dbDateStr = formatDateISO(d); // YYYY-MM-DD
         
         let label = t.dateOffset === 0 ? "СЬОГОДНІ" : "ЗАВТРА";
         
