@@ -232,7 +232,7 @@ def clean_house_numbers(houses_str):
 # ------------------------------------------------------------
 def generate_feed_text(items, label):
     if not items:
-        return f"[{label}] Відключення не зафіксовані."
+        return f"[{label}] Інформація про відключення відсутня."
         
     # Групування: ключ = (Тип, Місто, Час)
     # Значення = список очищених назв вулиць з будинками
@@ -302,7 +302,7 @@ def generate_feed_text(items, label):
             streets_str = "; ".join(street_parts)
             parts.append(f"{typ}: {settlement} ({time_range}): {streets_str}")
             
-    return f"[{label}] " + " | ".join(parts) if parts else f"[{label}] Відключення не зафіксовані."
+    return f"[{label}] " + " | ".join(parts) if parts else f"[{label}] Інформація про відключення відсутня."
 
 # ------------------------------------------------------------
 # Підготовка дат та перехідного вікна
@@ -432,15 +432,30 @@ feed_data["days"] = new_days
 today_day = next((d for d in new_days if d["date"] == today.strftime("%Y-%m-%d")), None)
 tomorrow_day = next((d for d in new_days if d["date"] == tomorrow.strftime("%Y-%m-%d")), None)
 
-current_parts = []
-if today_day and today_day["actual_content"]:
-    clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
-    current_parts.append(clean_today)
-if tomorrow_day and tomorrow_day["actual_content"]:
-    current_parts.append(tomorrow_day["actual_content"])
+# Визначаємо, чи є відключення на сьогодні та завтра
+today_has_outages = today_day and not ("Інформація про відключення відсутня" in today_day["actual_content"])
+tomorrow_has_outages = tomorrow_day and not ("Інформація про відключення відсутня" in tomorrow_day["actual_content"])
 
-# Збираємо фінальний текст стрічки
-combined_feed = " | ".join(current_parts) if current_parts else "Відключення не зафіксовані."
+if today_day and tomorrow_day:
+    if not today_has_outages and not tomorrow_has_outages:
+        combined_feed = "Інформація про відключення на сьогодні та завтра відсутня."
+    elif not today_has_outages and tomorrow_has_outages:
+        combined_feed = f"Інформація про відключення на сьогодні відсутня. | {tomorrow_day['actual_content']}"
+    elif today_has_outages and not tomorrow_has_outages:
+        clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
+        combined_feed = f"{clean_today} | [ЗАВТРА] Інформація про відключення відсутня."
+    else:
+        clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
+        combined_feed = f"{clean_today} | {tomorrow_day['actual_content']}"
+else:
+    # Резервний варіант, якщо якісь об'єкти відсутні
+    current_parts = []
+    if today_day and today_day["actual_content"]:
+        clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
+        current_parts.append(clean_today)
+    if tomorrow_day and tomorrow_day["actual_content"]:
+        current_parts.append(tomorrow_day["actual_content"])
+    combined_feed = " | ".join(current_parts) if current_parts else "Інформація про відключення відсутня."
 
 # Визначаємо, чи потрібно додати мітку оновлення на самий початок стрічки
 update_time_str = ""
@@ -490,7 +505,7 @@ if tomorrow_day and tomorrow_day["actual_content"]:
     feed_tomorrow_parts.append(tomorrow_day["actual_content"])
 if day_after_tomorrow_day and day_after_tomorrow_day["actual_content"]:
     feed_tomorrow_parts.append(day_after_tomorrow_day["actual_content"])
-feed_tomorrow_content = " | ".join(feed_tomorrow_parts) if feed_tomorrow_parts else "[ЗАВТРА] Відключення не зафіксовані."
+feed_tomorrow_content = " | ".join(feed_tomorrow_parts) if feed_tomorrow_parts else "[ЗАВТРА] Інформація про відключення відсутня."
 
 # ------------------------------------------------------------
 # Завантаження messages.json для Кешування

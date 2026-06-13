@@ -420,18 +420,22 @@ function renderFeed(container) {
             let todayObj = feedData.days.find(d => d.date === todayDateStr);
             let tomorrowObj = feedData.days.find(d => d.date === tomorrowDateStr);
             
-            let currentParts = [];
-            if (todayObj && todayObj.actual_content) {
-                // Видаляємо [СЬОГОДНІ] та мітку оновлення якщо вони були
-                let cleanToday = todayObj.actual_content.replace(/^\[СЬОГОДНІ\]\s*/, "").replace(/\s*\(Оновлено о \d{2}:\d{2}\)/g, "");
-                currentParts.push(cleanToday);
-            }
-            if (tomorrowObj && tomorrowObj.actual_content) {
-                let cleanTomorrow = tomorrowObj.actual_content.replace(/\s*\(Оновлено о \d{2}:\d{2}\)/g, "");
-                currentParts.push(cleanTomorrow);
-            }
+            let todayText = todayObj && todayObj.actual_content ? todayObj.actual_content.replace(/^\[СЬОГОДНІ\]\s*/, "").replace(/\s*\(Оновлено о \d{2}:\d{2}\)/g, "").trim() : "";
+            let tomorrowText = tomorrowObj && tomorrowObj.actual_content ? tomorrowObj.actual_content.replace(/\s*\(Оновлено о \d{2}:\d{2}\)/g, "").trim() : "";
             
-            let combinedFeed = currentParts.join(" | ");
+            let todayHasOutages = todayText && !todayText.includes("Інформація про відключення відсутня");
+            let tomorrowHasOutages = tomorrowText && !tomorrowText.includes("Інформація про відключення відсутня");
+            
+            let combinedFeed = "";
+            if (!todayHasOutages && !tomorrowHasOutages) {
+                combinedFeed = "Інформація про відключення на сьогодні та завтра відсутня.";
+            } else if (!todayHasOutages && tomorrowHasOutages) {
+                combinedFeed = `Інформація про відключення на сьогодні відсутня. | ${tomorrowText}`;
+            } else if (todayHasOutages && !tomorrowHasOutages) {
+                combinedFeed = `${todayText} | [ЗАВТРА] Інформація про відключення відсутня.`;
+            } else {
+                combinedFeed = `${todayText} | ${tomorrowText}`;
+            }
             
             // Збираємо всі мітки часу з Сьогодні та Завтра
             let anomalyTimestamps = [];
