@@ -1503,55 +1503,179 @@ function renderStreets(container) {
     if (!window.moveStreetSettlement) {
         window.moveStreetSettlement = async function(street) {
             let settlements = Object.keys(officialStreets).filter(s => s !== selectedSettlement).sort();
-            let promptMsg = `Перенесення офіційної вулиці '${street}' з '${selectedSettlement}' в інший населений пункт.\n\n` +
-                            `Введіть назву населеного пункту або його номер зі списку:\n` +
+            let promptMsg = `Перенесення офіційної вулиці '${street}' з '${selectedSettlement}' в інші населені пункти.\n\n` +
+                            `Введіть назви через кому або їх номери зі списку через кому (наприклад: 28, 63):\n` +
                             settlements.map((s, idx) => `${idx + 1}. ${s}`).join("\n");
-            let target = prompt(promptMsg);
-            if (!target) return;
-            target = target.trim();
+            let targetInput = prompt(promptMsg);
+            if (!targetInput) return;
             
-            const targetIdx = parseInt(target) - 1;
-            if (!isNaN(targetIdx) && targetIdx >= 0 && targetIdx < settlements.length) {
-                target = settlements[targetIdx];
-            }
-            
-            if (!officialStreets[target]) {
-                alert(`Населений пункт '${target}' не знайдено в базі!`);
+            // Розпарсимо список населених пунктів, розділених комою
+            let targets = targetInput.split(',')
+                .map(t => t.trim())
+                .filter(t => t.length > 0)
+                .map(t => {
+                    const targetIdx = parseInt(t) - 1;
+                    if (!isNaN(targetIdx) && targetIdx >= 0 && targetIdx < settlements.length) {
+                        return settlements[targetIdx];
+                    }
+                    // Пошук найближчого співпадіння за назвою
+                    const found = settlements.find(s => s.toLowerCase().includes(t.toLowerCase()));
+                    return found || t;
+                });
+                
+            if (targets.length === 0) {
+                alert("Не обрано жодного правильного населеного пункту!");
                 return;
             }
             
-            if (officialStreets[target][street]) {
-                alert(`Вулиця '${street}' вже є офіційною в населеному пункті '${target}'!`);
-                return;
+            // Валідуємо, що всі обрані н.п. існують в базі
+            for (let t of targets) {
+                if (!officialStreets[t]) {
+                    alert(`Населений пункт '${t}' не знайдено в базі!`);
+                    return;
+                }
             }
             
-            if (confirm(`Ви впевнені, що хочете перенести вулицю '${street}' з '${selectedSettlement}' в '${target}'?\nЦе переприв'яже всі відключення в архіві та створить правило автокорекції.`)) {
+            const targetsStr = targets.join(", ");
+            let confirmMsg = `Ви впевнені, що хочете перенести вулицю '${street}' з '${selectedSettlement}' в:\n` +
+                             `[ ${targetsStr} ]?\n\n` +
+                             `Це прибере її з '${selectedSettlement}', додасть до офіційних словників обраних н.п. та налаштує правило автоматичного вибору (трирівнева логіка).`;
+            
+            if (confirm(confirmMsg)) {
                 const streetData = officialStreets[selectedSettlement][street] || { type: "вулиця", houses: [], blacklist: [] };
                 
-                // 1. Update official streets list
+                // 1. Оновлюємо офіційні словники
                 delete officialStreets[selectedSettlement][street];
-                officialStreets[target][street] = streetData;
+                for (let t of targets) {
+                    if (!officialStreets[t][street]) {
+                        officialStreets[t][street] = JSON.parse(JSON.stringify(streetData));
+                    } else {
+                        // Об'єднуємо будинки
+                        const existingHouses = new Set(officialStreets[t][street].houses || []);
+                        (streetData.houses || []).forEach(h => existingHouses.add(h));
+                        officialStreets[t][street].houses = Array.from(existingHouses);
+                    }
+                }
                 
                 if (window.selectedStreet === street) {
                     window.selectedStreet = "";
                 }
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
-                await commitFileToGitHub("data/official_streets.json", jsonStr, `Перенесення вулиці ${street} з ${selectedSettlement} в ${target}`);
+                await commitFileToGitHub("data/official_streets.json", jsonStr, `Перенесення вулиці ${street} з ${selectedSettlement} в [${targetsStr}]`);
                 
-                // 2. Add rule to street corrections
+                // 2. Створюємо правило в street_corrections.json
                 if (!window.streetCorrections) window.streetCorrections = {};
                 if (!window.streetCorrections[selectedSettlement]) window.streetCorrections[selectedSettlement] = {};
                 window.streetCorrections[selectedSettlement][street] = {
                     action: "move_to_settlement",
-                    target_settlement: target,
+                    target_settlements: targets,
                     target_street: street,
                     timestamp: new Date().toISOString()
                 };
                 const correctionsStr = JSON.stringify(window.streetCorrections, null, 2);
-                await commitFileToGitHub("data/street_corrections.json", correctionsStr, `Правило перенесення вулиці: ${street} з ${selectedSettlement} -> ${target}`);
+                await commitFileToGitHub("data/street_corrections.json", correctionsStr, `Правило перенесення вулиці: ${street} з ${selectedSettlement} -> [${targetsStr}]`);
                 
-                // 3. Update archive.json (with split)
+                // 3. Допоміжна функція для трирівневого розподілу на стороні клієнта
+                function routeRecordForTargets(rec) {
+                    const sDet = (rec.streets_detailed || []).find(s => s.name && s.name.trim() === street);
+                    const housesStr = sDet ? sDet.houses || "" : "";
+                    const expandedHouses = expandHouseRanges(housesStr);
+                    
+                    // Рівень 1: Співпадіння будинків
+                    let candMatches = {};
+                    let anyMatch = false;
+                    targets.forEach(t => {
+                        candMatches[t] = new Set();
+                        const offHouses = officialStreets[t]?.[street]?.houses || [];
+                        expandedHouses.forEach(h => {
+                            if (offHouses.includes(h)) {
+                                candMatches[t].add(h);
+                                anyMatch = true;
+                            }
+                        });
+                    });
+                    
+                    if (anyMatch) {
+                        // Збираємо список кандидатів, які отримали хоча б одне співпадіння
+                        let activeCands = targets.filter(t => candMatches[t].size > 0);
+                        let assignedHouses = {};
+                        targets.forEach(t => assignedHouses[t] = []);
+                        
+                        expandedHouses.forEach(h => {
+                            let matchedCands = targets.filter(t => candMatches[t].has(h));
+                            if (matchedCands.length > 0) {
+                                matchedCands.forEach(t => assignedHouses[t].push(h));
+                            } else {
+                                // Будинки, що не співпали, йдуть до всіх активних кандидатів
+                                activeCands.forEach(t => assignedHouses[t].push(h));
+                            }
+                        });
+                        
+                        let results = [];
+                        targets.forEach(t => {
+                            if (assignedHouses[t].length > 0) {
+                                let targetRec = JSON.parse(JSON.stringify(rec));
+                                targetRec.settlement = t;
+                                targetRec.streets = (targetRec.streets || []).filter(s => s.trim() === street);
+                                targetRec.streets_detailed = [{
+                                    name: street,
+                                    houses: assignedHouses[t].join(", ")
+                                }];
+                                results.push(targetRec);
+                            }
+                        });
+                        return results;
+                    }
+                    
+                    // Рівень 2: Сусідство (інші вулиці в події)
+                    let votes = {};
+                    targets.forEach(t => votes[t] = 0);
+                    const otherStreets = (rec.streets || []).filter(s => s.trim() !== street);
+                    otherStreets.forEach(otherS => {
+                        targets.forEach(t => {
+                            if (officialStreets[t]?.[otherS]) {
+                                votes[t]++;
+                            }
+                        });
+                    });
+                    
+                    let maxVotes = 0;
+                    let bestCands = [];
+                    targets.forEach(t => {
+                        if (votes[t] > maxVotes) {
+                            maxVotes = votes[t];
+                            bestCands = [t];
+                        } else if (votes[t] === maxVotes && maxVotes > 0) {
+                            bestCands.push(t);
+                        }
+                    });
+                    
+                    if (bestCands.length > 0) {
+                        let results = [];
+                        bestCands.forEach(t => {
+                            let targetRec = JSON.parse(JSON.stringify(rec));
+                            targetRec.settlement = t;
+                            targetRec.streets = (targetRec.streets || []).filter(s => s.trim() === street);
+                            targetRec.streets_detailed = (targetRec.streets_detailed || []).filter(s => s.name && s.name.trim() === street);
+                            results.push(targetRec);
+                        });
+                        return results;
+                    }
+                    
+                    // Рівень 3: Fallback (дублюємо на всіх кандидатів)
+                    let results = [];
+                    targets.forEach(t => {
+                        let targetRec = JSON.parse(JSON.stringify(rec));
+                        targetRec.settlement = t;
+                        targetRec.streets = (targetRec.streets || []).filter(s => s.trim() === street);
+                        targetRec.streets_detailed = (targetRec.streets_detailed || []).filter(s => s.name && s.name.trim() === street);
+                        results.push(targetRec);
+                    });
+                    return results;
+                }
+                
+                // 4. Оновлюємо archive.json
                 let archiveChanged = false;
                 let newArchive = [];
                 archiveOutages.forEach(rec => {
@@ -1560,7 +1684,6 @@ function renderStreets(container) {
                         let hasTargetStreet = false;
                         let streets = rec.streets || [];
                         let streetsDetailed = rec.streets_detailed || [];
-                        
                         if (streets.some(s => s.trim() === street) || 
                             streetsDetailed.some(s => s.name && s.name.trim() === street)) {
                             hasTargetStreet = true;
@@ -1568,18 +1691,14 @@ function renderStreets(container) {
                         
                         if (hasTargetStreet) {
                             archiveChanged = true;
-                            // Target record (moved)
-                            let targetRec = JSON.parse(JSON.stringify(rec));
-                            targetRec.settlement = target;
-                            targetRec.streets = (targetRec.streets || []).filter(s => s.trim() === street);
-                            targetRec.streets_detailed = (targetRec.streets_detailed || []).filter(s => s.name && s.name.trim() === street);
-                            newArchive.push(targetRec);
+                            // Отримуємо розподілені/продубльовані записи
+                            const routed = routeRecordForTargets(rec);
+                            routed.forEach(r => newArchive.push(r));
                             
-                            // Remaining record (stays)
+                            // Залишок у початковому записі
                             let remainingRec = JSON.parse(JSON.stringify(rec));
                             remainingRec.streets = (remainingRec.streets || []).filter(s => s.trim() !== street);
                             remainingRec.streets_detailed = (remainingRec.streets_detailed || []).filter(s => !s.name || s.name.trim() !== street);
-                            
                             if (remainingRec.streets.length > 0 || remainingRec.streets_detailed.length > 0) {
                                 newArchive.push(remainingRec);
                             }
@@ -1593,10 +1712,10 @@ function renderStreets(container) {
                 if (archiveChanged) {
                     archiveOutages = newArchive;
                     const archiveStr = JSON.stringify(archiveOutages, null, 2);
-                    await commitFileToGitHub("data/archive.json", archiveStr, `Оновлення приналежності вулиці ${street} в архіві (перенесено в ${target})`);
+                    await commitFileToGitHub("data/archive.json", archiveStr, `Оновлення приналежності вулиці ${street} в архіві (розподілено між [${targetsStr}])`);
                 }
                 
-                // 4. Update outages_snapshot.json (with split)
+                // 5. Оновлюємо outages_snapshot.json
                 let rawChanged = false;
                 let newRaw = [];
                 rawOutages.forEach(rec => {
@@ -1605,7 +1724,6 @@ function renderStreets(container) {
                         let hasTargetStreet = false;
                         let streets = rec.streets || [];
                         let streetsDetailed = rec.streets_detailed || [];
-                        
                         if (streets.some(s => s.trim() === street) || 
                             streetsDetailed.some(s => s.name && s.name.trim() === street)) {
                             hasTargetStreet = true;
@@ -1613,18 +1731,14 @@ function renderStreets(container) {
                         
                         if (hasTargetStreet) {
                             rawChanged = true;
-                            // Target record (moved)
-                            let targetRec = JSON.parse(JSON.stringify(rec));
-                            targetRec.settlement = target;
-                            targetRec.streets = (targetRec.streets || []).filter(s => s.trim() === street);
-                            targetRec.streets_detailed = (targetRec.streets_detailed || []).filter(s => s.name && s.name.trim() === street);
-                            newRaw.push(targetRec);
+                            // Отримуємо розподілені/продубльовані записи
+                            const routed = routeRecordForTargets(rec);
+                            routed.forEach(r => newRaw.push(r));
                             
-                            // Remaining record (stays)
+                            // Залишок у початковому записі
                             let remainingRec = JSON.parse(JSON.stringify(rec));
                             remainingRec.streets = (remainingRec.streets || []).filter(s => s.trim() !== street);
                             remainingRec.streets_detailed = (remainingRec.streets_detailed || []).filter(s => !s.name || s.name.trim() !== street);
-                            
                             if (remainingRec.streets.length > 0 || remainingRec.streets_detailed.length > 0) {
                                 newRaw.push(remainingRec);
                             }
@@ -1638,11 +1752,11 @@ function renderStreets(container) {
                 if (rawChanged) {
                     rawOutages = newRaw;
                     const rawStr = JSON.stringify(rawOutages, null, 2);
-                    await commitFileToGitHub("data/outages_snapshot.json", rawStr, `Оновлення приналежності вулиці ${street} в активних відключеннях (перенесено в ${target})`);
+                    await commitFileToGitHub("data/outages_snapshot.json", rawStr, `Оновлення приналежності вулиці ${street} в активних відключеннях (розподілено між [${targetsStr}])`);
                 }
                 
-                // 5. Log action
-                await logAddressAction('move_settlement', street, target, streetData.houses);
+                // 6. Логуємо подію
+                await logAddressAction('move_settlement', street, targetsStr, streetData.houses);
                 
                 renderStreets(document.getElementById('tabContent'));
             }

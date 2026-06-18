@@ -167,6 +167,32 @@ def find_best_official_match(raw_name, official_list, threshold=0.85):
         return best_match
     return None
 
+def expand_house_ranges(houses_str):
+    if not houses_str:
+        return []
+    parts = [p.strip() for p in houses_str.split(",") if p.strip()]
+    expanded = set()
+    for part in parts:
+        part_lower = part.lower()
+        if any(w in part_lower for w in ["опора", "будка", "гараж", "блок", "каб", "оп"]):
+            continue
+        match = re.match(r"^(\d+)-(\d+)$", part)
+        if match:
+            start = int(match.group(1))
+            end = int(match.group(2))
+            if start > end:
+                start, end = end, start
+            if end - start <= 50:
+                for i in range(start, end + 1):
+                    expanded.add(str(i))
+            else:
+                expanded.add(part)
+        else:
+            cleaned = re.sub(r"[^\d/a-zA-Zа-яА-Я\-]", "", part)
+            if cleaned:
+                expanded.add(cleaned)
+    return list(expanded)
+
 def apply_street_corrections(records):
     official_streets_path = "data/official_streets.json"
     corrections_path = "data/street_corrections.json"
@@ -194,64 +220,159 @@ def apply_street_corrections(records):
         dict_key = get_street_dict_key(settlement)
         
         sett_corrections = corrections_data.get(dict_key, {})
-        official_list = official_data.get(dict_key, {})
-        if isinstance(official_list, dict):
-            official_list = list(official_list.keys())
         
         streets = rec.get("streets", [])
         streets_detailed = rec.get("streets_detailed", [])
         
-        # Check if any street needs to be moved to another settlement
-        moved_streets = {} # target_settlement -> { "streets": [...], "streets_detailed": [...] }
-        
-        remaining_streets = []
-        for s in streets:
-            rule = sett_corrections.get(s)
-            if rule:
-                if rule.get("action") == "delete":
-                    corrected_count += 1
-                    continue
-                elif rule.get("action") == "rename" and rule.get("target"):
-                    remaining_streets.append(rule.get("target"))
-                    corrected_count += 1
-                    continue
-                elif rule.get("action") == "move_to_settlement" and rule.get("target_settlement"):
-                    target_sett = rule.get("target_settlement")
-                    target_street = rule.get("target_street", s)
-                    if target_sett not in moved_streets:
-                        moved_streets[target_sett] = {"streets": [], "streets_detailed": []}
-                    moved_streets[target_sett]["streets"].append(target_street)
-                    corrected_count += 1
-                    continue
-            remaining_streets.append(s)
-            
-        remaining_detailed = []
+        s_det_map = {}
         for s_det in streets_detailed:
             name = s_det.get("name")
             if name:
-                rule = sett_corrections.get(name)
-                if rule:
-                    if rule.get("action") == "delete":
-                        corrected_count += 1
-                        continue
-                    elif rule.get("action") == "rename" and rule.get("target"):
-                        new_det = dict(s_det)
-                        new_det["name"] = rule.get("target")
-                        remaining_detailed.append(new_det)
-                        corrected_count += 1
-                        continue
-                    elif rule.get("action") == "move_to_settlement" and rule.get("target_settlement"):
-                        target_sett = rule.get("target_settlement")
-                        target_street = rule.get("target_street", name)
-                        if target_sett not in moved_streets:
-                            moved_streets[target_sett] = {"streets": [], "streets_detailed": []}
+                s_det_map[name] = s_det
+                
+        moved_streets = {} # target_settlement -> { "streets": [], "streets_detailed": [] }
+        remaining_streets = []
+        remaining_detailed = []
+        
+        all_streets_set = list(dict.fromkeys(streets + list(s_det_map.keys())))
+        
+        for s in all_streets_set:
+            s_det = s_det_map.get(s)
+            houses_str = s_det.get("houses", "") if s_det else ""
+            
+            rule = sett_corrections.get(s)
+            if not rule:
+                if s in streets:
+                    remaining_streets.append(s)
+                if s_det:
+                    remaining_detailed.append(s_det)
+                continue
+                
+            action = rule.get("action")
+            if action == "delete":
+                corrected_count += 1
+                continue
+            elif action == "rename" and rule.get("target"):
+                target_name = rule.get("target")
+                if s in streets:
+                    remaining_streets.append(target_name)
+                if s_det:
+                    new_det = dict(s_det)
+                    new_det["name"] = target_name
+                    remaining_detailed.append(new_det)
+                corrected_count += 1
+                continue
+            elif action == "move_to_settlement":
+                target_street = rule.get("target_street", s)
+                target_sett_val = rule.get("target_settlements") or rule.get("target_settlement")
+                
+                if isinstance(target_sett_val, list):
+                    candidates = [c.strip() for c in target_sett_val if c.strip()]
+                elif isinstance(target_sett_val, str):
+                    candidates = [c.strip() for c in target_sett_val.split(",") if c.strip()]
+                else:
+                    candidates = []
+                    
+                if not candidates:
+                    if s in streets:
+                        remaining_streets.append(s)
+                    if s_det:
+                        remaining_detailed.append(s_det)
+                    continue
+                    
+                if len(candidates) == 1:
+                    target_sett = candidates[0]
+                    if target_sett not in moved_streets:
+                        moved_streets[target_sett] = {"streets": [], "streets_detailed": []}
+                    moved_streets[target_sett]["streets"].append(target_street)
+                    if s_det:
                         new_det = dict(s_det)
                         new_det["name"] = target_street
                         moved_streets[target_sett]["streets_detailed"].append(new_det)
+                    corrected_count += 1
+                else:
+                    # 3-level selection logic
+                    expanded = expand_house_ranges(houses_str)
+                    
+                    # Level 1: House matching
+                    cand_matches = {}
+                    any_match = False
+                    for cand in candidates:
+                        cand_key = get_street_dict_key(cand)
+                        off_dict = official_data.get(cand_key, {})
+                        off_street = find_best_official_match(target_street, off_dict.keys()) if off_dict else None
+                        if off_street:
+                            off_houses = off_dict[off_street].get("houses", [])
+                            matched = [h for h in expanded if h in off_houses]
+                            if matched:
+                                cand_matches[cand] = set(matched)
+                                any_match = True
+                                
+                    if any_match:
+                        assigned = {c: [] for c in candidates}
+                        active_cands = [c for c, m in cand_matches.items() if m]
+                        
+                        for h in expanded:
+                            matched_any = False
+                            for c in candidates:
+                                if c in cand_matches and h in cand_matches[c]:
+                                    assigned[c].append(h)
+                                    matched_any = True
+                            if not matched_any:
+                                for c in active_cands:
+                                    assigned[c].append(h)
+                                    
+                        for cand, h_list in assigned.items():
+                            if h_list:
+                                if cand not in moved_streets:
+                                    moved_streets[cand] = {"streets": [], "streets_detailed": []}
+                                moved_streets[cand]["streets"].append(target_street)
+                                
+                                # Sort house list
+                                h_list.sort(key=lambda x: (int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 0, x))
+                                moved_streets[cand]["streets_detailed"].append({
+                                    "name": target_street,
+                                    "houses": ", ".join(h_list)
+                                })
                         corrected_count += 1
-                        continue
-            remaining_detailed.append(s_det)
-            
+                    else:
+                        # Level 2: Neighborhood match
+                        votes = {c: 0 for c in candidates}
+                        other_streets = [st for st in all_streets_set if st != s and st in streets]
+                        
+                        for other in other_streets:
+                            for cand in candidates:
+                                cand_key = get_street_dict_key(cand)
+                                off_dict = official_data.get(cand_key, {})
+                                if off_dict:
+                                    matched_other = find_best_official_match(other, off_dict.keys())
+                                    if matched_other:
+                                        votes[cand] += 1
+                                        
+                        max_votes = max(votes.values()) if votes else 0
+                        if max_votes > 0:
+                            winners = [c for c, v in votes.items() if v == max_votes]
+                            for cand in winners:
+                                if cand not in moved_streets:
+                                    moved_streets[cand] = {"streets": [], "streets_detailed": []}
+                                moved_streets[cand]["streets"].append(target_street)
+                                if s_det:
+                                    new_det = dict(s_det)
+                                    new_det["name"] = target_street
+                                    moved_streets[cand]["streets_detailed"].append(new_det)
+                            corrected_count += 1
+                        else:
+                            # Level 3: Fallback (Duplicate)
+                            for cand in candidates:
+                                if cand not in moved_streets:
+                                    moved_streets[cand] = {"streets": [], "streets_detailed": []}
+                                moved_streets[cand]["streets"].append(target_street)
+                                if s_det:
+                                    new_det = dict(s_det)
+                                    new_det["name"] = target_street
+                                    moved_streets[cand]["streets_detailed"].append(new_det)
+                            corrected_count += 1
+                            
         # Update original record
         rec["streets"] = remaining_streets
         rec["streets_detailed"] = remaining_detailed
@@ -264,7 +385,7 @@ def apply_street_corrections(records):
         for target_sett, data in moved_streets.items():
             moved_rec = dict(rec)
             moved_rec["settlement"] = target_sett
-            moved_rec["streets"] = data["streets"]
+            moved_rec["streets"] = list(dict.fromkeys(data["streets"]))
             moved_rec["streets_detailed"] = data["streets_detailed"]
             new_records.append(moved_rec)
             
