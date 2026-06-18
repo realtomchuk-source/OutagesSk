@@ -28,6 +28,23 @@ except AttributeError:
 with open("data/villages.json", "r", encoding="utf-8") as f:
     villages = json.load(f)
 
+def write_update_log(entry):
+    log_path = "data/update_log.json"
+    logs = []
+    try:
+        with open(log_path, "r", encoding="utf-8") as f:
+            logs = json.load(f)
+    except:
+        pass
+    logs.append(entry)
+    logs = logs[-100:]
+    try:
+        os.makedirs("data", exist_ok=True)
+        with open(log_path, "w", encoding="utf-8") as f:
+            json.dump(logs, f, ensure_ascii=False, indent=2)
+    except Exception as err:
+        print(f"Помилка запису логу: {err}")
+
 def extract_settlement(city_text, villages_list):
     text = city_text.strip()
     hromada_match = re.search(r'\((.*?)\)', text)
@@ -285,6 +302,214 @@ try:
                 "streets_detailed": streets_detailed
             })
 
+    # Helper functions for street name normalization and auto-correction
+    def normalize_street_name(name):
+        if not name:
+            return ""
+        name = name.lower().strip()
+        prefixes = [
+            "вулиця", "вул.", "вул", 
+            "провулок", "пров.", "пров", 
+            "проспект", "просп.", "просп", 
+            "площа", "пл.", "пл", 
+            "тупик"
+        ]
+        for prefix in prefixes:
+            if name.startswith(prefix):
+                name = name[len(prefix):].strip()
+            elif name.endswith(prefix):
+                name = name[:-len(prefix)].strip()
+        name = name.replace(".", "").strip()
+        name = re.sub(r"\s+", " ", name)
+        return name
+
+    def get_street_dict_key(settlement):
+        if not settlement:
+            return "м. Старокостянтинів"
+        settlement = settlement.strip()
+        if settlement in ["Старокостянтинів", "м. Старокостянтинів"]:
+            return "м. Старокостянтинів"
+        if settlement.startswith("с. "):
+            return settlement
+        return "с. " + settlement
+
+    def find_best_official_match(raw_name, official_list, threshold=0.85):
+        import difflib
+        if not official_list:
+            return None
+        raw_norm = normalize_street_name(raw_name)
+        if not raw_norm:
+            return None
+            
+        exact_matches = []
+        for off_name in official_list:
+            if raw_name.strip().lower() == off_name.strip().lower():
+                return off_name
+            if raw_norm == normalize_street_name(off_name):
+                exact_matches.append(off_name)
+                
+        if len(exact_matches) == 1:
+            return exact_matches[0]
+        elif len(exact_matches) > 1:
+            is_raw_prov = "пров" in raw_name.lower()
+            for match in exact_matches:
+                is_match_prov = "пров" in match.lower()
+                if is_raw_prov == is_match_prov:
+                    return match
+            return exact_matches[0]
+            
+        best_match = None
+        best_ratio = 0.0
+        for off_name in official_list:
+            off_norm = normalize_street_name(off_name)
+            if not off_norm:
+                continue
+            ratio = difflib.SequenceMatcher(None, raw_norm, off_norm).ratio()
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_match = off_name
+                
+        if best_ratio >= threshold:
+            return best_match
+        return None
+
+    def apply_street_corrections(records):
+        official_streets_path = "data/official_streets.json"
+        corrections_path = "data/street_corrections.json"
+        
+        official_data = {}
+        if os.path.exists(official_streets_path):
+            try:
+                with open(official_streets_path, "r", encoding="utf-8") as f:
+                    official_data = json.load(f)
+            except Exception as e:
+                print(f"[ERROR] Не вдалося завантажити official_streets.json: {e}")
+                
+        corrections_data = {}
+        if os.path.exists(corrections_path):
+            try:
+                with open(corrections_path, "r", encoding="utf-8") as f:
+                    corrections_data = json.load(f)
+            except Exception as e:
+                print(f"[ERROR] Не вдалося завантажити street_corrections.json: {e}")
+
+        corrected_count = 0
+        new_records = []
+        for rec in records:
+            settlement = rec.get("settlement")
+            dict_key = get_street_dict_key(settlement)
+            
+            sett_corrections = corrections_data.get(dict_key, {})
+            official_list = official_data.get(dict_key, {})
+            if isinstance(official_list, dict):
+                official_list = list(official_list.keys())
+            
+            streets = rec.get("streets", [])
+            streets_detailed = rec.get("streets_detailed", [])
+            
+            # Check if any street needs to be moved to another settlement
+            moved_streets = {} # target_settlement -> { "streets": [...], "streets_detailed": [...] }
+            
+            remaining_streets = []
+            for s in streets:
+                rule = sett_corrections.get(s)
+                if rule:
+                    if rule.get("action") == "delete":
+                        corrected_count += 1
+                        continue
+                    elif rule.get("action") == "rename" and rule.get("target"):
+                        remaining_streets.append(rule.get("target"))
+                        corrected_count += 1
+                        continue
+                    elif rule.get("action") == "move_to_settlement" and rule.get("target_settlement"):
+                        target_sett = rule.get("target_settlement")
+                        target_street = rule.get("target_street", s)
+                        if target_sett not in moved_streets:
+                            moved_streets[target_sett] = {"streets": [], "streets_detailed": []}
+                        moved_streets[target_sett]["streets"].append(target_street)
+                        corrected_count += 1
+                        continue
+                remaining_streets.append(s)
+                
+            remaining_detailed = []
+            for s_det in streets_detailed:
+                name = s_det.get("name")
+                if name:
+                    rule = sett_corrections.get(name)
+                    if rule:
+                        if rule.get("action") == "delete":
+                            corrected_count += 1
+                            continue
+                        elif rule.get("action") == "rename" and rule.get("target"):
+                            new_det = dict(s_det)
+                            new_det["name"] = rule.get("target")
+                            remaining_detailed.append(new_det)
+                            corrected_count += 1
+                            continue
+                        elif rule.get("action") == "move_to_settlement" and rule.get("target_settlement"):
+                            target_sett = rule.get("target_settlement")
+                            target_street = rule.get("target_street", name)
+                            if target_sett not in moved_streets:
+                                moved_streets[target_sett] = {"streets": [], "streets_detailed": []}
+                            new_det = dict(s_det)
+                            new_det["name"] = target_street
+                            moved_streets[target_sett]["streets_detailed"].append(new_det)
+                            corrected_count += 1
+                            continue
+                remaining_detailed.append(s_det)
+                
+            # Update original record
+            rec["streets"] = remaining_streets
+            rec["streets_detailed"] = remaining_detailed
+            
+            # If original record still has streets, keep it
+            if len(remaining_streets) > 0 or len(remaining_detailed) > 0:
+                new_records.append(rec)
+                
+            # Create new records for moved streets
+            for target_sett, data in moved_streets.items():
+                moved_rec = dict(rec)
+                moved_rec["settlement"] = target_sett
+                moved_rec["streets"] = data["streets"]
+                moved_rec["streets_detailed"] = data["streets_detailed"]
+                new_records.append(moved_rec)
+                
+        # Now apply fuzzy match against official list for all records
+        records = new_records
+        for rec in records:
+            settlement = rec.get("settlement")
+            dict_key = get_street_dict_key(settlement)
+            official_list = official_data.get(dict_key, {})
+            if isinstance(official_list, dict):
+                official_list = list(official_list.keys())
+                
+            streets = rec.get("streets", [])
+            final_streets = []
+            for s in streets:
+                match = find_best_official_match(s, official_list)
+                if match and match != s:
+                    final_streets.append(match)
+                    corrected_count += 1
+                else:
+                    final_streets.append(s)
+            rec["streets"] = final_streets
+            
+            streets_detailed = rec.get("streets_detailed", [])
+            for s_det in streets_detailed:
+                name = s_det.get("name")
+                if name:
+                    match = find_best_official_match(name, official_list)
+                    if match and match != name:
+                        s_det["name"] = match
+                        corrected_count += 1
+                        
+        if corrected_count > 0:
+            print(f"[CORRECTOR] Успішно автокоректовано {corrected_count} назв вулиць на основі бази!")
+        return records
+
+    # Застосовуємо автокорекцію вулиць на основі офіційного словника перед збереженням
+    all_records = apply_street_corrections(all_records)
+
     # ------------------------------------------------------------
     # 6. Зберігаємо результат
     # ------------------------------------------------------------
@@ -346,11 +571,34 @@ try:
         json.dump(filtered_archive, f, ensure_ascii=False, indent=2)
     print(f"✅ Архів оновлено (всього {len(filtered_archive)} записів у archive.json)")
 
+    write_update_log({
+        "timestamp": datetime.now().isoformat(),
+        "stage": "collector",
+        "status": "ok",
+        "records_count": len(all_records),
+        "message": f"Збір успішно завершено. Знайдено записів: {len(all_records)}."
+    })
 
 except Exception as e:
     print(f"\n❌ СТАЛАСЯ ПОМИЛКА під час збору даних: {e}")
     traceback.print_exc()
-    driver.quit()
+    error_msg = str(e)
+    status = "error"
+    if "WebDriver" in error_msg or "Timeout" in error_msg or "http" in error_msg or "connection" in error_msg.lower():
+        status = "http_error"
+    elif "BeautifulSoup" in error_msg or "find" in error_msg or "structure" in error_msg.lower():
+        status = "structure_error"
+    write_update_log({
+        "timestamp": datetime.now().isoformat(),
+        "stage": "collector",
+        "status": status,
+        "records_count": 0,
+        "message": f"Помилка збору: {error_msg}"
+    })
+    try:
+        driver.quit()
+    except:
+        pass
     sys.exit(1)
 finally:
     try:

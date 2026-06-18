@@ -4,3 +4,7 @@ __pycache__/
 .venv/
 venv/
 env/
+html_dumps/
+*.log
+git_log_app_js.txt
+stash_diff.txt
