@@ -304,8 +304,18 @@ function migrateStreetsStructure(raw) {
     }
     for (const sett in raw) {
         for (const str in raw[sett]) {
-            if (!raw[sett][str].houses) raw[sett][str].houses = [];
-            if (!raw[sett][str].blacklist) raw[sett][str].blacklist = [];
+            if (!raw[sett][str].houses) {
+                raw[sett][str].houses = [];
+            } else {
+                // Видаляємо дублікати та зайві пробіли
+                raw[sett][str].houses = Array.from(new Set(raw[sett][str].houses.map(h => String(h).trim()).filter(h => h.length > 0)));
+            }
+            if (!raw[sett][str].blacklist) {
+                raw[sett][str].blacklist = [];
+            } else {
+                // Також чистимо чорний список
+                raw[sett][str].blacklist = Array.from(new Set(raw[sett][str].blacklist.map(h => String(h).trim()).filter(h => h.length > 0)));
+            }
         }
     }
     return raw;
@@ -452,22 +462,24 @@ function renderFeed(container) {
     const todayStr_local = formatDateISO(new Date());
 
     let html = `
-        <h3>Стрічка новин (Актуальна)</h3>
-        
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
             <div>
-                <h4 style="margin-bottom: 8px;">Стрічка на сьогодні (Актуальна)</h4>
+                <h4 style="margin-bottom: 8px;">Стрічка новин на сьогодні (Актуальна)</h4>
                 <textarea class="feed-textarea" style="height: 120px;" readonly>${escapeHtml(todayStr)}</textarea>
-                <div style="display: flex; gap: 10px; margin-top: 8px;">
-                    <button class="btn btn-primary" onclick="copyToClipboard(this.parentElement.previousElementSibling.value)">📋 Копіювати текст</button>
-                    <button class="btn btn-secondary" style="background:#007bff; color:white; border:none;" onclick="window.openFeedDayDetails('${todayStr_local}')">✏️ Редагувати</button>
+                <div style="display: flex; gap: 10px; margin-top: 8px; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="copyToClipboard(this.parentElement.parentElement.previousElementSibling.value)">📋 Копіювати текст</button>
+                        <button class="btn btn-secondary" style="background:#007bff; color:white; border:none;" onclick="window.openFeedDayDetails('${todayStr_local}')">✏️ Редагувати</button>
+                    </div>
+                    <span style="font-size: 13px; color: var(--secondary-text);">Символів: <strong>${todayStr.length}</strong></span>
                 </div>
             </div>
             <div>
-                <h4 style="margin-bottom: 8px;">Стрічка на завтра (Планова)</h4>
+                <h4 style="margin-bottom: 8px;">Стрічка новин на завтра (Планова)</h4>
                 <textarea class="feed-textarea" style="height: 120px;" readonly>${escapeHtml(tomorrowStr)}</textarea>
-                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                <div style="display: flex; gap: 10px; margin-top: 8px; align-items: center; justify-content: space-between;">
                     <button class="btn btn-primary" onclick="copyToClipboard(this.parentElement.previousElementSibling.value)">📋 Копіювати текст</button>
+                    <span style="font-size: 13px; color: var(--secondary-text);">Символів: <strong>${tomorrowStr.length}</strong></span>
                 </div>
             </div>
         </div>
@@ -1962,12 +1974,14 @@ function renderStreets(container) {
             const currentStreet = window.selectedStreet;
             if (!currentStreet || !officialStreets[selectedSettlement][currentStreet]) return;
             
-            const houses = officialStreets[selectedSettlement][currentStreet].houses || [];
+            let houses = officialStreets[selectedSettlement][currentStreet].houses || [];
             if (houses.includes(val)) {
                 alert('Цей будинок вже є у списку!');
                 return;
             }
             houses.push(val);
+            // Нормалізуємо та об'єднуємо
+            houses = Array.from(new Set(houses.map(h => h.trim()).filter(h => h.length > 0)));
             officialStreets[selectedSettlement][currentStreet].houses = houses;
             
             const jsonStr = JSON.stringify(officialStreets, null, 2);
@@ -2002,10 +2016,12 @@ function renderStreets(container) {
             const currentStreet = window.selectedStreet;
             if (!currentStreet || !officialStreets[selectedSettlement][currentStreet]) return;
             
-            const houses = officialStreets[selectedSettlement][currentStreet].houses || [];
+            let houses = officialStreets[selectedSettlement][currentStreet].houses || [];
             if (!houses.includes(houseNum)) {
                 houses.push(houseNum);
             }
+            // Нормалізуємо та об'єднуємо
+            houses = Array.from(new Set(houses.map(h => h.trim()).filter(h => h.length > 0)));
             officialStreets[selectedSettlement][currentStreet].houses = houses;
             
             const jsonStr = JSON.stringify(officialStreets, null, 2);
@@ -2031,6 +2047,8 @@ function renderStreets(container) {
                 } else {
                     houses.push(cleanedNum);
                 }
+                // Нормалізуємо та об'єднуємо (видаляємо можливі дублікати після перейменування)
+                houses = Array.from(new Set(houses.map(h => h.trim()).filter(h => h.length > 0)));
                 officialStreets[selectedSettlement][currentStreet].houses = houses;
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
@@ -2064,6 +2082,11 @@ function renderStreets(container) {
                 if (!officialStreets[selectedSettlement][currentStreet].houses.includes(cleanedNum)) {
                     officialStreets[selectedSettlement][currentStreet].houses.push(cleanedNum);
                 }
+                
+                // Нормалізуємо та об'єднуємо
+                let houses = officialStreets[selectedSettlement][currentStreet].houses || [];
+                houses = Array.from(new Set(houses.map(h => h.trim()).filter(h => h.length > 0)));
+                officialStreets[selectedSettlement][currentStreet].houses = houses;
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
                 await commitFileToGitHub("data/official_streets.json", jsonStr, `Виправлення сумнівного будинку на ${currentStreet}: ${houseNum} -> ${cleanedNum}`);
