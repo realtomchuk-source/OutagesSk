@@ -886,6 +886,37 @@ def get_grouped_outages(items):
     return grouped
 
 # ------------------------------------------------------------
+def group_streets_by_prefix(items):
+    known_prefixes = ["вул. ", "пров. ", "пл. ", "проїзд ", "бульвар ", "автодорога "]
+    groups = {}
+    prefix_order = []
+    
+    for item in items:
+        found_prefix = ""
+        rest = item
+        for p in known_prefixes:
+            if item.startswith(p):
+                found_prefix = p
+                rest = item[len(p):]
+                break
+        if found_prefix not in groups:
+            groups[found_prefix] = []
+            prefix_order.append(found_prefix)
+        groups[found_prefix].append(rest)
+        
+    parts = []
+    sorted_prefixes = sorted(prefix_order, key=lambda p: (0 if p == "вул. " else 1 if p == "пров. " else 2, p))
+    for p in sorted_prefixes:
+        elements = sorted(groups[p])
+        elements_str = ", ".join(elements)
+        if p:
+            parts.append(f"{p}{elements_str}")
+        else:
+            parts.append(elements_str)
+            
+    return "; ".join(parts)
+
+# ------------------------------------------------------------
 def generate_feed_text(items, label):
     grouped = get_grouped_outages(items)
     if not grouped:
@@ -912,11 +943,14 @@ def generate_feed_text(items, label):
             else:
                 regular_parts.append(s_name)
                 
+        regular_str = group_streets_by_prefix(regular_parts) if regular_parts else ""
+        partial_str = f"частково: {group_streets_by_prefix(partial_streets)}" if partial_streets else ""
+        
         final_parts = []
-        if regular_parts:
-            final_parts.extend(regular_parts)
-        if partial_streets:
-            final_parts.append(f"частково: {', '.join(partial_streets)}")
+        if regular_str:
+            final_parts.append(regular_str)
+        if partial_str:
+            final_parts.append(partial_str)
             
         if final_parts:
             streets_str = "; ".join(final_parts)
