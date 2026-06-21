@@ -83,6 +83,8 @@ options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple
 
 print("Запуск браузера...")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+driver.set_page_load_timeout(45)
+driver.set_script_timeout(30)
 wait = WebDriverWait(driver, 10)
 
 all_records = []  # сюди зберемо всі знайдені записи
@@ -458,6 +460,18 @@ try:
                 if action == "delete":
                     corrected_count += 1
                     continue
+                elif action == "hide":
+                    if s in streets:
+                        remaining_streets.append(s)
+                    if s_det:
+                        remaining_detailed.append(s_det)
+                    continue
+                elif action == "unverified":
+                    if s in streets:
+                        remaining_streets.append(s)
+                    if s_det:
+                        remaining_detailed.append(s_det)
+                    continue
                 elif action == "rename" and rule.get("target"):
                     target_name = rule.get("target")
                     if s in streets:
@@ -595,27 +609,35 @@ try:
                 moved_rec["streets_detailed"] = data["streets_detailed"]
                 new_records.append(moved_rec)
                 
-        # Now apply fuzzy match against official list for all records
+        # Now apply fuzzy match against official list for all records,
+        # and move unmatched/doubtful streets to the "Пісочниця" settlement.
         records = new_records
+        final_records = []
         for rec in records:
             settlement = rec.get("settlement")
+            if settlement == "Пісочниця":
+                final_records.append(rec)
+                continue
+                
             dict_key = get_street_dict_key(settlement)
             official_list = official_data.get(dict_key, {})
             if isinstance(official_list, dict):
                 official_list = list(official_list.keys())
                 
             streets = rec.get("streets", [])
-            final_streets = []
+            streets_detailed = rec.get("streets_detailed", [])
+            
+            # Fuzzy match first
+            matched_streets = []
             for s in streets:
                 match = find_best_official_match(s, official_list)
                 if match and match != s:
-                    final_streets.append(match)
+                    matched_streets.append(match)
                     corrected_count += 1
                 else:
-                    final_streets.append(s)
-            rec["streets"] = final_streets
+                    matched_streets.append(s)
             
-            streets_detailed = rec.get("streets_detailed", [])
+            s_det_map = {}
             for s_det in streets_detailed:
                 name = s_det.get("name")
                 if name:
@@ -623,7 +645,53 @@ try:
                     if match and match != name:
                         s_det["name"] = match
                         corrected_count += 1
-                        
+                    s_det_map[s_det["name"]] = s_det
+            
+            # Now divide into verified and unverified (sandbox)
+            verified_streets = []
+            verified_detailed = []
+            sandbox_streets = []
+            sandbox_detailed = []
+            
+            # Combine all unique streets in this record
+            all_rec_streets = list(dict.fromkeys(matched_streets + list(s_det_map.keys())))
+            
+            for s in all_rec_streets:
+                s_det = s_det_map.get(s)
+                # Check if it is in official list
+                is_official = False
+                for off_name in official_list:
+                    if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
+                        is_official = True
+                        break
+                
+                if is_official:
+                    if s in matched_streets:
+                        verified_streets.append(s)
+                    if s_det:
+                        verified_detailed.append(s_det)
+                else:
+                    if s in matched_streets:
+                        sandbox_streets.append(s)
+                    if s_det:
+                        sandbox_detailed.append(s_det)
+            
+            # If there are verified streets, keep the original record with them
+            if verified_streets or verified_detailed:
+                rec_ver = dict(rec)
+                rec_ver["streets"] = verified_streets
+                rec_ver["streets_detailed"] = verified_detailed
+                final_records.append(rec_ver)
+                
+            # If there are sandbox streets, create a new record under "Пісочниця"
+            if sandbox_streets or sandbox_detailed:
+                rec_box = dict(rec)
+                rec_box["settlement"] = "Пісочниця"
+                rec_box["streets"] = sandbox_streets
+                rec_box["streets_detailed"] = sandbox_detailed
+                final_records.append(rec_box)
+                
+        records = final_records
         if corrected_count > 0:
             print(f"[CORRECTOR] Успішно автокоректовано {corrected_count} назв вулиць на основі бази!")
         return records

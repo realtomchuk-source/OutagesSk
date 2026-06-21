@@ -24,7 +24,41 @@ if not GOOGLE_API_KEY and not OPENROUTER_API_KEY:
     sys.exit(1)
 
 GOOGLE_MODEL = "gemini-2.0-flash"
-OPENROUTER_MODEL = "google/gemini-2.0-flash-001"
+OPENROUTER_MODEL = "google/gemini-2.5-flash"
+
+
+# ------------------------------------------------------------
+# Функція виклику ШІ
+# ------------------------------------------------------------
+def ask_ai(prompt):
+    if HAS_GOOGLE_AI and GOOGLE_API_KEY:
+        try:
+            genai.configure(api_key=GOOGLE_API_KEY)
+            model = genai.GenerativeModel(GOOGLE_MODEL)
+            response = model.generate_content(prompt, request_options={"timeout": 30.0})
+            return response.text.strip()
+        except Exception as e:
+            print(f"[WARN] Помилка Google AI: {e}")
+            print("Перемикаюсь на OpenRouter...")
+
+    if OPENROUTER_API_KEY:
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "model": OPENROUTER_MODEL,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+        try:
+            resp = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data, timeout=30)
+            if resp.status_code == 200:
+                return resp.json()["choices"][0]["message"]["content"].strip()
+            else:
+                print(f"[ERROR] OpenRouter помилка {resp.status_code}: {resp.text}")
+        except Exception as e:
+            print(f"[ERROR] OpenRouter виклик не вдався: {e}")
+    return None
 
 # ------------------------------------------------------------
 # Налаштування системного часу для Києва
@@ -91,7 +125,8 @@ sys.excepthook = exception_hook
 # Завантаження даних
 # ------------------------------------------------------------
 try:
-    with open("data/outages_snapshot.json", "r", encoding="utf-8") as f:
+    snapshot_path = os.getenv("OUTAGES_SNAPSHOT_PATH", "data/outages_snapshot.json")
+    with open(snapshot_path, "r", encoding="utf-8") as f:
         outages = json.load(f)
 except FileNotFoundError:
     outages = []
@@ -126,6 +161,31 @@ def get_street_dict_key(settlement):
     if settlement.startswith("с. "):
         return settlement
     return "с. " + settlement
+
+_corrections_data_cache = None
+
+def get_corrections_data():
+    global _corrections_data_cache
+    if _corrections_data_cache is None:
+        corrections_path = os.getenv("STREET_CORRECTIONS_PATH", "data/street_corrections.json")
+        if os.path.exists(corrections_path):
+            try:
+                with open(corrections_path, "r", encoding="utf-8") as f:
+                    _corrections_data_cache = json.load(f)
+            except Exception as e:
+                print(f"[ERROR] Не вдалося завантажити street_corrections.json: {e}")
+                _corrections_data_cache = {}
+        else:
+            _corrections_data_cache = {}
+    return _corrections_data_cache
+
+def is_street_hidden(settlement, street):
+    corrections = get_corrections_data()
+    dict_key = get_street_dict_key(settlement)
+    rule = corrections.get(dict_key, {}).get(street)
+    if rule and rule.get("action") == "hide":
+        return True
+    return False
 
 def find_best_official_match(raw_name, official_list, threshold=0.85):
     import difflib
@@ -192,10 +252,64 @@ def expand_house_ranges(houses_str):
             if cleaned:
                 expanded.add(cleaned)
     return list(expanded)
+def save_corrections_data(data):
+    global _corrections_data_cache
+    _corrections_data_cache = data
+    corrections_path = os.getenv("STREET_CORRECTIONS_PATH", "data/street_corrections.json")
+    try:
+        with open(corrections_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[ERROR] Не вдалося зберегти street_corrections.json: {e}")
+
+def run_auto_decolonization_check(settlement, street, official_list):
+    """
+    Checks if a street name is a communist/colonial/Soviet name and tries to match it
+    with a modern official name from the whitelist (official_list).
+    Returns the official name if a match is found, otherwise None.
+    """
+    if not GOOGLE_API_KEY and not OPENROUTER_API_KEY:
+        return None
+    if not official_list:
+        return None
+        
+    official_streets_formatted = "\n".join([f"- {name}" for name in official_list])
+    
+    prompt = f"""You are an assistant for decolonizing and renaming streets in Ukraine.
+Your task is to check if the given street name is an old communist/colonial/Soviet name (e.g., Леніна, Дзержинського, Кірова, Комсомольська, Жовтнева, Чапаєва, etc.) or a misspelled old name, and if so, map it to its modern official Ukrainian name from the provided whitelist of streets for that settlement.
+
+Settlement: {settlement}
+Old Street Name: {street}
+Whitelist of Official Streets:
+{official_streets_formatted}
+
+Instructions:
+1. If the old street name is NOT a communist/colonial/Soviet/Russian-colonial name, or is already neutral/modern, return "null".
+2. If the old street name IS a colonial/communist name, find its new renamed counterpart in the Whitelist of Official Streets. The match must be exact (case and spelling) as it appears in the whitelist.
+3. If the modern counterpart is NOT present in the whitelist, or you are not sure, return "null".
+4. Do not invent any names. Only return a name from the whitelist or "null".
+5. Return ONLY the matched street name from the whitelist, or the word "null" (without quotes, no markdown formatting, no explanations)."""
+
+    try:
+        response = ask_ai(prompt)
+        if response:
+            clean_resp = response.strip().replace('"', '').replace("'", "")
+            # Remove any markdown wrapping if any
+            clean_resp = clean_resp.replace('`', '')
+            if clean_resp.lower() == "null" or not clean_resp:
+                return None
+            # Verify that the response is actually in the official_list
+            for off_name in official_list:
+                if (clean_resp.strip().lower() == off_name.strip().lower() or 
+                    normalize_street_name(clean_resp) == normalize_street_name(off_name)):
+                    return off_name
+    except Exception as e:
+        print(f"[ERROR] Помилка автодеколонізації для {street}: {e}")
+    return None
 
 def apply_street_corrections(records):
-    official_streets_path = "data/official_streets.json"
-    corrections_path = "data/street_corrections.json"
+    official_streets_path = os.getenv("OFFICIAL_STREETS_PATH", "data/official_streets.json")
+    corrections_path = os.getenv("STREET_CORRECTIONS_PATH", "data/street_corrections.json")
     
     official_data = {}
     if os.path.exists(official_streets_path):
@@ -219,7 +333,7 @@ def apply_street_corrections(records):
         settlement = rec.get("settlement")
         dict_key = get_street_dict_key(settlement)
         
-        sett_corrections = corrections_data.get(dict_key, {})
+        sett_corrections = corrections_data.setdefault(dict_key, {})
         
         streets = rec.get("streets", [])
         streets_detailed = rec.get("streets_detailed", [])
@@ -242,15 +356,63 @@ def apply_street_corrections(records):
             
             rule = sett_corrections.get(s)
             if not rule:
+                # Check if it is in official list
+                official_list = official_data.get(dict_key, {})
+                if isinstance(official_list, dict):
+                    official_list = list(official_list.keys())
+                
+                is_official = False
+                for off_name in official_list:
+                    if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
+                        is_official = True
+                        break
+                
+                if not is_official and settlement != "Пісочниця":
+                    # Run AI decolonization check
+                    rename_target = run_auto_decolonization_check(settlement, s, official_list)
+                    timestamp = datetime.now().isoformat() + "Z"
+                    if rename_target:
+                        print(f"[AI DECOLONIZATION] Вулиця '{s}' у '{settlement}' перейменована на '{rename_target}' за допомогою ШІ")
+                        rule = {
+                            "action": "rename",
+                            "target": rename_target,
+                            "timestamp": timestamp,
+                            "auto": True
+                        }
+                        sett_corrections[s] = rule
+                        save_corrections_data(corrections_data)
+                    else:
+                        print(f"[AI DECOLONIZATION] Вулиця '{s}' у '{settlement}' позначена як неверифікована за допомогою ШІ")
+                        rule = {
+                            "action": "unverified",
+                            "timestamp": timestamp,
+                            "auto": True
+                        }
+                        sett_corrections[s] = rule
+                        save_corrections_data(corrections_data)
+                else:
+                    # Street is official or Sandbox, just keep it
+                    if s in streets:
+                        remaining_streets.append(s)
+                    if s_det:
+                        remaining_detailed.append(s_det)
+                    continue
+                
+            action = rule.get("action")
+            if action == "delete":
+                corrected_count += 1
+                continue
+            elif action == "hide":
                 if s in streets:
                     remaining_streets.append(s)
                 if s_det:
                     remaining_detailed.append(s_det)
                 continue
-                
-            action = rule.get("action")
-            if action == "delete":
-                corrected_count += 1
+            elif action == "unverified":
+                if s in streets:
+                    remaining_streets.append(s)
+                if s_det:
+                    remaining_detailed.append(s_det)
                 continue
             elif action == "rename" and rule.get("target"):
                 target_name = rule.get("target")
@@ -389,27 +551,35 @@ def apply_street_corrections(records):
             moved_rec["streets_detailed"] = data["streets_detailed"]
             new_records.append(moved_rec)
             
-    # Now apply fuzzy match against official list for all records
+    # Now apply fuzzy match against official list for all records,
+    # and move unmatched/doubtful streets to the "Пісочниця" settlement.
     records = new_records
+    final_records = []
     for rec in records:
         settlement = rec.get("settlement")
+        if settlement == "Пісочниця":
+            final_records.append(rec)
+            continue
+            
         dict_key = get_street_dict_key(settlement)
         official_list = official_data.get(dict_key, {})
         if isinstance(official_list, dict):
             official_list = list(official_list.keys())
             
         streets = rec.get("streets", [])
-        final_streets = []
+        streets_detailed = rec.get("streets_detailed", [])
+        
+        # Fuzzy match first
+        matched_streets = []
         for s in streets:
             match = find_best_official_match(s, official_list)
             if match and match != s:
-                final_streets.append(match)
+                matched_streets.append(match)
                 corrected_count += 1
             else:
-                final_streets.append(s)
-        rec["streets"] = final_streets
+                matched_streets.append(s)
         
-        streets_detailed = rec.get("streets_detailed", [])
+        s_det_map = {}
         for s_det in streets_detailed:
             name = s_det.get("name")
             if name:
@@ -417,55 +587,104 @@ def apply_street_corrections(records):
                 if match and match != name:
                     s_det["name"] = match
                     corrected_count += 1
-                    
+                s_det_map[s_det["name"]] = s_det
+        
+        # Now divide into verified and unverified (sandbox)
+        verified_streets = []
+        verified_detailed = []
+        sandbox_streets = []
+        sandbox_detailed = []
+        
+        # Combine all unique streets in this record
+        all_rec_streets = list(dict.fromkeys(matched_streets + list(s_det_map.keys())))
+        
+        for s in all_rec_streets:
+            s_det = s_det_map.get(s)
+            # Check if it is in official list
+            is_official = False
+            for off_name in official_list:
+                if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
+                    is_official = True
+                    break
+            
+            if is_official:
+                if s in matched_streets:
+                    verified_streets.append(s)
+                if s_det:
+                    verified_detailed.append(s_det)
+            else:
+                if s in matched_streets:
+                    sandbox_streets.append(s)
+                if s_det:
+                    sandbox_detailed.append(s_det)
+        
+        # If there are verified streets, keep the original record with them
+        if verified_streets or verified_detailed:
+            rec_ver = dict(rec)
+            rec_ver["streets"] = verified_streets
+            rec_ver["streets_detailed"] = verified_detailed
+            final_records.append(rec_ver)
+            
+        # If there are sandbox streets, create a new record under "Пісочниця"
+        if sandbox_streets or sandbox_detailed:
+            rec_box = dict(rec)
+            rec_box["settlement"] = "Пісочниця"
+            rec_box["streets"] = sandbox_streets
+            rec_box["streets_detailed"] = sandbox_detailed
+            final_records.append(rec_box)
+            
+    records = final_records
     if corrected_count > 0:
         print(f"[CORRECTOR] Успішно автокоректовано {corrected_count} назв вулиць на основі бази!")
         try:
-            with open("data/outages_snapshot.json", "w", encoding="utf-8") as f:
+            snapshot_path = os.getenv("OUTAGES_SNAPSHOT_PATH", "data/outages_snapshot.json")
+            with open(snapshot_path, "w", encoding="utf-8") as f:
                 json.dump(records, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"[ERROR] Не вдалося зберегти оновлений outages_snapshot.json: {e}")
             
     return records
 
-# Застосовуємо автокорекцію вулиць на основі поточного стану бази
-outages = apply_street_corrections(outages)
+if __name__ == "__main__":
+    # Застосовуємо автокорекцію вулиць на основі поточного стану бази
+    outages = apply_street_corrections(outages)
 
-# ------------------------------------------------------------
-# Телеметрія змін (Smart Monitor)
-# ------------------------------------------------------------
-has_cardinal_changes = True
-try:
-    with open("data/previous_snapshot.json", "r", encoding="utf-8") as f:
-        previous_outages = json.load(f)
+    # ------------------------------------------------------------
+    # Телеметрія змін (Smart Monitor)
+    # ------------------------------------------------------------
+    has_cardinal_changes = True
+    prev_snapshot_path = os.getenv("PREVIOUS_SNAPSHOT_PATH", "data/previous_snapshot.json")
+    try:
+        with open(prev_snapshot_path, "r", encoding="utf-8") as f:
+            previous_outages = json.load(f)
+            
+        # Порівняння за допомогою хешування JSON-рядків (ігноруючи порядок)
+        # Щоб не реагувати на дрібниці, порівнюємо відсортовані представлення
+        curr_str = json.dumps(sorted(outages, key=lambda x: str(x)), sort_keys=True)
+        prev_str = json.dumps(sorted(previous_outages, key=lambda x: str(x)), sort_keys=True)
         
-    # Порівняння за допомогою хешування JSON-рядків (ігноруючи порядок)
-    # Щоб не реагувати на дрібниці, порівнюємо відсортовані представлення
-    curr_str = json.dumps(sorted(outages, key=lambda x: str(x)), sort_keys=True)
-    prev_str = json.dumps(sorted(previous_outages, key=lambda x: str(x)), sort_keys=True)
-    
-    if curr_str == prev_str:
-        has_cardinal_changes = False
-        print("[TELEMETRY] Кардинальних змін на сайті немає. Використовуються попередні дані.")
-    else:
-        print("[TELEMETRY] Виявлено зміни на сайті Обленерго!")
-        # Записуємо лог
-        log_entry = {"time": get_kyiv_now().isoformat(), "msg": "Detected changes in outages_snapshot"}
-        try:
-            with open("data/changelog.json", "r", encoding="utf-8") as clog:
-                changelog = json.load(clog)
-        except (FileNotFoundError, json.JSONDecodeError):
-            changelog = []
-        changelog.append(log_entry)
-        with open("data/changelog.json", "w", encoding="utf-8") as clog:
-            json.dump(changelog, clog, ensure_ascii=False, indent=2)
+        if curr_str == prev_str:
+            has_cardinal_changes = False
+            print("[TELEMETRY] Кардинальних змін на сайті немає. Використовуються попередні дані.")
+        else:
+            print("[TELEMETRY] Виявлено зміни на сайті Обленерго!")
+            # Записуємо лог
+            log_entry = {"time": get_kyiv_now().isoformat(), "msg": "Detected changes in outages_snapshot"}
+            try:
+                with open("data/changelog.json", "r", encoding="utf-8") as clog:
+                    changelog = json.load(clog)
+            except (FileNotFoundError, json.JSONDecodeError):
+                changelog = []
+            changelog.append(log_entry)
+            with open("data/changelog.json", "w", encoding="utf-8") as clog:
+                json.dump(changelog, clog, ensure_ascii=False, indent=2)
 
-except FileNotFoundError:
-    print("[TELEMETRY] Немає previous_snapshot.json, створюємо.")
+    except FileNotFoundError:
+        print(f"[TELEMETRY] Немає {prev_snapshot_path}, створюємо.")
 
-# Зберігаємо поточний снепшот як попередній для наступного запуску
-with open("data/previous_snapshot.json", "w", encoding="utf-8") as f:
-    json.dump(outages, f, ensure_ascii=False, indent=2)
+    # Зберігаємо поточний снепшот як попередній для наступного запуску
+    with open(prev_snapshot_path, "w", encoding="utf-8") as f:
+        json.dump(outages, f, ensure_ascii=False, indent=2)
 
 try:
     with open("data/districts.json", "r", encoding="utf-8") as f:
@@ -534,38 +753,7 @@ def extract_time_range(rec):
     end = format_time_only(end_str)
     return f"з {start} до {end}"
 
-# ------------------------------------------------------------
-# Функція виклику ШІ
-# ------------------------------------------------------------
-def ask_ai(prompt):
-    if HAS_GOOGLE_AI and GOOGLE_API_KEY:
-        try:
-            genai.configure(api_key=GOOGLE_API_KEY)
-            model = genai.GenerativeModel(GOOGLE_MODEL)
-            response = model.generate_content(prompt)
-            return response.text.strip()
-        except Exception as e:
-            print(f"[WARN] Помилка Google AI: {e}")
-            print("Перемикаюсь на OpenRouter...")
 
-    if OPENROUTER_API_KEY:
-        headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json"
-        }
-        data = {
-            "model": OPENROUTER_MODEL,
-            "messages": [{"role": "user", "content": prompt}]
-        }
-        try:
-            resp = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
-            if resp.status_code == 200:
-                return resp.json()["choices"][0]["message"]["content"].strip()
-            else:
-                print(f"[ERROR] OpenRouter помилка {resp.status_code}: {resp.text}")
-        except Exception as e:
-            print(f"[ERROR] OpenRouter виклик не вдався: {e}")
-    return None
 
 def generate_with_validation(prompt, items, max_retries=2):
     for attempt in range(max_retries + 1):
@@ -628,15 +816,19 @@ def clean_house_numbers(houses_str):
 # ------------------------------------------------------------
 # Генерація Стрічки (Алгоритмічна, без ШІ)
 # ------------------------------------------------------------
-def generate_feed_text(items, label):
-    if not items:
-        return f"[{label}] Інформація про відключення відсутня."
-        
-    # Групування: ключ = (Тип, Місто, Час)
-    # Значення = список очищених назв вулиць з будинками
+# Групування та дедуплікація відключень
+# ------------------------------------------------------------
+def get_grouped_outages(items):
     grouped = {}
+    if not items:
+        return grouped
+        
     for rec in items:
         settlement = rec.get("settlement", "Невідомо")
+        # Виключаємо "Пісочницю" з генерації публічних повідомлень
+        if settlement == "Пісочниця":
+            continue
+            
         typ = "Аварійні знеструмлення" if "Аварійні" in rec.get("type", "") else "Планові знеструмлення"
         time_range = extract_time_range(rec)
         
@@ -649,6 +841,8 @@ def generate_feed_text(items, label):
             for s in streets_detailed:
                 name = s.get("name", "").strip()
                 if not name:
+                    continue
+                if is_street_hidden(settlement, name):
                     continue
                 # Пропускаємо вулиці, що містять технічні слова в назві
                 if any(x in name.lower() for x in ["гараж", "опора", "будка"]):
@@ -673,9 +867,19 @@ def generate_feed_text(items, label):
                 name = name.strip()
                 if not name or any(x in name.lower() for x in ["гараж", "опора", "будка"]):
                     continue
+                if is_street_hidden(settlement, name):
+                    continue
                 if name not in grouped[key]:
                     grouped[key][name] = set()
-            
+                    
+    return grouped
+
+# ------------------------------------------------------------
+def generate_feed_text(items, label):
+    grouped = get_grouped_outages(items)
+    if not grouped:
+        return f"[{label}] Інформація про відключення відсутня."
+        
     # Сортування
     sorted_keys = sorted(grouped.keys(), key=lambda k: (0 if "Аварійні" in k[0] else 1, 0 if k[1] == "Старокостянтинів" else 1, k[1], k[2]))
     
@@ -705,211 +909,214 @@ def generate_feed_text(items, label):
 # ------------------------------------------------------------
 # Підготовка дат та перехідного вікна
 # ------------------------------------------------------------
-now_kyiv = get_kyiv_now()
+if __name__ == "__main__":
+    now_kyiv = get_kyiv_now()
 
-# Якщо година 23:00 - 23:59, зміщуємо референсний день на наступну добу
-if now_kyiv.hour == 23:
-    today = now_kyiv.date() + timedelta(days=1)
-else:
-    today = now_kyiv.date()
-tomorrow = today + timedelta(days=1)
-
-# Пауза для аномалій (перехідне вікно з 23:00 до 01:00)
-is_transition_window = (now_kyiv.hour == 23) or (now_kyiv.hour == 0)
-
-# Фільтруємо дані для Telegram-постів
-items_today = [r for r in outages if is_active_on_date(r, today)]
-items_tomorrow = [r for r in outages if is_active_on_date(r, tomorrow)]
-
-# ------------------------------------------------------------
-# Робота з data/feed.json (Динамічна стрічка та тижнева сітка)
-# ------------------------------------------------------------
-FEED_PATH = "data/feed.json"
-
-try:
-    with open(FEED_PATH, "r", encoding="utf-8") as f:
-        feed_data = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
-    feed_data = {
-        "current_feed": "",
-        "last_updated": "",
-        "days": [],
-        "anomalies_log": []
-    }
-
-if "days" not in feed_data: feed_data["days"] = []
-if "anomalies_log" not in feed_data: feed_data["anomalies_log"] = []
-
-# Отримуємо дати на наступні 7 днів (сьогодні + 6 днів)
-target_dates = [today + timedelta(days=i) for i in range(7)]
-new_days = []
-current_time_str = now_kyiv.strftime("%H:%M")
-
-for target_date in target_dates:
-    date_str = target_date.strftime("%Y-%m-%d")
-    items_for_date = [r for r in outages if is_active_on_date(r, target_date)]
-    
-    # Визначаємо, чи день за межами горизонту парсингу (> 5 днів)
-    is_outside_horizon = (target_date - today).days > 4
-    
-    if not items_for_date and is_outside_horizon:
-        label = "СЬОГОДНІ" if target_date == today else ("ЗАВТРА" if target_date == tomorrow else target_date.strftime("%d.%m.%Y"))
-        new_text = f"[{label}] Немає даних (очікується оновлення)"
+    # Якщо година 23:00 - 23:59, зміщуємо референсний день на наступну добу
+    if now_kyiv.hour == 23:
+        today = now_kyiv.date() + timedelta(days=1)
     else:
-        label = "СЬОГОДНІ" if target_date == today else ("ЗАВТРА" if target_date == tomorrow else ("ПІСЛЯЗАВТРА" if target_date == today + timedelta(days=2) else target_date.strftime("%d.%m.%Y")))
-        new_text = generate_feed_text(items_for_date, label)
+        today = now_kyiv.date()
+    tomorrow = today + timedelta(days=1)
+
+    # Пауза для аномалій (перехідне вікно з 23:00 до 01:00)
+    is_transition_window = (now_kyiv.hour == 23) or (now_kyiv.hour == 0)
+
+    # Фільтруємо дані для Telegram-постів
+    items_today = [r for r in outages if is_active_on_date(r, today)]
+    items_tomorrow = [r for r in outages if is_active_on_date(r, tomorrow)]
+
+    # ------------------------------------------------------------
+    # Робота з data/feed.json (Динамічна стрічка та тижнева сітка)
+    # ------------------------------------------------------------
+    FEED_PATH = os.getenv("FEED_PATH", "data/feed.json")
+
+    try:
+        with open(FEED_PATH, "r", encoding="utf-8") as f:
+            feed_data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        feed_data = {
+            "current_feed": "",
+            "last_updated": "",
+            "days": [],
+            "anomalies_log": []
+        }
+
+    if "days" not in feed_data: feed_data["days"] = []
+    if "anomalies_log" not in feed_data: feed_data["anomalies_log"] = []
+
+    # Отримуємо дати на наступні 7 днів (сьогодні + 6 днів)
+    target_dates = [today + timedelta(days=i) for i in range(7)]
+    new_days = []
+    current_time_str = now_kyiv.strftime("%H:%M")
+
+    for target_date in target_dates:
+        date_str = target_date.strftime("%Y-%m-%d")
+        items_for_date = [r for r in outages if is_active_on_date(r, target_date)]
         
-    existing_day = next((d for d in feed_data["days"] if d["date"] == date_str), None)
-    
-    if is_transition_window:
-        # У перехідний час формуємо стартову позицію: жодних аномалій, чистий контент
-        new_days.append({
-            "date": date_str,
-            "planned_content": new_text,
-            "actual_content": new_text,
-            "baseline_created_at": now_kyiv.strftime("%H:%M"),
-            "history": [{
-                "timestamp": now_kyiv.isoformat(),
-                "content": new_text,
-                "is_anomaly": False
-            }]
-        })
-    else:
-        if existing_day:
-            history = existing_day.get("history", [])
-            last_version = history[-1]["content"] if history else ""
-            baseline_created_at = existing_day.get("baseline_created_at", "")
-            
-            # Порівнюємо контент без міток часу
-            clean_last = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", last_version)
-            clean_new = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", new_text)
-            
-            planned_content = existing_day.get("planned_content", clean_new)
-            actual_content = clean_new
-            
-            if clean_last != clean_new:
-                # Зміна контенту є аномалією
-                history.append({
-                    "timestamp": now_kyiv.isoformat(),
-                    "content": clean_new,
-                    "is_anomaly": True
-                })
-                feed_data["anomalies_log"].append({
-                    "date": date_str,
-                    "timestamp": now_kyiv.isoformat(),
-                    "old_text": last_version,
-                    "new_text": clean_new
-                })
-            else:
-                # Історія залишається незмінною, actual_content дорівнює останній версії з історії
-                actual_content = clean_last
-                
-            new_days.append({
-                "date": date_str,
-                "planned_content": planned_content,
-                "actual_content": actual_content,
-                "baseline_created_at": baseline_created_at,
-                "history": history
-            })
+        # Визначаємо, чи день за межами горизонту парсингу (> 5 днів)
+        is_outside_horizon = (target_date - today).days > 4
+        
+        if not items_for_date and is_outside_horizon:
+            label = "СЬОГОДНІ" if target_date == today else ("ЗАВТРА" if target_date == tomorrow else target_date.strftime("%d.%m.%Y"))
+            new_text = f"[{label}] Немає даних (очікується оновлення)"
         else:
+            label = "СЬОГОДНІ" if target_date == today else ("ЗАВТРА" if target_date == tomorrow else ("ПІСЛЯЗАВТРА" if target_date == today + timedelta(days=2) else target_date.strftime("%d.%m.%Y")))
+            new_text = generate_feed_text(items_for_date, label)
+            
+        existing_day = next((d for d in feed_data["days"] if d["date"] == date_str), None)
+        
+        if is_transition_window:
+            # У перехідний час формуємо стартову позицію: жодних аномалій, чистий контент
             new_days.append({
                 "date": date_str,
                 "planned_content": new_text,
                 "actual_content": new_text,
-                "baseline_created_at": "",
+                "baseline_created_at": now_kyiv.strftime("%H:%M"),
                 "history": [{
                     "timestamp": now_kyiv.isoformat(),
                     "content": new_text,
                     "is_anomaly": False
                 }]
             })
+        else:
+            if existing_day:
+                history = existing_day.get("history", [])
+                last_version = history[-1]["content"] if history else ""
+                baseline_created_at = existing_day.get("baseline_created_at", "")
+                
+                # Порівнюємо контент без міток часу
+                clean_last = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", last_version)
+                clean_new = re.sub(r"\s*\(Оновлено о \d{2}:\d{2}\)", "", new_text)
+                
+                planned_content = existing_day.get("planned_content", clean_new)
+                actual_content = clean_new
+                
+                if clean_last != clean_new:
+                    # Зміна контенту є аномалією
+                    history.append({
+                        "timestamp": now_kyiv.isoformat(),
+                        "content": clean_new,
+                        "is_anomaly": True
+                    })
+                    feed_data["anomalies_log"].append({
+                        "date": date_str,
+                        "timestamp": now_kyiv.isoformat(),
+                        "old_text": last_version,
+                        "new_text": clean_new
+                    })
+                else:
+                    # Історія залишається незмінною, actual_content дорівнює останній версії з історії
+                    actual_content = clean_last
+                    
+                new_days.append({
+                    "date": date_str,
+                    "planned_content": planned_content,
+                    "actual_content": actual_content,
+                    "baseline_created_at": baseline_created_at,
+                    "history": history
+                })
+            else:
+                new_days.append({
+                    "date": date_str,
+                    "planned_content": new_text,
+                    "actual_content": new_text,
+                    "baseline_created_at": "",
+                    "history": [{
+                        "timestamp": now_kyiv.isoformat(),
+                        "content": new_text,
+                        "is_anomaly": False
+                    }]
+                })
 
-feed_data["days"] = new_days
+    feed_data["days"] = new_days
 
-# Формуємо поточну стрічку (актуальну на тепер, очищену від [СЬОГОДНІ])
-today_day = next((d for d in new_days if d["date"] == today.strftime("%Y-%m-%d")), None)
-tomorrow_day = next((d for d in new_days if d["date"] == tomorrow.strftime("%Y-%m-%d")), None)
+    # Формуємо поточну стрічку (актуальну на тепер, очищену від [СЬОГОДНІ])
+    today_day = next((d for d in new_days if d["date"] == today.strftime("%Y-%m-%d")), None)
+    tomorrow_day = next((d for d in new_days if d["date"] == tomorrow.strftime("%Y-%m-%d")), None)
 
-# Визначаємо, чи є відключення на сьогодні та завтра
-today_has_outages = today_day and not ("Інформація про відключення відсутня" in today_day["actual_content"])
-tomorrow_has_outages = tomorrow_day and not ("Інформація про відключення відсутня" in tomorrow_day["actual_content"])
+    # Визначаємо, чи є відключення на сьогодні та завтра
+    today_has_outages = today_day and not ("Інформація про відключення відсутня" in today_day["actual_content"])
+    tomorrow_has_outages = tomorrow_day and not ("Інформація про відключення відсутня" in tomorrow_day["actual_content"])
 
-if today_day and tomorrow_day:
-    if not today_has_outages and not tomorrow_has_outages:
-        combined_feed = "Інформація про відключення на сьогодні та завтра відсутня."
-    elif not today_has_outages and tomorrow_has_outages:
-        combined_feed = f"Інформація про відключення на сьогодні відсутня. | {tomorrow_day['actual_content']}"
-    elif today_has_outages and not tomorrow_has_outages:
-        clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
-        combined_feed = f"{clean_today} | [ЗАВТРА] Інформація про відключення відсутня."
+    if today_day and tomorrow_day:
+        if not today_has_outages and not tomorrow_has_outages:
+            combined_feed = "Інформація про відключення на сьогодні та завтра відсутня."
+        elif not today_has_outages and tomorrow_has_outages:
+            combined_feed = f"Інформація про відключення на сьогодні відсутня. | {tomorrow_day['actual_content']}"
+        elif today_has_outages and not tomorrow_has_outages:
+            clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
+            combined_feed = f"{clean_today} | [ЗАВТРА] Інформація про відключення відсутня."
+        else:
+            clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
+            combined_feed = f"{clean_today} | {tomorrow_day['actual_content']}"
     else:
-        clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
-        combined_feed = f"{clean_today} | {tomorrow_day['actual_content']}"
-else:
-    # Резервний варіант, якщо якісь об'єкти відсутні
-    current_parts = []
-    if today_day and today_day["actual_content"]:
-        clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
-        current_parts.append(clean_today)
+        # Резервний варіант, якщо якісь об'єкти відсутні
+        current_parts = []
+        if today_day and today_day["actual_content"]:
+            clean_today = re.sub(r"^\[СЬОГОДНІ\]\s*", "", today_day["actual_content"])
+            current_parts.append(clean_today)
+        if tomorrow_day and tomorrow_day["actual_content"]:
+            current_parts.append(tomorrow_day["actual_content"])
+        combined_feed = " | ".join(current_parts) if current_parts else "Інформація про відключення відсутня."
+
+    # Визначаємо, чи потрібно додати мітку оновлення на самий початок стрічки
+    update_time_str = ""
+    if not is_transition_window:
+        anomaly_timestamps = []
+        # Шукаємо аномалії в історії Сьогодні та Завтра
+        for day in [today_day, tomorrow_day]:
+            if day:
+                for h in day.get("history", []):
+                    if h.get("is_anomaly") or h.get("is_manual_edit"):
+                        anomaly_timestamps.append(h["timestamp"])
+        if anomaly_timestamps:
+            latest_ts_str = max(anomaly_timestamps)
+            try:
+                latest_dt = datetime.fromisoformat(latest_ts_str)
+                update_time_str = latest_dt.strftime("%H:%M")
+            except Exception:
+                pass
+
+    if update_time_str:
+        feed_data["current_feed"] = f"(Оновлено о {update_time_str}) {combined_feed}"
+    else:
+        feed_data["current_feed"] = combined_feed
+
+    feed_data["last_updated"] = now_kyiv.isoformat()
+
+    # Очищення історії (зберігаємо за останні 60 днів)
+    cutoff_dt = now_kyiv - timedelta(days=60)
+    feed_data["days"] = [d for d in feed_data["days"] if datetime.strptime(d["date"], "%Y-%m-%d") >= cutoff_dt.replace(hour=0, minute=0, second=0, microsecond=0)]
+    feed_data["anomalies_log"] = [a for a in feed_data["anomalies_log"] if datetime.fromisoformat(a["timestamp"]) >= cutoff_dt]
+
+    # Зберігаємо структурований JSON
+    with open(FEED_PATH, "w", encoding="utf-8") as f:
+        json.dump(feed_data, f, ensure_ascii=False, indent=2)
+    print("[SUCCESS] feed.json збережено")
+
+    # Зберігаємо чистий плоский текст у feed.txt для іншого додатка
+    feed_txt_path = os.getenv("FEED_TXT_PATH", "data/feed.txt")
+    with open(feed_txt_path, "w", encoding="utf-8") as txt_f:
+        txt_f.write(feed_data["current_feed"])
+    print("[SUCCESS] feed.txt збережено")
+
+    # Для сумісності зшиваємо feed_today та feed_tomorrow
+    day_after_tomorrow_day = next((d for d in new_days if d["date"] == (today + timedelta(days=2)).strftime("%Y-%m-%d")), None)
+    feed_today_content = feed_data["current_feed"]
+    feed_tomorrow_parts = []
     if tomorrow_day and tomorrow_day["actual_content"]:
-        current_parts.append(tomorrow_day["actual_content"])
-    combined_feed = " | ".join(current_parts) if current_parts else "Інформація про відключення відсутня."
-
-# Визначаємо, чи потрібно додати мітку оновлення на самий початок стрічки
-update_time_str = ""
-if not is_transition_window:
-    anomaly_timestamps = []
-    # Шукаємо аномалії в історії Сьогодні та Завтра
-    for day in [today_day, tomorrow_day]:
-        if day:
-            for h in day.get("history", []):
-                if h.get("is_anomaly") or h.get("is_manual_edit"):
-                    anomaly_timestamps.append(h["timestamp"])
-    if anomaly_timestamps:
-        latest_ts_str = max(anomaly_timestamps)
-        try:
-            latest_dt = datetime.fromisoformat(latest_ts_str)
-            update_time_str = latest_dt.strftime("%H:%M")
-        except Exception:
-            pass
-
-if update_time_str:
-    feed_data["current_feed"] = f"(Оновлено о {update_time_str}) {combined_feed}"
-else:
-    feed_data["current_feed"] = combined_feed
-
-feed_data["last_updated"] = now_kyiv.isoformat()
-
-# Очищення історії (зберігаємо за останні 60 днів)
-cutoff_dt = now_kyiv - timedelta(days=60)
-feed_data["days"] = [d for d in feed_data["days"] if datetime.strptime(d["date"], "%Y-%m-%d") >= cutoff_dt.replace(hour=0, minute=0, second=0, microsecond=0)]
-feed_data["anomalies_log"] = [a for a in feed_data["anomalies_log"] if datetime.fromisoformat(a["timestamp"]) >= cutoff_dt]
-
-# Зберігаємо структурований JSON
-with open(FEED_PATH, "w", encoding="utf-8") as f:
-    json.dump(feed_data, f, ensure_ascii=False, indent=2)
-print("[SUCCESS] feed.json збережено")
-
-# Зберігаємо чистий плоский текст у feed.txt для іншого додатка
-with open("data/feed.txt", "w", encoding="utf-8") as txt_f:
-    txt_f.write(feed_data["current_feed"])
-print("[SUCCESS] feed.txt збережено")
-
-# Для сумісності зшиваємо feed_today та feed_tomorrow
-day_after_tomorrow_day = next((d for d in new_days if d["date"] == (today + timedelta(days=2)).strftime("%Y-%m-%d")), None)
-feed_today_content = feed_data["current_feed"]
-feed_tomorrow_parts = []
-if tomorrow_day and tomorrow_day["actual_content"]:
-    feed_tomorrow_parts.append(tomorrow_day["actual_content"])
-if day_after_tomorrow_day and day_after_tomorrow_day["actual_content"]:
-    feed_tomorrow_parts.append(day_after_tomorrow_day["actual_content"])
-feed_tomorrow_content = " | ".join(feed_tomorrow_parts) if feed_tomorrow_parts else "[ЗАВТРА] Інформація про відключення відсутня."
+        feed_tomorrow_parts.append(tomorrow_day["actual_content"])
+    if day_after_tomorrow_day and day_after_tomorrow_day["actual_content"]:
+        feed_tomorrow_parts.append(day_after_tomorrow_day["actual_content"])
+    feed_tomorrow_content = " | ".join(feed_tomorrow_parts) if feed_tomorrow_parts else "[ЗАВТРА] Інформація про відключення відсутня."
 
 # ------------------------------------------------------------
 # Завантаження messages.json для Кешування
 # ------------------------------------------------------------
 try:
-    with open("data/messages.json", "r", encoding="utf-8") as f:
+    messages_path = os.getenv("MESSAGES_PATH", "data/messages.json")
+    with open(messages_path, "r", encoding="utf-8") as f:
         existing_messages = json.load(f)
 except (FileNotFoundError, json.JSONDecodeError):
     existing_messages = []
@@ -934,18 +1141,29 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
     typ_str = "Аварійні" if is_emergency else "Планові"
     typ_header = "АВАРІЙНИХ" if is_emergency else "ПЛАНОВИХ"
     
-    filtered = [r for r in items if (is_emergency and "Аварійні" in r.get("type", "")) or (not is_emergency and "Планові" in r.get("type", ""))]
+    # Фільтруємо записи: виключаємо "Пісочницю" та беремо потрібний тип відключень
+    filtered = [
+        r for r in items 
+        if r.get("settlement") != "Пісочниця" and 
+        ((is_emergency and "Аварійні" in r.get("type", "")) or (not is_emergency and "Планові" in r.get("type", "")))
+    ]
     
-    if not filtered:
+    # Використовуємо наш єдиний групувальник
+    grouped = get_grouped_outages(filtered)
+    
+    if not grouped:
         if is_emergency:
             return f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} аварійних знеструмлень не зафіксовано.", "no_outages"
         else:
             return f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} планових знеструмлень не передбачено.", "no_outages"
 
     raw_text_parts = []
-    for rec in filtered:
-        time_range = extract_time_range(rec)
-        settlement = rec.get("settlement", "")
+    # Сортування: місто Старокостянтинів першим, далі села за алфавітом
+    sorted_keys = sorted(grouped.keys(), key=lambda k: (0 if k[1] == "Старокостянтинів" else 1, k[1], k[2]))
+    
+    for k in sorted_keys:
+        typ, settlement, time_range = k
+        streets_dict = grouped[k]
         
         district_name = ""
         if settlement != "Старокостянтинів":
@@ -954,24 +1172,20 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
             district_name = "Місто Старокостянтинів"
             
         streets_str_list = []
-        for s_det in rec.get("streets_detailed", []):
-            name = s_det.get("name", "")
-            houses = s_det.get("houses", "").strip()
-            if not houses:
-                streets_str_list.append(name)
+        for s_name in sorted(streets_dict.keys()):
+            houses_set = streets_dict[s_name]
+            if houses_set:
+                # Сортування будинків
+                sorted_houses = sorted(list(houses_set), key=lambda x: (int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 9999, x))
+                # Виводимо весь масив без жодних скорочень типу "(частково)"
+                streets_str_list.append(f"{s_name} (буд. {', '.join(sorted_houses)})")
             else:
-                house_list = [h.strip() for h in houses.split(",") if h.strip()]
-                if len(house_list) <= 5:
-                    streets_str_list.append(f"{name} (буд. {', '.join(house_list)})")
-                else:
-                    streets_str_list.append(f"{name} (частково)")
-                    
-        if not streets_str_list:
-            streets_str_list = rec.get("streets", [])
+                streets_str_list.append(s_name)
+                
+        if streets_str_list:
+            streets = "; ".join(streets_str_list)
+            raw_text_parts.append(f"[{district_name}] {settlement} ({time_range}): {streets}")
             
-        streets = "; ".join(streets_str_list)
-        raw_text_parts.append(f"[{district_name}] {settlement} ({time_range}): {streets}")
-        
     raw_text = "\n".join(raw_text_parts)
     
     
@@ -1013,81 +1227,83 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
         fallback_text = intro_phrase + "\n\n" + raw_text + "\n\nПросимо завчасно зарядити пристрої та з розумінням поставитись до тимчасових незручностей."
         return fallback_text, text_hash
 
-today_str = today.strftime("%Y-%m-%d")
-tomorrow_str = tomorrow.strftime("%Y-%m-%d")
+if __name__ == "__main__":
+    today_str = today.strftime("%Y-%m-%d")
+    tomorrow_str = tomorrow.strftime("%Y-%m-%d")
 
-tg_today_planned, hash_tp = get_tg_post(items_today, today, False, f"{today_str}_tg_planned")
-tg_today_emergency, hash_te = get_tg_post(items_today, today, True, f"{today_str}_tg_emergency")
-tg_tomorrow_planned, hash_tmp = get_tg_post(items_tomorrow, tomorrow, False, f"{tomorrow_str}_tg_planned")
-tg_tomorrow_emergency, hash_tme = get_tg_post(items_tomorrow, tomorrow, True, f"{tomorrow_str}_tg_emergency")
+    tg_today_planned, hash_tp = get_tg_post(items_today, today, False, f"{today_str}_tg_planned")
+    tg_today_emergency, hash_te = get_tg_post(items_today, today, True, f"{today_str}_tg_emergency")
+    tg_tomorrow_planned, hash_tmp = get_tg_post(items_tomorrow, tomorrow, False, f"{tomorrow_str}_tg_planned")
+    tg_tomorrow_emergency, hash_tme = get_tg_post(items_tomorrow, tomorrow, True, f"{tomorrow_str}_tg_emergency")
 
-# ------------------------------------------------------------
-# Збереження messages.json
-# ------------------------------------------------------------
-add_message(f"{today_str}_feed", today_str, "feed_today", feed_today_content)
-add_message(f"{tomorrow_str}_feed", tomorrow_str, "feed_tomorrow", feed_tomorrow_content)
+    # ------------------------------------------------------------
+    # Збереження messages.json
+    # ------------------------------------------------------------
+    add_message(f"{today_str}_feed", today_str, "feed_today", feed_today_content)
+    add_message(f"{tomorrow_str}_feed", tomorrow_str, "feed_tomorrow", feed_tomorrow_content)
 
-add_message(f"{today_str}_tg_planned", today_str, "tg_planned", tg_today_planned, hash_tp)
-add_message(f"{today_str}_tg_emergency", today_str, "tg_emergency", tg_today_emergency, hash_te)
-add_message(f"{tomorrow_str}_tg_planned", tomorrow_str, "tg_planned", tg_tomorrow_planned, hash_tmp)
-add_message(f"{tomorrow_str}_tg_emergency", tomorrow_str, "tg_emergency", tg_tomorrow_emergency, hash_tme)
+    add_message(f"{today_str}_tg_planned", today_str, "tg_planned", tg_today_planned, hash_tp)
+    add_message(f"{today_str}_tg_emergency", today_str, "tg_emergency", tg_today_emergency, hash_te)
+    add_message(f"{tomorrow_str}_tg_planned", tomorrow_str, "tg_planned", tg_tomorrow_planned, hash_tmp)
+    add_message(f"{tomorrow_str}_tg_emergency", tomorrow_str, "tg_emergency", tg_tomorrow_emergency, hash_tme)
 
-# Garbage Collection: Видаляємо старі повідомлення (>40 днів)
-cutoff_date = get_kyiv_now() - timedelta(days=40)
-filtered_messages = []
-for m in messages_dict.values():
-    try:
-        dt = datetime.strptime(m["date"], "%Y-%m-%d")
-        if dt >= cutoff_date:
-            filtered_messages.append(m)
-    except:
-        filtered_messages.append(m) # Якщо дата не розпізнана
+    # Garbage Collection: Видаляємо старі повідомлення (>40 днів)
+    cutoff_date = get_kyiv_now() - timedelta(days=40)
+    filtered_messages = []
+    for m in messages_dict.values():
+        try:
+            dt = datetime.strptime(m["date"], "%Y-%m-%d")
+            if dt >= cutoff_date:
+                filtered_messages.append(m)
+        except:
+            filtered_messages.append(m) # Якщо дата не розпізнана
 
-final_messages = sorted(filtered_messages, key=lambda x: x["date"], reverse=True)
+    final_messages = sorted(filtered_messages, key=lambda x: x["date"], reverse=True)
 
-with open("data/messages.json", "w", encoding="utf-8") as f:
-    json.dump(final_messages, f, ensure_ascii=False, indent=2)
-print("[SUCCESS] messages.json збережено")
+    messages_path = os.getenv("MESSAGES_PATH", "data/messages.json")
+    with open(messages_path, "w", encoding="utf-8") as f:
+        json.dump(final_messages, f, ensure_ascii=False, indent=2)
+    print("[SUCCESS] messages.json збережено")
 
-# ------------------------------------------------------------
-# Оновлення auth_config.js
-# ------------------------------------------------------------
-if ADMIN_PASSWORD:
-    hash_hex = hashlib.sha256(ADMIN_PASSWORD.encode("utf-8")).hexdigest()
-    with open("auth_config.js", "w", encoding="utf-8") as f:
-        f.write(f'const ADMIN_HASH = "{hash_hex}";\n')
-    print("[SUCCESS] auth_config.js оновлено")
-else:
-    print("[WARN] ADMIN_PASSWORD не знайдено у .env")
+    # ------------------------------------------------------------
+    # Оновлення auth_config.js
+    # ------------------------------------------------------------
+    if ADMIN_PASSWORD:
+        hash_hex = hashlib.sha256(ADMIN_PASSWORD.encode("utf-8")).hexdigest()
+        with open("auth_config.js", "w", encoding="utf-8") as f:
+            f.write(f'const ADMIN_HASH = "{hash_hex}";\n')
+        print("[SUCCESS] auth_config.js оновлено")
+    else:
+        print("[WARN] ADMIN_PASSWORD не знайдено у .env")
 
-# ------------------------------------------------------------
-# Автоматичний запуск Щотижневої Аналітики
-# ------------------------------------------------------------
-now = get_kyiv_now()
-if now.weekday() == 0:
-    try:
-        with open("data/analytics.json", "r", encoding="utf-8") as f:
-            last_date_str = json.load(f).get("date", "2000-01-01 00:00")
-            last_date = datetime.strptime(last_date_str, "%Y-%m-%d %H:%M").date()
-    except Exception:
-        last_date = None
-        
-    if last_date != now.date():
-        print("Понеділок - Запуск Щотижневої Аналітики...")
-    try:
-        import analytics
-        analytics.generate_weekly_report()
-    except Exception as e:
-        print(f"Помилка при запуску аналітики: {e}")
-        warnings_list.append(f"Помилка аналітики: {e}")
+    # ------------------------------------------------------------
+    # Автоматичний запуск Щотижневої Аналітики
+    # ------------------------------------------------------------
+    now = get_kyiv_now()
+    if now.weekday() == 0:
+        try:
+            with open("data/analytics.json", "r", encoding="utf-8") as f:
+                last_date_str = json.load(f).get("date", "2000-01-01 00:00")
+                last_date = datetime.strptime(last_date_str, "%Y-%m-%d %H:%M").date()
+        except Exception:
+            last_date = None
+            
+        if last_date != now.date():
+            print("Понеділок - Запуск Щотижневої Аналітики...")
+        try:
+            import analytics
+            analytics.generate_weekly_report()
+        except Exception as e:
+            print(f"Помилка при запуску аналітики: {e}")
+            warnings_list.append(f"Помилка аналітики: {e}")
 
-# ------------------------------------------------------------
-# Запис фінального статусу в update_log.json
-# ------------------------------------------------------------
-status = "warning" if warnings_list else "ok"
-msg_parts = ["Форматування успішно завершено."]
-if not ai_called:
-    msg_parts.append("Змін не виявлено, використано кеш.")
-if warnings_list:
-    msg_parts.append("Попередження: " + "; ".join(warnings_list))
-update_latest_log(status=status, message_append=" ".join(msg_parts))
+    # ------------------------------------------------------------
+    # Запис фінального статусу в update_log.json
+    # ------------------------------------------------------------
+    status = "warning" if warnings_list else "ok"
+    msg_parts = ["Форматування успішно завершено."]
+    if not ai_called:
+        msg_parts.append("Змін не виявлено, використано кеш.")
+    if warnings_list:
+        msg_parts.append("Попередження: " + "; ".join(warnings_list))
+    update_latest_log(status=status, message_append=" ".join(msg_parts))

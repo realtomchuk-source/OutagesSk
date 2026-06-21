@@ -1000,6 +1000,7 @@ function expandHouseRanges(housesStr) {
 function getStreetDictKey(settlement) {
     if (!settlement) return "м. Старокостянтинів";
     settlement = settlement.trim();
+    if (settlement === "Пісочниця") return "Пісочниця";
     if (settlement === "Старокостянтинів" || settlement === "м. Старокостянтинів") {
         return "м. Старокостянтинів";
     }
@@ -1056,20 +1057,21 @@ function renderStreets(container) {
     
     const villages = new Set();
     for (const key in officialStreets) {
-        if (key !== "м. Старокостянтинів") {
+        if (key !== "м. Старокостянтинів" && key !== "Пісочниця") {
             villages.add(key.replace(/^с\.\s*/, ""));
         }
     }
     archiveOutages.forEach(rec => {
         if (rec.settlement) {
             const name = rec.settlement.trim();
-            if (name !== "Старокостянтинів" && name !== "м. Старокостянтинів") {
+            if (name !== "Старокостянтинів" && name !== "м. Старокостянтинів" && name !== "Пісочниця") {
                 villages.add(name.replace(/^с\.\s*/, ""));
             }
         }
     });
     
     Array.from(villages).sort().forEach(v => allSettlements.push("с. " + v));
+    allSettlements.push("Пісочниця");
 
     let optionsHtml = allSettlements.map(s => {
         const selected = s === selectedSettlement ? "selected" : "";
@@ -1161,6 +1163,8 @@ function renderStreets(container) {
                     <div style="display:flex; gap: 5px;">
                         <button onclick="window.whitelistStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#28a745; border:none; color:#fff; cursor:pointer;" title="Обілити (✓)">✓</button>
                         <button onclick="window.editDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#007bff; border:none; color:#fff; cursor:pointer;" title="Редагувати (✏️)">✏️</button>
+                        <button onclick="window.moveStreetSettlement('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#e67e22; border:none; color:#fff; cursor:pointer;" title="Перенести в інший н.п. (🚚)">🚚</button>
+                        <button onclick="window.hideDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#17a2b8; border:none; color:#fff; cursor:pointer;" title="Приховати з публікацій (👁️)">👁️</button>
                         <button onclick="window.deleteDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#e74c3c; border:none; color:#fff; cursor:pointer;" title="Видалити (🗑️)">🗑️</button>
                     </div>
                 </li>`;
@@ -1257,12 +1261,20 @@ function renderStreets(container) {
             } else if (r.action === "rename") {
                 actionText = `<span class="badge badge-warning">Перейменовувати</span>`;
                 targetText = `<strong>${escapeHtml(r.target)}</strong>`;
+            } else if (r.action === "move_to_settlement") {
+                actionText = `<span class="badge" style="background: rgba(52, 152, 219, 0.15); color: #2980b9; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Переносити в н.п.</span>`;
+                targetText = `<strong>${escapeHtml(Array.isArray(r.target_settlements) ? r.target_settlements.join(", ") : (r.target_settlements || r.target_settlement || ""))}</strong>`;
+            } else if (r.action === "hide") {
+                actionText = `<span class="badge badge-secondary" style="background:#7f8c8d; color:#fff;">Приховано з публ.</span>`;
+            } else if (r.action === "unverified") {
+                actionText = `<span class="badge" style="background: rgba(127, 140, 141, 0.15); color: #7f8c8d; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Неверифікована (ШІ checked)</span>`;
             }
             const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleString('uk-UA') : "-";
+            const aiBadge = r.auto ? ` <span style="background: rgba(155, 89, 182, 0.15); color: #8e44ad; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;" title="Створено автоматично ШІ">🤖 ШІ</span>` : "";
             
             rulesRows += `
                 <tr style="border-bottom: 1px solid var(--border);">
-                    <td style="padding: 10px; font-weight: bold; color: var(--danger);">${escapeHtml(k)}</td>
+                    <td style="padding: 10px; font-weight: bold; color: var(--danger);">${escapeHtml(k)}${aiBadge}</td>
                     <td style="padding: 10px;">${actionText}</td>
                     <td style="padding: 10px;">${targetText}</td>
                     <td style="padding: 10px; font-size: 12px; color: #888;">${escapeHtml(dateStr)}</td>
@@ -1289,6 +1301,9 @@ function renderStreets(container) {
             if (c.action === 'rename_doubtful') {
                 actionLabel = `<span class="badge badge-warning" style="background:#f39c12; color:#fff; padding:3px 8px; border-radius:3px; font-size:11px;">Перейм. сумнівну</span>`;
                 details = `Змінено з <strong>${escapeHtml(c.old_name)}</strong> на <strong>${escapeHtml(c.new_name)}</strong>.`;
+            } else if (c.action === 'hide_doubtful') {
+                actionLabel = `<span class="badge badge-secondary" style="background:#7f8c8d; color:#fff; padding:3px 8px; border-radius:3px; font-size:11px;">Приховано з публ.</span>`;
+                details = `Приховано з публікацій <strong>${escapeHtml(c.old_name)}</strong>.`;
             } else if (c.action === 'delete_doubtful') {
                 actionLabel = `<span class="badge badge-danger" style="background:#e74c3c; color:#fff; padding:3px 8px; border-radius:3px; font-size:11px;">Видалено сумнівну</span>`;
                 details = `Вилучено з архіву <strong>${escapeHtml(c.old_name)}</strong>.`;
@@ -1554,10 +1569,13 @@ function renderStreets(container) {
                              `Це прибере її з '${selectedSettlement}', додасть до офіційних словників обраних н.п. та налаштує правило автоматичного вибору (трирівнева логіка).`;
             
             if (confirm(confirmMsg)) {
-                const streetData = officialStreets[selectedSettlement][street] || { type: "вулиця", houses: [], blacklist: [] };
+                const houses = getDoubtfulHousesForStreet(selectedSettlement, street);
+                const streetData = (officialStreets[selectedSettlement] && officialStreets[selectedSettlement][street]) || { type: "вулиця", houses: houses, blacklist: [] };
                 
                 // 1. Оновлюємо офіційні словники
-                delete officialStreets[selectedSettlement][street];
+                if (officialStreets[selectedSettlement]) {
+                    delete officialStreets[selectedSettlement][street];
+                }
                 for (let t of targets) {
                     if (!officialStreets[t][street]) {
                         officialStreets[t][street] = JSON.parse(JSON.stringify(streetData));
@@ -1800,6 +1818,10 @@ function renderStreets(container) {
 
     if (!window.whitelistStreet) {
         window.whitelistStreet = async function(street) {
+            if (selectedSettlement === "Пісочниця") {
+                alert("Для верифікації сумнівної вулиці з Пісочниці, будь ласка, спочатку перенесіть її до правильного населеного пункту за допомогою кнопки 🚚.");
+                return;
+            }
             if (!officialStreets[selectedSettlement]) {
                 officialStreets[selectedSettlement] = {};
             }
@@ -1945,6 +1967,26 @@ function renderStreets(container) {
                 }
 
                 await logAddressAction('delete_doubtful', street, "", doubtfulHouses);
+                renderStreets(document.getElementById('tabContent'));
+            }
+        };
+    }
+
+    if (!window.hideDoubtfulStreet) {
+        window.hideDoubtfulStreet = async function(street) {
+            const doubtfulHouses = getDoubtfulHousesForStreet(selectedSettlement, street);
+            if (confirm(`Приховати сумнівну вулицю '${street}' з публікацій?\n(Вона залишиться в базі даних та архіві, але не буде відображатися в Telegram та новинах)`)) {
+                
+                if (!window.streetCorrections) window.streetCorrections = {};
+                if (!window.streetCorrections[selectedSettlement]) window.streetCorrections[selectedSettlement] = {};
+                window.streetCorrections[selectedSettlement][street] = {
+                    action: "hide",
+                    timestamp: new Date().toISOString()
+                };
+                const correctionsStr = JSON.stringify(window.streetCorrections, null, 2);
+                await commitFileToGitHub("data/street_corrections.json", correctionsStr, `Створення правила приховування для ${street}`);
+
+                await logAddressAction('hide_doubtful', street, "", doubtfulHouses);
                 renderStreets(document.getElementById('tabContent'));
             }
         };
