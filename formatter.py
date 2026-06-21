@@ -916,7 +916,7 @@ def generate_feed_text(items, label):
         if regular_parts:
             final_parts.extend(regular_parts)
         if partial_streets:
-            final_parts.append(f"{', '.join(partial_streets)} (частково)")
+            final_parts.append(f"частково: {', '.join(partial_streets)}")
             
         if final_parts:
             streets_str = "; ".join(final_parts)
