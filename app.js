@@ -808,7 +808,10 @@ function renderTelegram(container) {
 
                 html += `
                     <div class="tg-card">
-                        <h4>${partLabel}: ${t.title}</h4>
+                        <h4 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px;">
+                            <span>${partLabel}: ${t.title}</span>
+                            <span style="font-size: 11px; font-weight: normal; background: rgba(128,128,128,0.1); padding: 2px 6px; border-radius: 4px; color: var(--secondary-text);">${content.length} симв.</span>
+                        </h4>
                         <div class="post-body" id="${elementId}">${escapeHtml(content)}</div>
                         <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
                             <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('${elementId}').innerText)">📋 Копіювати</button>
@@ -840,7 +843,8 @@ function renderTelegram(container) {
                     </div>
                     <div class="feed-modal-body">
                         <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 6px;">Вміст поста:</label>
-                        <textarea id="editTgText" class="feed-textarea" style="height: 250px; margin-bottom: 12px; font-family: sans-serif;">${escapeHtml(msg.content)}</textarea>
+                        <textarea id="editTgText" class="feed-textarea" style="height: 250px; margin-bottom: 6px; font-family: sans-serif;" oninput="document.getElementById('editTgCharCount').innerText = 'Символів: ' + this.value.length + ' / 4000 (Telegram limit)'">${escapeHtml(msg.content)}</textarea>
+                        <div id="editTgCharCount" style="font-size: 12px; color: var(--secondary-text); margin-bottom: 12px;">Символів: ${msg.content.length} / 4000 (Telegram limit)</div>
                     </div>
                     <div class="feed-modal-footer">
                         <button class="btn" style="background:#ccc; color:#333;" onclick="window.closeTgModal()">Скасувати</button>
