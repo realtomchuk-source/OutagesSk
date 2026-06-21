@@ -777,27 +777,47 @@ function renderTelegram(container) {
         
         let label = t.dateOffset === 0 ? "СЬОГОДНІ" : "ЗАВТРА";
         
-        let msg = messages.find(m => m.type === t.id && m.date === dbDateStr);
-        let content = msg ? msg.content : "Очікування генерації або немає відключень.";
-        const elementId = `tg-post-${dbDateStr}-${t.id}-${idx}`;
+        // Знаходимо всі відповідні повідомлення та сортуємо їх за ID
+        let relevantMsgs = messages.filter(m => m.type === t.id && m.date === dbDateStr);
+        relevantMsgs.sort((a, b) => a.id.localeCompare(b.id));
         
-        let editBtn = '';
-        if (msg && t.dateOffset === 0) {
-            editBtn = `
-                <button class="btn btn-secondary" onclick="window.openEditTelegramModal('${msg.id}', '${label}: ${t.title}')" style="background:#007bff; color:white; border:none; margin-left:10px;">✏️ Редагувати</button>
-            `;
-        }
-
-        html += `
-            <div class="tg-card">
-                <h4>${label}: ${t.title}</h4>
-                <div class="post-body" id="${elementId}">${escapeHtml(content)}</div>
-                <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
-                    <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('${elementId}').innerText)">📋 Копіювати</button>
-                    ${editBtn}
+        if (relevantMsgs.length === 0) {
+            const elementId = `tg-post-${dbDateStr}-${t.id}-${idx}-empty`;
+            html += `
+                <div class="tg-card">
+                    <h4>${label}: ${t.title}</h4>
+                    <div class="post-body" id="${elementId}">Очікування генерації або немає відключень.</div>
                 </div>
-            </div>
-        `;
+            `;
+        } else {
+            relevantMsgs.forEach((msg, partIdx) => {
+                let content = msg.content;
+                let partLabel = label;
+                if (relevantMsgs.length > 1) {
+                    partLabel += ` (Частина ${partIdx + 1})`;
+                }
+                
+                const elementId = `tg-post-${msg.id}-${idx}-${partIdx}`;
+                
+                let editBtn = '';
+                if (t.dateOffset === 0) {
+                    editBtn = `
+                        <button class="btn btn-secondary" onclick="window.openEditTelegramModal('${msg.id}', '${partLabel}: ${t.title}')" style="background:#007bff; color:white; border:none; margin-left:10px;">✏️ Редагувати</button>
+                    `;
+                }
+
+                html += `
+                    <div class="tg-card">
+                        <h4>${partLabel}: ${t.title}</h4>
+                        <div class="post-body" id="${elementId}">${escapeHtml(content)}</div>
+                        <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+                            <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('${elementId}').innerText)">📋 Копіювати</button>
+                            ${editBtn}
+                        </div>
+                    </div>
+                `;
+            });
+        }
     });
     
     html += '</div>';
@@ -2357,8 +2377,8 @@ window.showArchivedMessages = function() {
     
     const feedToday = relevant.find(m => m.type === 'feed_today');
     const feedTomorrow = relevant.find(m => m.type === 'feed_tomorrow');
-    const tgPlanned = relevant.find(m => m.type === 'tg_planned');
-    const tgEmergency = relevant.find(m => m.type === 'tg_emergency');
+    const tgPlanneds = relevant.filter(m => m.type === 'tg_planned').sort((a, b) => a.id.localeCompare(b.id));
+    const tgEmergencies = relevant.filter(m => m.type === 'tg_emergency').sort((a, b) => a.id.localeCompare(b.id));
     
     let html = `
         <div style="margin-top: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
@@ -2389,29 +2409,49 @@ window.showArchivedMessages = function() {
             <div>
                 <h5 style="margin-bottom: 10px; color: var(--primary); font-size: 14px;">✈️ Telegram-повідомлення</h5>
                 
+                <!-- Planned Telegram Messages -->
+                ${tgPlanneds.length === 0 ? `
                 <div style="padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); margin-bottom: 15px;">
-                    <h6 style="margin: 0 0 8px 0; font-size: 13px; display:flex; justify-content:space-between; align-items: center;">
-                        <span>🟡 Планові відключення:</span>
-                        ${tgPlanned && tgPlanned.created_at ? `<span style="font-weight:normal; font-size:10px; color:var(--secondary-text);">Створено: ${formatDateTimeParts(tgPlanned.created_at).time}</span>` : ''}
-                    </h6>
-                    <textarea class="feed-textarea" style="height: 120px; font-size:12px; font-family: monospace; width: 100%; resize: vertical;" readonly>${escapeHtml(tgPlanned ? tgPlanned.content : 'Дані відсутні')}</textarea>
-                    ${tgPlanned ? `
-                    <div style="margin-top: 8px;">
-                        <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="copyToClipboard(this.parentElement.previousElementSibling.value)">📋 Копіювати текст</button>
-                    </div>` : ''}
+                    <h6 style="margin: 0 0 8px 0; font-size: 13px;">🟡 Планові відключення:</h6>
+                    <textarea class="feed-textarea" style="height: 120px; font-size:12px; font-family: monospace; width: 100%; resize: vertical;" readonly>Дані відсутні</textarea>
                 </div>
+                ` : tgPlanneds.map((msg, partIdx) => {
+                    const label = tgPlanneds.length > 1 ? `🟡 Планові відключення (Частина ${partIdx + 1}):` : `🟡 Планові відключення:`;
+                    return `
+                    <div style="padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); margin-bottom: 15px;">
+                        <h6 style="margin: 0 0 8px 0; font-size: 13px; display:flex; justify-content:space-between; align-items: center;">
+                            <span>${label}</span>
+                            ${msg.created_at ? `<span style="font-weight:normal; font-size:10px; color:var(--secondary-text);">Створено: ${formatDateTimeParts(msg.created_at).time}</span>` : ''}
+                        </h6>
+                        <textarea class="feed-textarea" style="height: 120px; font-size:12px; font-family: monospace; width: 100%; resize: vertical;" readonly>${escapeHtml(msg.content)}</textarea>
+                        <div style="margin-top: 8px;">
+                            <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="copyToClipboard(this.parentElement.previousElementSibling.value)">📋 Копіювати текст</button>
+                        </div>
+                    </div>
+                    `;
+                }).join('')}
                 
+                <!-- Emergency Telegram Messages -->
+                ${tgEmergencies.length === 0 ? `
                 <div style="padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
-                    <h6 style="margin: 0 0 8px 0; font-size: 13px; display:flex; justify-content:space-between; align-items: center;">
-                        <span>🔴 Аварійні відключення:</span>
-                        ${tgEmergency && tgEmergency.created_at ? `<span style="font-weight:normal; font-size:10px; color:var(--secondary-text);">Створено: ${formatDateTimeParts(tgEmergency.created_at).time}</span>` : ''}
-                    </h6>
-                    <textarea class="feed-textarea" style="height: 120px; font-size:12px; font-family: monospace; width: 100%; resize: vertical;" readonly>${escapeHtml(tgEmergency ? tgEmergency.content : 'Дані відсутні')}</textarea>
-                    ${tgEmergency ? `
-                    <div style="margin-top: 8px;">
-                        <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="copyToClipboard(this.parentElement.previousElementSibling.value)">📋 Копіювати текст</button>
-                    </div>` : ''}
+                    <h6 style="margin: 0 0 8px 0; font-size: 13px;">🔴 Аварійні відключення:</h6>
+                    <textarea class="feed-textarea" style="height: 120px; font-size:12px; font-family: monospace; width: 100%; resize: vertical;" readonly>Дані відсутні</textarea>
                 </div>
+                ` : tgEmergencies.map((msg, partIdx) => {
+                    const label = tgEmergencies.length > 1 ? `🔴 Аварійні відключення (Частина ${partIdx + 1}):` : `🔴 Аварійні відключення:`;
+                    return `
+                    <div style="padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); margin-bottom: ${partIdx < tgEmergencies.length - 1 ? '15px' : '0'};">
+                        <h6 style="margin: 0 0 8px 0; font-size: 13px; display:flex; justify-content:space-between; align-items: center;">
+                            <span>${label}</span>
+                            ${msg.created_at ? `<span style="font-weight:normal; font-size:10px; color:var(--secondary-text);">Створено: ${formatDateTimeParts(msg.created_at).time}</span>` : ''}
+                        </h6>
+                        <textarea class="feed-textarea" style="height: 120px; font-size:12px; font-family: monospace; width: 100%; resize: vertical;" readonly>${escapeHtml(msg.content)}</textarea>
+                        <div style="margin-top: 8px;">
+                            <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="copyToClipboard(this.parentElement.previousElementSibling.value)">📋 Копіювати text</button>
+                        </div>
+                    </div>
+                    `;
+                }).join('')}
             </div>
         </div>
     `;

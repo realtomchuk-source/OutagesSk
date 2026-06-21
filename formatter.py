@@ -1148,7 +1148,7 @@ def add_message(m_id, m_date, m_type, m_content, m_hash=None):
 # ------------------------------------------------------------
 # Генерація Telegram-постів (з ШІ)
 # ------------------------------------------------------------
-def get_tg_post(items, target_date, is_emergency, msg_id):
+def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=False):
     typ_str = "Аварійні" if is_emergency else "Планові"
     typ_header = "АВАРІЙНИХ" if is_emergency else "ПЛАНОВИХ"
     
@@ -1164,17 +1164,26 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
     
     if not grouped:
         if is_emergency:
-            return f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} аварійних знеструмлень не зафіксовано.", "no_outages"
+            content = f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} аварійних знеструмлень не зафіксовано."
         else:
-            return f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} планових знеструмлень не передбачено.", "no_outages"
+            content = f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} планових знеструмлень не передбачено."
+        return [{"id": base_msg_id, "content": content, "hash": "no_outages"}]
 
     raw_text_parts = []
+    line_to_records = {}
+    
     # Сортування: місто Старокостянтинів першим, далі села за алфавітом
     sorted_keys = sorted(grouped.keys(), key=lambda k: (0 if k[1] == "Старокостянтинів" else 1, k[1], k[2]))
     
     for k in sorted_keys:
         typ, settlement, time_range = k
         streets_dict = grouped[k]
+        
+        # Знаходимо відповідні записи в filtered
+        matching_recs = [
+            r for r in filtered 
+            if r.get("settlement") == settlement and extract_time_range(r) == time_range
+        ]
         
         district_name = ""
         if settlement != "Старокостянтинів":
@@ -1195,25 +1204,114 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
                 
         if streets_str_list:
             streets = "; ".join(streets_str_list)
-            raw_text_parts.append(f"[{district_name}] {settlement} ({time_range}): {streets}")
+            line = f"[{district_name}] {settlement} ({time_range}): {streets}"
+            raw_text_parts.append(line)
+            line_to_records[line] = matching_recs
             
-    raw_text = "\n".join(raw_text_parts)
+    # 1. Групуємо рядки за округами
+    district_to_lines = {}
+    for line in raw_text_parts:
+        match = re.match(r"^\[(.*?)\]", line)
+        dist_name = match.group(1) if match else "Невідомий округ"
+        if dist_name not in district_to_lines:
+            district_to_lines[dist_name] = []
+        district_to_lines[dist_name].append(line)
+        
+    district_order = sorted(list(district_to_lines.keys()), key=lambda d: (0 if "Місто" in d or "місто" in d.lower() else 1, d))
     
-    
-    # Кешування (v3: скидаємо кеш, бо оновили промпт та правила скорочення)
-    text_hash = hashlib.md5(f"{raw_text}_v3".encode('utf-8')).hexdigest()
-    if msg_id in messages_dict:
-        old_msg = messages_dict[msg_id]
-        if old_msg.get("hash") == text_hash and old_msg.get("content"):
-            print(f"[{msg_id}] Хеш співпадає. Використано кеш (без виклику ШІ).")
-            return old_msg.get("content"), text_hash
-
-    if is_emergency:
-        intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення, зафіксовані станом на {target_date.strftime('%d.%m.%Y')}:"
+    # 2. Формуємо блоки (Варіант А: Округи тримаємо разом, якщо вони не надто гігантські)
+    blocks = []
+    for dist in district_order:
+        dist_lines = district_to_lines[dist]
+        combined_text = "\n".join(dist_lines)
+        
+        # Збираємо всі записи для цього округу
+        dist_recs = []
+        for line in dist_lines:
+            dist_recs.extend(line_to_records[line])
+            
+        if len(combined_text) <= 3000:
+            blocks.append((dist, combined_text, dist_recs))
+        else:
+            # Якщо один округ гігантський, ріжемо його на окремі рядки-записи
+            for line in dist_lines:
+                blocks.append((dist, line, line_to_records[line]))
+                
+    # 3. Допоміжна функція оцінки довжини повідомлення
+    def get_estimated_len(chunk_blocks, is_first, is_last):
+        if is_first and is_last:
+            header_len = 150
+        elif is_first:
+            header_len = 170
+        else:
+            header_len = 80
+        footer_len = 100
+        content_len = sum(len(b[1]) for b in chunk_blocks) + len(chunk_blocks)
+        return header_len + content_len + footer_len
+        
+    # 4. Пакуємо блоки у чанки з лімітом 3950 символів
+    chunks = []
+    if not allow_splitting:
+        chunks = [blocks]
     else:
-        intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення, передбачені на {target_date.strftime('%d.%m.%Y')}:"
-
-    prompt = f"""Створи офіційний Telegram-пост про {typ_header} ВІДКЛЮЧЕННЯ електроенергії на {target_date.strftime('%d.%m.%Y')}.
+        current_chunk = []
+        for dist, text, recs in blocks:
+            if not current_chunk:
+                current_chunk.append((dist, text, recs))
+            else:
+                est_len = get_estimated_len(current_chunk + [(dist, text, recs)], is_first=(len(chunks) == 0), is_last=False)
+                if est_len > 3950:
+                    chunks.append(current_chunk)
+                    current_chunk = [(dist, text, recs)]
+                else:
+                    current_chunk.append((dist, text, recs))
+        if current_chunk:
+            chunks.append(current_chunk)
+            
+    # 5. Генеруємо тексти для кожного чанку
+    results = []
+    total_chunks = len(chunks)
+    
+    for idx, chunk in enumerate(chunks):
+        chunk_raw_text = "\n".join(b[1] for b in chunk)
+        chunk_items = []
+        for b in chunk:
+            chunk_items.extend(b[2])
+            
+        # Унікальний ID для кожної частини
+        if total_chunks == 1:
+            part_msg_id = base_msg_id
+        else:
+            part_msg_id = f"{base_msg_id}_part{idx+1}"
+            
+        # Визначаємо заголовки
+        if total_chunks == 1:
+            if is_emergency:
+                intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення, зафіксовані станом на {target_date.strftime('%d.%m.%Y')}:"
+            else:
+                intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення, передбачені на {target_date.strftime('%d.%m.%Y')}:"
+        else:
+            if is_emergency:
+                if idx == 0:
+                    intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення, зафіксовані станом на {target_date.strftime('%d.%m.%Y')} (Частина 1 з {total_chunks}):"
+                else:
+                    intro_phrase = f"Продовження аварійних знеструмлень на {target_date.strftime('%d.%m.%Y')} (Частина {idx+1} з {total_chunks}):"
+            else:
+                if idx == 0:
+                    intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення, передбачені на {target_date.strftime('%d.%m.%Y')} (Частина 1 з {total_chunks}):"
+                else:
+                    intro_phrase = f"Продовження планових відключень на {target_date.strftime('%d.%m.%Y')} (Частина {idx+1} з {total_chunks}):"
+                    
+        # Кешування (v4: скидаємо кеш для нової логіки поділу та валідації)
+        chunk_hash = hashlib.md5(f"{chunk_raw_text}_v4".encode('utf-8')).hexdigest()
+        if part_msg_id in messages_dict:
+            old_msg = messages_dict[part_msg_id]
+            if old_msg.get("hash") == chunk_hash and old_msg.get("content"):
+                print(f"[{part_msg_id}] Хеш співпадає. Використано кеш (без виклику ШІ).")
+                results.append({"id": part_msg_id, "content": old_msg.get("content"), "hash": chunk_hash})
+                continue
+                
+        prompt = f"""Створи офіційний Telegram-пост про {typ_header} ВІДКЛЮЧЕННЯ електроенергії на {target_date.strftime('%d.%m.%Y')}.
 СУВОРІ ПРАВИЛА (ІГНОРУВАННЯ ПРИЗВЕДЕ ДО ПОМИЛКИ):
 1. КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати БУДЬ-ЯКІ емодзі (ніяких блискавок, крапок, кружечків, трикутників). Пост має бути виключно текстовим.
 2. Пост ПОВИНЕН починатися з фрази: "{intro_phrase}"
@@ -1224,29 +1322,31 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
 7. КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати слово "частково" або "(частково)" для будь-Яких вулиць. Виводь повні списки будинків повністю, без жодних скорочень, точно так, як вони вказані в сирих даних (наприклад, "(буд. 1, 2, 3, 4, 5)").
 
 Сирі дані для обробки:
-{raw_text}
+{chunk_raw_text}
 """
-    print(f"Генерую Telegram-пост (ШІ): {typ_str} на {target_date.strftime('%d.%m.%Y')}...")
-    global ai_called
-    ai_called = True
-    ai_result = generate_with_validation(prompt, filtered)
-    if ai_result:
-        return ai_result, text_hash
-    else:
-        print(f"[WARN] ШІ недоступний (ліміти або помилка). Використовую резервний шаблон для {typ_str}.")
-        global warnings_list
-        warnings_list.append(f"ШІ недоступний для {typ_str} на {target_date.strftime('%d.%m.%Y')}")
-        fallback_text = intro_phrase + "\n\n" + raw_text + "\n\nПросимо завчасно зарядити пристрої та з розумінням поставитись до тимчасових незручностей."
-        return fallback_text, text_hash
+        print(f"Генерую Telegram-пост {part_msg_id} (ШІ)...")
+        global ai_called
+        ai_called = True
+        ai_result = generate_with_validation(prompt, chunk_items)
+        if ai_result:
+            results.append({"id": part_msg_id, "content": ai_result, "hash": chunk_hash})
+        else:
+            print(f"[WARN] ШІ недоступний для {part_msg_id}. Використовую резервний шаблон.")
+            global warnings_list
+            warnings_list.append(f"ШІ недоступний для {part_msg_id}")
+            fallback_text = intro_phrase + "\n\n" + chunk_raw_text + "\n\nПросимо завчасно зарядити пристрої та з розумінням поставитись до тимчасових незручностей."
+            results.append({"id": part_msg_id, "content": fallback_text, "hash": chunk_hash})
+            
+    return results
 
 if __name__ == "__main__":
     today_str = today.strftime("%Y-%m-%d")
     tomorrow_str = tomorrow.strftime("%Y-%m-%d")
 
-    tg_today_planned, hash_tp = get_tg_post(items_today, today, False, f"{today_str}_tg_planned")
-    tg_today_emergency, hash_te = get_tg_post(items_today, today, True, f"{today_str}_tg_emergency")
-    tg_tomorrow_planned, hash_tmp = get_tg_post(items_tomorrow, tomorrow, False, f"{tomorrow_str}_tg_planned")
-    tg_tomorrow_emergency, hash_tme = get_tg_post(items_tomorrow, tomorrow, True, f"{tomorrow_str}_tg_emergency")
+    today_planned_posts = get_tg_post(items_today, today, False, f"{today_str}_tg_planned", allow_splitting=True)
+    today_emergency_posts = get_tg_post(items_today, today, True, f"{today_str}_tg_emergency", allow_splitting=True)
+    tomorrow_planned_posts = get_tg_post(items_tomorrow, tomorrow, False, f"{tomorrow_str}_tg_planned", allow_splitting=False)
+    tomorrow_emergency_posts = get_tg_post(items_tomorrow, tomorrow, True, f"{tomorrow_str}_tg_emergency", allow_splitting=False)
 
     # ------------------------------------------------------------
     # Збереження messages.json
@@ -1254,10 +1354,19 @@ if __name__ == "__main__":
     add_message(f"{today_str}_feed", today_str, "feed_today", feed_today_content)
     add_message(f"{tomorrow_str}_feed", tomorrow_str, "feed_tomorrow", feed_tomorrow_content)
 
-    add_message(f"{today_str}_tg_planned", today_str, "tg_planned", tg_today_planned, hash_tp)
-    add_message(f"{today_str}_tg_emergency", today_str, "tg_emergency", tg_today_emergency, hash_te)
-    add_message(f"{tomorrow_str}_tg_planned", tomorrow_str, "tg_planned", tg_tomorrow_planned, hash_tmp)
-    add_message(f"{tomorrow_str}_tg_emergency", tomorrow_str, "tg_emergency", tg_tomorrow_emergency, hash_tme)
+    # Очищаємо кеш сьогоднішнього та завтрашнього дня, щоб уникнути дублювання старих частин
+    keys_to_delete = [k for k in messages_dict.keys() if k.startswith(today_str) or k.startswith(tomorrow_str)]
+    for k in keys_to_delete:
+        del messages_dict[k]
+
+    for post in today_planned_posts:
+        add_message(post["id"], today_str, "tg_planned", post["content"], post["hash"])
+    for post in today_emergency_posts:
+        add_message(post["id"], today_str, "tg_emergency", post["content"], post["hash"])
+    for post in tomorrow_planned_posts:
+        add_message(post["id"], tomorrow_str, "tg_planned", post["content"], post["hash"])
+    for post in tomorrow_emergency_posts:
+        add_message(post["id"], tomorrow_str, "tg_emergency", post["content"], post["hash"])
 
     # Garbage Collection: Видаляємо старі повідомлення (>40 днів)
     cutoff_date = get_kyiv_now() - timedelta(days=40)
