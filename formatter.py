@@ -361,11 +361,14 @@ def apply_street_corrections(records):
                 if isinstance(official_list, dict):
                     official_list = list(official_list.keys())
                 
-                is_official = False
-                for off_name in official_list:
-                    if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
-                        is_official = True
-                        break
+                if not official_list:
+                    is_official = True
+                else:
+                    is_official = False
+                    for off_name in official_list:
+                        if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
+                            is_official = True
+                            break
                 
                 if not is_official and settlement != "Пісочниця":
                     # Run AI decolonization check
@@ -601,11 +604,14 @@ def apply_street_corrections(records):
         for s in all_rec_streets:
             s_det = s_det_map.get(s)
             # Check if it is in official list
-            is_official = False
-            for off_name in official_list:
-                if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
-                    is_official = True
-                    break
+            if not official_list:
+                is_official = True
+            else:
+                is_official = False
+                for off_name in official_list:
+                    if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
+                        is_official = True
+                        break
             
             if is_official:
                 if s in matched_streets:
@@ -759,7 +765,7 @@ def generate_with_validation(prompt, items, max_retries=2):
     for attempt in range(max_retries + 1):
         content = ask_ai(prompt)
         if not content:
-            return None
+            continue
         
         missing_streets = []
         for rec in items:
@@ -767,13 +773,18 @@ def generate_with_validation(prompt, items, max_retries=2):
                 if street not in content:
                     missing_streets.append(street)
         
-        if not missing_streets:
+        has_partial = any(x in content.lower() for x in ["частково", "частков", "частк."])
+        
+        if not missing_streets and not has_partial:
             return content
             
-        print(f"[WARN] Спроба {attempt + 1}: ШІ загубив вулиці ({', '.join(missing_streets)}). Повторюю генерацію...")
+        if missing_streets:
+            print(f"[WARN] Спроба {attempt + 1}: ШІ загубив вулиці ({', '.join(missing_streets)}). Повторюю генерацію...")
+        elif has_partial:
+            print(f"[WARN] Спроба {attempt + 1}: ШІ використав скорочення 'частково'. Повторюю генерацію...")
     
-    print("[ERROR] ШІ не зміг згенерувати повний список без втрат після всіх спроб.")
-    return content + "\n\n[УВАГА] Можливо, ШІ переніс не всі вулиці. Перевірте джерело."
+    print("[ERROR] ШІ не зміг згенерувати повний список без втрат чи скорочень після всіх спроб.")
+    return None
 
 # ------------------------------------------------------------
 # Допоміжні функції для очищення адрес стрічки
@@ -1189,8 +1200,8 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
     raw_text = "\n".join(raw_text_parts)
     
     
-    # Кешування
-    text_hash = hashlib.md5(raw_text.encode('utf-8')).hexdigest()
+    # Кешування (v3: скидаємо кеш, бо оновили промпт та правила скорочення)
+    text_hash = hashlib.md5(f"{raw_text}_v3".encode('utf-8')).hexdigest()
     if msg_id in messages_dict:
         old_msg = messages_dict[msg_id]
         if old_msg.get("hash") == text_hash and old_msg.get("content"):
@@ -1210,6 +1221,7 @@ def get_tg_post(items, target_date, is_emergency, msg_id):
 4. Офіційний, діловий тон, але привабливе і зрозуміле структурування. Використовуй звичайні дефіси "-" для маркованих списків.
 5. ЗГРУПУЙ населені пункти за округами (СО), які вказані в квадратних дужках. Спочатку має йти Місто Старокостянтинів, потім інші округи.
 6. В кінці додай коротке: "Просимо завчасно зарядити пристрої та з розумінням поставитись до тимчасових незручностей."
+7. КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати слово "частково" або "(частково)" для будь-Яких вулиць. Виводь повні списки будинків повністю, без жодних скорочень, точно так, як вони вказані в сирих даних (наприклад, "(буд. 1, 2, 3, 4, 5)").
 
 Сирі дані для обробки:
 {raw_text}
