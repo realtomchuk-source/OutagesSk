@@ -806,12 +806,26 @@ function renderTelegram(container) {
                     `;
                 }
 
+                let cardStyle = '';
+                let updatedBadge = '';
+                let updatedNote = '';
+                if (msg.is_updated) {
+                    const upTime = formatDateTimeParts(msg.updated_at).time;
+                    cardStyle = 'border: 2px dashed #ff9800; background: rgba(255, 152, 0, 0.03);';
+                    updatedBadge = `<span style="font-size: 11px; font-weight: bold; background: #ff9800; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">⚠️ Змінено о ${upTime}</span>`;
+                    updatedNote = `<div style="font-size: 11px; color: #d97706; font-weight: bold; margin-bottom: 10px;">⚠️ Ця частина містить зміни. Рекомендується опублікувати її повторно!</div>`;
+                }
+
                 html += `
-                    <div class="tg-card">
+                    <div class="tg-card" style="${cardStyle}">
                         <h4 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px;">
-                            <span>${partLabel}: ${t.title}</span>
+                            <span style="display: flex; align-items: center; flex-wrap: wrap; gap: 5px;">
+                                <span>${partLabel}: ${t.title}</span>
+                                ${updatedBadge}
+                            </span>
                             <span style="font-size: 11px; font-weight: normal; background: rgba(128,128,128,0.1); padding: 2px 6px; border-radius: 4px; color: var(--secondary-text);">${content.length} симв.</span>
                         </h4>
+                        ${updatedNote}
                         <div class="post-body" id="${elementId}">${escapeHtml(content)}</div>
                         <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
                             <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('${elementId}').innerText)">📋 Копіювати</button>

@@ -899,20 +899,27 @@ def generate_feed_text(items, label):
         typ, settlement, time_range = k
         streets_dict = grouped[k]
         
-        street_parts = []
+        regular_parts = []
+        partial_streets = []
         for s_name in sorted(streets_dict.keys()):
             houses_set = streets_dict[s_name]
             if houses_set:
                 sorted_houses = sorted(list(houses_set), key=lambda x: (int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 9999, x))
                 if len(sorted_houses) <= 5:
-                    street_parts.append(f"{s_name} ({', '.join(sorted_houses)})")
+                    regular_parts.append(f"{s_name} ({', '.join(sorted_houses)})")
                 else:
-                    street_parts.append(f"{s_name} (частково)")
+                    partial_streets.append(s_name)
             else:
-                street_parts.append(s_name)
+                regular_parts.append(s_name)
                 
-        if street_parts:
-            streets_str = "; ".join(street_parts)
+        final_parts = []
+        if regular_parts:
+            final_parts.extend(regular_parts)
+        if partial_streets:
+            final_parts.append(f"{', '.join(partial_streets)} (частково)")
+            
+        if final_parts:
+            streets_str = "; ".join(final_parts)
             parts.append(f"{typ}: {settlement} ({time_range}): {streets_str}")
             
     return f"[{label}] " + " | ".join(parts) if parts else f"[{label}] Інформація про відключення відсутня."
@@ -1134,15 +1141,18 @@ except (FileNotFoundError, json.JSONDecodeError):
 
 messages_dict = {m["id"]: m for m in existing_messages}
 
-def add_message(m_id, m_date, m_type, m_content, m_hash=None):
+def add_message(m_id, m_date, m_type, m_content, m_hash=None, is_updated=False, updated_at=None):
     if m_content:
+        old_created_at = messages_dict.get(m_id, {}).get("created_at")
         messages_dict[m_id] = {
             "id": m_id,
             "date": m_date,
             "type": m_type,
             "content": m_content,
             "hash": m_hash,
-            "created_at": get_kyiv_now().isoformat()
+            "created_at": old_created_at if old_created_at else get_kyiv_now().isoformat(),
+            "is_updated": is_updated,
+            "updated_at": updated_at
         }
 
 # ------------------------------------------------------------
@@ -1308,8 +1318,27 @@ def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=F
             old_msg = messages_dict[part_msg_id]
             if old_msg.get("hash") == chunk_hash and old_msg.get("content"):
                 print(f"[{part_msg_id}] Хеш співпадає. Використано кеш (без виклику ШІ).")
-                results.append({"id": part_msg_id, "content": old_msg.get("content"), "hash": chunk_hash})
+                results.append({
+                    "id": part_msg_id,
+                    "content": old_msg.get("content"),
+                    "hash": chunk_hash,
+                    "is_updated": old_msg.get("is_updated", False),
+                    "updated_at": old_msg.get("updated_at", None)
+                })
                 continue
+                
+        is_updated = False
+        updated_at = None
+        # Позначаємо оновленнями лише сьогоднішні повідомлення (де allow_splitting=True)
+        # та якщо це повідомлення вже раніше існувало в нашому кеші з іншим хешем
+        if allow_splitting and part_msg_id in messages_dict:
+            is_updated = True
+            updated_at = get_kyiv_now().isoformat()
+            
+        update_prefix = ""
+        if is_updated:
+            now_time_str = get_kyiv_now().strftime("%H:%M")
+            update_prefix = f"⚠️ УВАГА! Оновлено о {now_time_str}:\n\n"
                 
         prompt = f"""Створи офіційний Telegram-пост про {typ_header} ВІДКЛЮЧЕННЯ електроенергії на {target_date.strftime('%d.%m.%Y')}.
 СУВОРІ ПРАВИЛА (ІГНОРУВАННЯ ПРИЗВЕДЕ ДО ПОМИЛКИ):
@@ -1329,13 +1358,27 @@ def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=F
         ai_called = True
         ai_result = generate_with_validation(prompt, chunk_items)
         if ai_result:
-            results.append({"id": part_msg_id, "content": ai_result, "hash": chunk_hash})
+            final_content = update_prefix + ai_result
+            results.append({
+                "id": part_msg_id, 
+                "content": final_content, 
+                "hash": chunk_hash,
+                "is_updated": is_updated,
+                "updated_at": updated_at
+            })
         else:
             print(f"[WARN] ШІ недоступний для {part_msg_id}. Використовую резервний шаблон.")
             global warnings_list
             warnings_list.append(f"ШІ недоступний для {part_msg_id}")
             fallback_text = intro_phrase + "\n\n" + chunk_raw_text + "\n\nПросимо завчасно зарядити пристрої та з розумінням поставитись до тимчасових незручностей."
-            results.append({"id": part_msg_id, "content": fallback_text, "hash": chunk_hash})
+            final_content = update_prefix + fallback_text
+            results.append({
+                "id": part_msg_id, 
+                "content": final_content, 
+                "hash": chunk_hash,
+                "is_updated": is_updated,
+                "updated_at": updated_at
+            })
             
     return results
 
@@ -1351,22 +1394,32 @@ if __name__ == "__main__":
     # ------------------------------------------------------------
     # Збереження messages.json
     # ------------------------------------------------------------
-    add_message(f"{today_str}_feed", today_str, "feed_today", feed_today_content)
-    add_message(f"{tomorrow_str}_feed", tomorrow_str, "feed_tomorrow", feed_tomorrow_content)
+    posts_to_add = []
+    posts_to_add.append((f"{today_str}_feed", today_str, "feed_today", feed_today_content, None, False, None))
+    posts_to_add.append((f"{tomorrow_str}_feed", tomorrow_str, "feed_tomorrow", feed_tomorrow_content, None, False, None))
 
-    # Очищаємо кеш сьогоднішнього та завтрашнього дня, щоб уникнути дублювання старих частин
-    keys_to_delete = [k for k in messages_dict.keys() if k.startswith(today_str) or k.startswith(tomorrow_str)]
+    for post in today_planned_posts:
+        posts_to_add.append((post["id"], today_str, "tg_planned", post["content"], post["hash"], post.get("is_updated", False), post.get("updated_at")))
+    for post in today_emergency_posts:
+        posts_to_add.append((post["id"], today_str, "tg_emergency", post["content"], post["hash"], post.get("is_updated", False), post.get("updated_at")))
+    for post in tomorrow_planned_posts:
+        posts_to_add.append((post["id"], tomorrow_str, "tg_planned", post["content"], post["hash"], post.get("is_updated", False), post.get("updated_at")))
+    for post in tomorrow_emergency_posts:
+        posts_to_add.append((post["id"], tomorrow_str, "tg_emergency", post["content"], post["hash"], post.get("is_updated", False), post.get("updated_at")))
+
+    current_post_ids = {p[0] for p in posts_to_add}
+
+    # Видаляємо лише застарілі частини сьогодні/завтра, яких більше немає в поточному запуску
+    keys_to_delete = [
+        k for k in messages_dict.keys() 
+        if (k.startswith(today_str) or k.startswith(tomorrow_str)) and k not in current_post_ids
+    ]
     for k in keys_to_delete:
         del messages_dict[k]
 
-    for post in today_planned_posts:
-        add_message(post["id"], today_str, "tg_planned", post["content"], post["hash"])
-    for post in today_emergency_posts:
-        add_message(post["id"], today_str, "tg_emergency", post["content"], post["hash"])
-    for post in tomorrow_planned_posts:
-        add_message(post["id"], tomorrow_str, "tg_planned", post["content"], post["hash"])
-    for post in tomorrow_emergency_posts:
-        add_message(post["id"], tomorrow_str, "tg_emergency", post["content"], post["hash"])
+    # Зберігаємо та оновлюємо
+    for p_id, p_date, p_type, p_content, p_hash, is_upd, upd_at in posts_to_add:
+        add_message(p_id, p_date, p_type, p_content, p_hash, is_updated=is_upd, updated_at=upd_at)
 
     # Garbage Collection: Видаляємо старі повідомлення (>40 днів)
     cutoff_date = get_kyiv_now() - timedelta(days=40)
