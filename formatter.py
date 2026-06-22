@@ -886,7 +886,7 @@ def get_grouped_outages(items):
     return grouped
 
 # ------------------------------------------------------------
-def group_streets_by_prefix(items):
+def group_streets_by_prefix(items, separator="; "):
     known_prefixes = ["вул. ", "пров. ", "пл. ", "проїзд ", "бульвар ", "автодорога "]
     groups = {}
     prefix_order = []
@@ -908,7 +908,7 @@ def group_streets_by_prefix(items):
     sorted_prefixes = sorted(prefix_order, key=lambda p: (0 if p == "вул. " else 1 if p == "пров. " else 2, p))
     for p in sorted_prefixes:
         elements = sorted(groups[p])
-        elements_str = ", ".join(elements)
+        elements_str = separator.join(elements)
         if p:
             parts.append(f"{p}{elements_str}")
         else:
@@ -937,14 +937,14 @@ def generate_feed_text(items, label):
             if houses_set:
                 sorted_houses = sorted(list(houses_set), key=lambda x: (int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 9999, x))
                 if len(sorted_houses) <= 5:
-                    regular_parts.append(f"{s_name} ({', '.join(sorted_houses)})")
+                    regular_parts.append(f"{s_name} {', '.join(sorted_houses)}")
                 else:
                     partial_streets.append(s_name)
             else:
                 regular_parts.append(s_name)
                 
-        regular_str = group_streets_by_prefix(regular_parts) if regular_parts else ""
-        partial_str = f"частково: {group_streets_by_prefix(partial_streets)}" if partial_streets else ""
+        regular_str = group_streets_by_prefix(regular_parts, separator="; ") if regular_parts else ""
+        partial_str = f"частково: {group_streets_by_prefix(partial_streets, separator=', ')}" if partial_streets else ""
         
         final_parts = []
         if regular_str:
@@ -1241,8 +1241,8 @@ def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=F
             if houses_set:
                 # Сортування будинків
                 sorted_houses = sorted(list(houses_set), key=lambda x: (int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 9999, x))
-                # Виводимо весь масив без жодних скорочень типу "(частково)"
-                streets_str_list.append(f"{s_name} (буд. {', '.join(sorted_houses)})")
+                # Виводимо весь масив без жодних скорочень типу "(частково)", без круглих дужок
+                streets_str_list.append(f"{s_name} буд. {', '.join(sorted_houses)}")
             else:
                 streets_str_list.append(s_name)
                 
@@ -1382,7 +1382,7 @@ def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=F
 4. Офіційний, діловий тон, але привабливе і зрозуміле структурування. Використовуй звичайні дефіси "-" для маркованих списків.
 5. ЗГРУПУЙ населені пункти за округами (СО), які вказані в квадратних дужках. Спочатку має йти Місто Старокостянтинів, потім інші округи.
 6. В кінці додай коротке: "Просимо завчасно зарядити пристрої та з розумінням поставитись до тимчасових незручностей."
-7. КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати слово "частково" або "(частково)" для будь-Яких вулиць. Виводь повні списки будинків повністю, без жодних скорочень, точно так, як вони вказані в сирих даних (наприклад, "(буд. 1, 2, 3, 4, 5)").
+7. КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати слово "частково" або "(частково)" для будь-яких вулиць. Також КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати круглі дужки навколо будинків. Виводь повні списки будинків відразу після слова "буд." без дужок, точно так, як вказано в сирих даних (наприклад, "буд. 1, 2, 3, 4, 5").
 
 Сирі дані для обробки:
 {chunk_raw_text}
