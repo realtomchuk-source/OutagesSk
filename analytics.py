@@ -3,6 +3,10 @@ import os
 import sys
 from datetime import datetime, timedelta
 import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Завантажуємо змінні оточення з .env
+load_dotenv()
 
 # Фікс для Windows консолі
 try:
@@ -28,6 +32,9 @@ def generate_weekly_report():
     
     weekly_records = []
     for rec in archive:
+        # Виключаємо "Пісочницю" з щотижневої аналітики
+        if rec.get("settlement") == "Пісочниця":
+            continue
         start_str = rec.get("start_datetime", "")
         if len(start_str) >= 5 and not " " in start_str[-6:]:
             start_str = f"{start_str[:-5]} {start_str[-5:]}"
