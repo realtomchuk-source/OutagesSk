@@ -1195,9 +1195,25 @@ function renderStreets(container) {
         html += `<p style="font-size:13px; color:var(--secondary-text); font-style:italic;">Немає виявлених сумнівних вулиць.</p>`;
     } else {
         doubtful.forEach(street => {
+            let origSettSuffix = "";
+            if (selectedSettlement === "Пісочниця") {
+                const origSetts = new Set();
+                archiveOutages.forEach(rec => {
+                    if (rec.settlement === "Пісочниця") {
+                        const hasStreet = (rec.streets || []).map(s => s.trim()).includes(street) || 
+                                          (rec.streets_detailed || []).some(sd => sd.name && sd.name.trim() === street);
+                        if (hasStreet && rec.original_settlement) {
+                            origSetts.add(rec.original_settlement);
+                        }
+                    }
+                });
+                if (origSetts.size > 0) {
+                    origSettSuffix = ` <span style="font-size:11px; font-weight:normal; opacity:0.75; display:block; margin-top:2px; color:var(--text);">(ориг: ${escapeHtml(Array.from(origSetts).join(", "))})</span>`;
+                }
+            }
             html += `
                 <li style="display:flex; justify-content:space-between; align-items:center; padding: 8px 10px; border-bottom: 1px solid rgba(220,53,69,0.05); font-size: 14px; color: var(--danger);">
-                    <strong style="max-width: 50%; word-break: break-all;">${escapeHtml(street)}</strong>
+                    <strong style="max-width: 50%; word-break: break-all;">${escapeHtml(street)}${origSettSuffix}</strong>
                     <div style="display:flex; gap: 5px;">
                         <button onclick="window.whitelistStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#28a745; border:none; color:#fff; cursor:pointer;" title="Обілити (✓)">✓</button>
                         <button onclick="window.editDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#007bff; border:none; color:#fff; cursor:pointer;" title="Редагувати (✏️)">✏️</button>

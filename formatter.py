@@ -310,6 +310,7 @@ Instructions:
 def apply_street_corrections(records):
     official_streets_path = os.getenv("OFFICIAL_STREETS_PATH", "data/official_streets.json")
     corrections_path = os.getenv("STREET_CORRECTIONS_PATH", "data/street_corrections.json")
+    districts_path = "data/districts.json"
     
     official_data = {}
     if os.path.exists(official_streets_path):
@@ -318,6 +319,14 @@ def apply_street_corrections(records):
                 official_data = json.load(f)
         except Exception as e:
             print(f"[ERROR] Не вдалося завантажити official_streets.json: {e}")
+            
+    districts_data = {}
+    if os.path.exists(districts_path):
+        try:
+            with open(districts_path, "r", encoding="utf-8") as f:
+                districts_data = json.load(f)
+        except Exception as e:
+            print(f"[ERROR] Не вдалося завантажити districts.json: {e}")
             
     corrections_data = {}
     if os.path.exists(corrections_path):
@@ -613,7 +622,22 @@ def apply_street_corrections(records):
                         is_official = True
                         break
             
-            if is_official:
+            # Check if original settlement is a community settlement
+            is_community = False
+            if settlement:
+                sett_clean = re.sub(r"^(с\.|м\.|c\.|m\.)\s*", "", settlement.strip()).strip()
+                if sett_clean in ["Старокостянтинів", "м. Старокостянтинів", "Старокостянтинівська громада"]:
+                    is_community = True
+                else:
+                    for villages in districts_data.values():
+                        if any(v.lower().replace(" ", "") == sett_clean.lower().replace(" ", "") for v in villages):
+                            is_community = True
+                            break
+                            
+            # вул. Озерна always goes to Sandbox
+            is_ozerna = (s.strip().lower() == "вул. озерна" or normalize_street_name(s) == "озерна")
+            
+            if is_official or (is_community and not is_ozerna):
                 if s in matched_streets:
                     verified_streets.append(s)
                 if s_det:

@@ -125,9 +125,104 @@
       "target": "пров. Олімпійський",
       "timestamp": "2026-06-21T17:42:32.296027Z",
       "auto": true
+    },
+    "вул. Островського": {
+      "action": "rename",
+      "target": "вул. Острозького",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "пров. Воїнів інтернаціоналістів": {
+      "action": "rename",
+      "target": "вул. Кривоноса",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:48.014535Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Героїв України",
+      "timestamp": "2026-06-24T16:35:48.378685Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:49.527803Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:21.415733Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "rename",
+      "target": "пров. Трипільський",
+      "timestamp": "2026-06-24T16:36:22.684673Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:07.079187Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Залізнична",
+      "timestamp": "2026-06-24T16:38:05.427026Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:39.474202Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:41.682262Z",
+      "auto": true
     }
   },
-  "с. Волиця-Керекешина": {},
+  "с. Волиця-Керекешина": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:03.269419Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:21.324835Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:33.390989Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:34.540392Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:56.250723Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:37:57.734947Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:59.462550Z",
+      "auto": true
+    }
+  },
   "с. Попівці": {
     "вул. автодорога (Городище-Рівне-Старокостянтинів) - Попівці": {
       "action": "hide",
@@ -136,9 +231,248 @@
     "вул. автодорога місцевого значення С 231-422/11-25": {
       "action": "hide",
       "timestamp": "2026-06-24T08:44:32.567Z"
+    },
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:16.664995Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:37.802915Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:13.732513Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:14.753982Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:16.048795Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:36:06.960071Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:08.067816Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:50.971409Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:52.359355Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:53.659691Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:15.343145Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Зарічна",
+      "timestamp": "2026-06-24T16:38:23.726239Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:24.946303Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:00.801993Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:02.001823Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:00.843227Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:01.990777Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:03.381336Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:04.997227Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:06.089905Z",
+      "auto": true
+    },
+    "вул. Хмельницького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:33.453058Z",
+      "auto": true
     }
   },
-  "с. Радківці": {},
+  "с. Радківці": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:18.090812Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:39.008734Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:17.120270Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:18.132293Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:19.252235Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:20.384352Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Перемоги",
+      "timestamp": "2026-06-24T16:36:09.415826Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:10.703887Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:54.879284Z",
+      "auto": true
+    },
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:56.027284Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:57.273660Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:59.423051Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:16.732211Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:26.064203Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:27.730138Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:28.894452Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:35.254165Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:36.358311Z",
+      "auto": true
+    },
+    "вул. Зарічна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:07.277193Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:08.689341Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:09.961342Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:11.075139Z",
+      "auto": true
+    },
+    "вул. Молодіжна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:12.321304Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:13.533164Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:14.769385Z",
+      "auto": true
+    },
+    "вул. Хмельницького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:35.360950Z",
+      "auto": true
+    }
+  },
   "с. Раштівка": {},
   "с. Росолівці": {},
   "с. Самчики": {
@@ -162,9 +496,222 @@
       "action": "rename",
       "target": "пров. Замкова",
       "timestamp": "2026-06-24T11:15:01.295Z"
+    },
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:19.784942Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:40.996622Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:21.615822Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:22.864274Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:24.083977Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:11.839600Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:13.400515Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:00.687209Z",
+      "auto": true
+    },
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:02.019252Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:03.163305Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:04.339204Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:18.114998Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:30.290418Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:31.554130Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:03.082172Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:04.161947Z",
+      "auto": true
+    },
+    "вул. Зарічна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:15.905099Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:16.869085Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:18.073571Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:19.398941Z",
+      "auto": true
+    },
+    "вул. Молодіжна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:20.637107Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:22.053245Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:23.269104Z",
+      "auto": true
+    },
+    "вул. Хмельницького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:36.581112Z",
+      "auto": true
     }
   },
-  "с. Сахнівці": {},
+  "с. Сахнівці": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:07.497097Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:28.388517Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:49.093716Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:50.229268Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:35:50.747837Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:52.556047Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:24.474671Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:25.583566Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:26.843529Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:08.211735Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Миру",
+      "timestamp": "2026-06-24T16:38:06.894825Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:42.962231Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:44.286095Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:05.474103Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:06.726211Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:08.157894Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:09.509910Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:10.685834Z",
+      "auto": true
+    }
+  },
   "с. Григорівка": {
     "вул. 227км а/д Васьковичи-Порубне": {
       "action": "hide",
@@ -217,18 +764,279 @@
       ],
       "target_street": "пров. 2-й Польовий",
       "timestamp": "2026-06-24T07:53:49.277Z"
+    },
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:14.545208Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:35.138742Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:05.311207Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:07.176449Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:08.485701Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:36:01.221093Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:02.351865Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:42.250120Z",
+      "auto": true
+    },
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:43.504420Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:44.727289Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:46.371394Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:05.655189Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:18.648607Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:19.962715Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:55.419007Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:57.110096Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:45.329415Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:46.621421Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:48.117548Z",
+      "auto": true
+    },
+    "вул. Молодіжна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:50.349496Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:51.477488Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:52.887109Z",
+      "auto": true
+    },
+    "вул. Хмельницького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:31.956963Z",
+      "auto": true
     }
   },
   "с. Красносілка": {
     "вул. територія Веснянського старостинського округу Старокостянтинівської міської територіальної громади": {
       "action": "delete",
       "timestamp": "2026-06-24T07:56:38.685Z"
+    },
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:04.441438Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:25.040798Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:35.768019Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:36.920055Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:38.463948Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:38:00.692731Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Незалежності",
+      "timestamp": "2026-06-24T16:38:02.086764Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:03.834657Z",
+      "auto": true
     }
   },
   "с. Пашківці": {
     "вул. Автодорога Городище-Рівне-Старокостянтинів": {
       "action": "hide",
       "timestamp": "2026-06-24T08:22:22.558Z"
+    },
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:15.575332Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:36.516916Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:10.220414Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:11.496489Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:12.600496Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:36:03.789246Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "rename",
+      "target": "вул. Миру",
+      "timestamp": "2026-06-24T16:36:05.222622Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:47.563477Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:48.691379Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:49.799165Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:14.219101Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:38:21.202618Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:22.471200Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:58.186063Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:59.608289Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:53.937282Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:55.161281Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:56.362006Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:57.581349Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:58.737570Z",
+      "auto": true
     }
   },
   "Пісочниця": {
@@ -244,6 +1052,870 @@
       "action": "rename",
       "target": "вул. Південна",
       "timestamp": "2026-06-24T11:33:57.283Z"
+    },
+    "вул. Вільшана": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Великий Чернятин"
+      ],
+      "target_street": "вул. Вільшана",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Гагаріна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_street": "вул. Гагаріна",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Газопровідна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Веснянка"
+      ],
+      "target_street": "вул. Газопровідна",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Грінчуків": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Лажева"
+      ],
+      "target_street": "вул. Грінчуків",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Діброва": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Малий Чернятин"
+      ],
+      "target_street": "вул. Діброва",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Колгоспна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_street": "вул. Колгоспна",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Кривоноса": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Малий Чернятин"
+      ],
+      "target_street": "вул. Кривоноса",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Полісся": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Лажева"
+      ],
+      "target_street": "вул. Полісся",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Пригонова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Великий Чернятин"
+      ],
+      "target_street": "вул. Пригонова",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Південна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_street": "вул. Південна",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Фермська": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_street": "вул. Фермська",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "вул. Ясельна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Малий Чернятин"
+      ],
+      "target_street": "вул. Ясельна",
+      "timestamp": "2026-06-24T13:08:18.307230Z"
     }
-  }
+  },
+  "с. Великий Чернятин": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:33:59.401335Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:23.848708Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:29.432184Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:30.951996Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:32.178522Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:37:52.791040Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Центральна",
+      "timestamp": "2026-06-24T16:37:53.958964Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:55.074772Z",
+      "auto": true
+    }
+  },
+  "с. Малий Чернятин": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:01.844984Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:22.610659Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:25.324139Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:26.892105Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:28.176066Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Сковороди",
+      "timestamp": "2026-06-24T16:37:49.194821Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Незалежності",
+      "timestamp": "2026-06-24T16:37:50.530783Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:51.682851Z",
+      "auto": true
+    }
+  },
+  "с. Оріхівка": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:06.217399Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:26.992770Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:39.495750Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:40.586275Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Свободи",
+      "timestamp": "2026-06-24T16:37:43.691057Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:45.053997Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:46.298761Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:47.880458Z",
+      "auto": true
+    }
+  },
+  "с. Хутори": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:08.797274Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:30.056693Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:51.272490Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:52.452401Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:53.720645Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:55.072653Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Незалежності",
+      "timestamp": "2026-06-24T16:35:53.754160Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:54.855873Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:28.035596Z",
+      "auto": true
+    },
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:29.439621Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:30.635868Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:31.783498Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:09.448697Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:08.002572Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:09.062528Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:45.809994Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:47.022260Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:11.917810Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:13.033814Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:14.149800Z",
+      "auto": true
+    },
+    "вул. Молодіжна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:15.261743Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:16.504052Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:17.569846Z",
+      "auto": true
+    },
+    "вул. Хмельницького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:26.117029Z",
+      "auto": true
+    }
+  },
+  "с. Грибенинка": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:09.920899Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:31.400744Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:42.112842Z",
+      "auto": true
+    },
+    "вул. Острозького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:43.252786Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:44.560331Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:45.764977Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:46.824772Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:56.081210Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:57.387737Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:32.939542Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:34.451646Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:35.815653Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:10.547789Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:10.347023Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:11.390405Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:48.450186Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:49.533992Z",
+      "auto": true
+    },
+    "вул. Зарічна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:18.621723Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:19.947560Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:21.167687Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:22.453689Z",
+      "auto": true
+    },
+    "вул. Молодіжна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:25.169782Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:26.318350Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:27.587758Z",
+      "auto": true
+    },
+    "вул. Хмельницького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:27.345030Z",
+      "auto": true
+    }
+  },
+  "с. Демківці": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:11.380896Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:32.744954Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:56.240661Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:57.364564Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:58.520539Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:00.468493Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Сагайдачного",
+      "timestamp": "2026-06-24T16:35:45.437876Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:46.736152Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:36.947673Z",
+      "auto": true
+    },
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:38.087491Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:39.662984Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:41.015302Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:11.591018Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:12.602635Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:13.770618Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:14.798949Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:50.848267Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:51.982174Z",
+      "auto": true
+    },
+    "вул. Зарічна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:28.909738Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:30.077767Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:31.261607Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:32.461596Z",
+      "auto": true
+    },
+    "вул. Молодіжна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:33.849571Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:35.063392Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:36.245707Z",
+      "auto": true
+    },
+    "вул. Хмельницького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:28.832965Z",
+      "auto": true
+    }
+  },
+  "с. Жабче": {
+    "вул. Калинова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:13.388655Z",
+      "auto": true
+    },
+    "вул. Героїв України": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:34:33.908263Z",
+      "auto": true
+    },
+    "вул. Озерна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:01.720500Z",
+      "auto": true
+    },
+    "вул. Франка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:02.948512Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:04.152896Z",
+      "auto": true
+    },
+    "вул. Леніна": {
+      "action": "rename",
+      "target": "вул. Свободи",
+      "timestamp": "2026-06-24T16:35:58.707991Z",
+      "auto": true
+    },
+    "вул. Мирна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:00.026724Z",
+      "auto": true
+    },
+    "вул. Козацька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:16.046550Z",
+      "auto": true
+    },
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:17.629196Z",
+      "auto": true
+    },
+    "вул. Шемчука": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:18.775539Z",
+      "auto": true
+    },
+    "пров. Слави": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:36:19.960020Z",
+      "auto": true
+    },
+    "вул. Кругова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:12.855004Z",
+      "auto": true
+    },
+    "вул. Дзержинського": {
+      "action": "rename",
+      "target": "вул. Свободи",
+      "timestamp": "2026-06-24T16:38:15.958652Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:17.086866Z",
+      "auto": true
+    },
+    "вул. Ланковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:53.154118Z",
+      "auto": true
+    },
+    "пров. Весняний": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:54.289986Z",
+      "auto": true
+    },
+    "вул. Зарічна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:37.685445Z",
+      "auto": true
+    },
+    "вул. Климбівка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:38.941609Z",
+      "auto": true
+    },
+    "вул. Кобеева": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:40.505826Z",
+      "auto": true
+    },
+    "вул. Культури": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:41.625553Z",
+      "auto": true
+    },
+    "вул. Молодіжна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:42.841336Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:43.985495Z",
+      "auto": true
+    },
+    "вул. Хмельницького": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:30.613137Z",
+      "auto": true
+    }
+  },
+  "с. Великі Мацевичі": {},
+  "с. Громівка": {},
+  "с. Писарівка": {
+    "вул. Комсомольська": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:19.302965Z",
+      "auto": true
+    },
+    "вул. Лесі Украінки": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:20.423129Z",
+      "auto": true
+    },
+    "вул. Лісова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:21.875140Z",
+      "auto": true
+    },
+    "вул. Підлісна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:22.987016Z",
+      "auto": true
+    },
+    "вул. Хмельницького Богдана": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:24.059054Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:25.050883Z",
+      "auto": true
+    },
+    "вул. Демковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:35.799238Z",
+      "auto": true
+    },
+    "вул. Заставна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:37.222948Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:38.574902Z",
+      "auto": true
+    },
+    "вул. Пролетарська": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:38:32.962435Z",
+      "auto": true
+    }
+  },
+  "с. Половинники": {
+    "вул. Зелена": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:41.555755Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:42.768116Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:35:44.248187Z",
+      "auto": true
+    },
+    "вул. Комсомольська": {
+      "action": "rename",
+      "target": "вул. Нагірна",
+      "timestamp": "2026-06-24T16:37:25.996371Z",
+      "auto": true
+    },
+    "вул. Лесі Украінки": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:27.281391Z",
+      "auto": true
+    },
+    "вул. Лісова": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:28.455009Z",
+      "auto": true
+    },
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:29.639055Z",
+      "auto": true
+    },
+    "вул. Підлісна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:30.854892Z",
+      "auto": true
+    },
+    "вул. Хмельницького Богдана": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:31.954891Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:33.183389Z",
+      "auto": true
+    },
+    "пров. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:34.454866Z",
+      "auto": true
+    },
+    "вул. Демковецька": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:39.762928Z",
+      "auto": true
+    },
+    "вул. Заставна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:41.219974Z",
+      "auto": true
+    },
+    "вул. Шкільна": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:37:42.402936Z",
+      "auto": true
+    },
+    "вул. Пролетарська": {
+      "action": "rename",
+      "target": "вул. Нагірна",
+      "timestamp": "2026-06-24T16:38:34.130255Z",
+      "auto": true
+    }
+  },
+  "с. Немирівка": {},
+  "с. Огіївці": {}
 }

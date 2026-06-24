@@ -12253,5 +12253,15 @@
     "houses": [
       "3"
     ]
+  },
+  {
+    "timestamp": "2026-06-24T12:34:46.577Z",
+    "action": "edit_official_house",
+    "settlement": "м. Старокостянтинів",
+    "old_name": "вул. Варчука",
+    "new_name": "28/1бл7 -> 28/1",
+    "houses": [
+      "28/1"
+    ]
   }
 ]
