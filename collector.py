@@ -48,28 +48,34 @@ def write_update_log(entry):
 def extract_settlement(city_text, villages_list):
     text = city_text.strip()
     hromada_match = re.search(r'\((.*?)\)', text)
-    if hromada_match:
-        hromada = hromada_match.group(1).strip()
-        # Якщо в дужках вказана інша громада (не Старокостянтинівська), ігноруємо її
-        if "Старокостянтинівська" not in hromada:
-            return None
-        name_part = text.split('(')[0].strip()
-    else:
-        name_part = text
+    if not hromada_match:
+        # Питання 3: якщо немає чіткого маркування нашої громади в дужках — ігноруємо запис
+        return None
         
-    # Видаляємо префікси м., с., смт.
-    name_part = re.sub(r'^(м|с|смт)\.\s*', '', name_part).strip()
+    hromada = hromada_match.group(1).strip()
+    # Якщо в дужках вказана інша громада (не Старокостянтинівська), ігноруємо її
+    if "Старокостянтинівська" not in hromada:
+        return None
+        
+    name_part = text.split('(')[0].strip()
     
-    # Шукаємо точний збіг у довіднику villages
-    if name_part in villages_list:
-        return name_part
-        
-    # Якщо точного збігу немає, робимо перевірку по підрядку як fallback
+    # Видаляємо префікси м., с., смт. на початку кожного населеного пункту в списку (якщо є розділювачі)
+    # Але для надійності будемо шукати назви сіл як цілі слова у всьому name_part
+    matched = []
+    normalized_name_part = name_part.lower()
     for v in villages_list:
-        if v in name_part:
-            return v
+        v_norm = v.lower()
+        # Шукаємо назву села як ціле слово з межами слів для уникнення хибних часткових збігів
+        pattern = r'(?<![a-zA-Zа-яА-ЯіІїЇєЄґҐ])' + re.escape(v_norm) + r'(?![a-zA-Zа-яА-ЯіІїЇєЄґҐ])'
+        if re.search(pattern, normalized_name_part):
+            matched.append(v)
             
-    return None
+    if not matched:
+        return None
+        
+    # Повертаємо знайдені населені пункти через кому
+    return ", ".join(matched)
+
 
 # ------------------------------------------------------------
 # 2. Налаштування Selenium (безголовий режим)
@@ -434,7 +440,10 @@ try:
         new_records = []
         for rec in records:
             settlement = rec.get("settlement")
-            dict_key = get_street_dict_key(settlement)
+            sett_candidates = [s.strip() for s in settlement.split(",") if s.strip()]
+            if not sett_candidates:
+                sett_candidates = ["м. Старокостянтинів"]
+            dict_key = get_street_dict_key(sett_candidates[0])
             
             sett_corrections = corrections_data.get(dict_key, {})
             
@@ -457,18 +466,120 @@ try:
                 s_det = s_det_map.get(s)
                 houses_str = s_det.get("houses", "") if s_det else ""
                 
-                rule = sett_corrections.get(s)
+                # Пошук правил для вулиці у всіх розпарсених кандидатах населених пунктів
+                rule = None
+                for cand in sett_candidates:
+                    cand_key = get_street_dict_key(cand)
+                    rule = corrections_data.get(cand_key, {}).get(s)
+                    if rule:
+                        break
+                        
                 if not rule:
                     is_official_here = False
-                    current_official_list = official_data.get(dict_key, {})
-                    if isinstance(current_official_list, dict):
-                        for off_name in current_official_list.keys():
-                            if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
-                                is_official_here = True
-                                break
+                    official_matches = []  # список (candidate_sett, official_name)
+                    for cand in sett_candidates:
+                        cand_key = get_street_dict_key(cand)
+                        off_dict = official_data.get(cand_key, {})
+                        if isinstance(off_dict, dict):
+                            for off_name in off_dict.keys():
+                                if s.strip().lower() == off_name.strip().lower() or normalize_street_name(s) == normalize_street_name(off_name):
+                                    official_matches.append((cand, off_name))
+                                    break
+                                    
+                    if official_matches:
+                        is_official_here = True
+                        # Якщо парсованих н.п. кілька, або якщо збіг відрізняється від первинного села
+                        if len(sett_candidates) > 1 or official_matches[0][0] != sett_candidates[0]:
+                            if len(official_matches) == 1:
+                                rule = {
+                                    "action": "move_to_settlement",
+                                    "target_settlements": [official_matches[0][0]],
+                                    "target_street": official_matches[0][1],
+                                    "auto": True
+                                }
+                            else:
+                                # Перевіряємо будинки для вибору правильного села (Питання 1 - Варіант А)
+                                expanded_houses = expand_house_ranges(houses_str)
+                                house_matches = []
+                                for cand, off_name in official_matches:
+                                    cand_key = get_street_dict_key(cand)
+                                    off_houses = official_data.get(cand_key, {}).get(off_name, {}).get("houses", [])
+                                    matched_houses = [h for h in expanded_houses if h in off_houses]
+                                    if matched_houses:
+                                        house_matches.append((cand, off_name))
+                                        
+                                if len(house_matches) == 1:
+                                    rule = {
+                                        "action": "move_to_settlement",
+                                        "target_settlements": [house_matches[0][0]],
+                                        "target_street": house_matches[0][1],
+                                        "auto": True
+                                    }
+                                else:
+                                    # Амбівалентність або немає номерів будинків — у Пісочницю
+                                    rule = {
+                                        "action": "move_to_settlement",
+                                        "target_settlements": ["Пісочниця"],
+                                        "target_street": s,
+                                        "auto": True
+                                    }
+                                    
                     if not is_official_here:
-                        rule = corrections_data.get("Пісочниця", {}).get(s)
-                        
+                        # Auto-routing fallback: шукаємо по всій громаді (Питання 2)
+                        community_matches = []
+                        norm_s = normalize_street_name(s)
+                        for other_sett, other_streets_dict in official_data.items():
+                            if other_sett == "Пісочниця":
+                                continue
+                            for off_name in other_streets_dict.keys():
+                                if s.strip().lower() == off_name.strip().lower() or norm_s == normalize_street_name(off_name):
+                                    clean_sett = re.sub(r"^(с\.|м\.|c\.|m\.)\s*", "", other_sett).strip()
+                                    community_matches.append((clean_sett, off_name))
+                                    break
+                                    
+                        if len(community_matches) == 1:
+                            rule = {
+                                "action": "move_to_settlement",
+                                "target_settlements": [community_matches[0][0]],
+                                "target_street": community_matches[0][1],
+                                "auto": True
+                            }
+                        elif len(community_matches) > 1:
+                            # Перевіряємо будинки для вибору правильного села у всій громаді
+                            expanded_houses = expand_house_ranges(houses_str)
+                            house_matches = []
+                            for other_sett_name, off_name in community_matches:
+                                other_sett_key = get_street_dict_key(other_sett_name)
+                                off_houses = official_data.get(other_sett_key, {}).get(off_name, {}).get("houses", [])
+                                matched_houses = [h for h in expanded_houses if h in off_houses]
+                                if matched_houses:
+                                    house_matches.append((other_sett_name, off_name))
+                                    
+                            if len(house_matches) == 1:
+                                rule = {
+                                    "action": "move_to_settlement",
+                                    "target_settlements": [house_matches[0][0]],
+                                    "target_street": house_matches[0][1],
+                                    "auto": True
+                                }
+                            else:
+                                rule = {
+                                    "action": "move_to_settlement",
+                                    "target_settlements": ["Пісочниця"],
+                                    "target_street": s,
+                                    "auto": True
+                                }
+                        else:
+                            # Перевіряємо чи є правило у Пісочниці в corrections_data
+                            rule = corrections_data.get("Пісочниця", {}).get(s)
+                            if not rule:
+                                rule = {
+                                    "action": "move_to_settlement",
+                                    "target_settlements": ["Пісочниця"],
+                                    "target_street": s,
+                                    "auto": True
+                                }
+                                
                 if not rule:
                     if s in streets:
                         remaining_streets.append(s)
@@ -625,6 +736,8 @@ try:
             for target_sett, data in moved_streets.items():
                 moved_rec = dict(rec)
                 moved_rec["settlement"] = target_sett
+                if target_sett == "Пісочниця":
+                    moved_rec["original_settlement"] = rec.get("settlement", "")
                 moved_rec["streets"] = list(dict.fromkeys(data["streets"]))
                 moved_rec["streets_detailed"] = data["streets_detailed"]
                 new_records.append(moved_rec)
