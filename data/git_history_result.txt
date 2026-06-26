@@ -1,0 +1,140 @@
+=== Git Log for 'Кривоноса' ===
+b5ffa31 Update outages and messages
+c7d942e Update outages and messages
+94f5aac Update outages and messages
+fb86108 Оновлення даних з адмінки
+0c6fc09 Update outages and messages
+e364e73 Update outages and messages
+9b45d4c Update outages and messages
+3f8e388 Update outages and messages
+f4e023a Update outages and messages
+ed5e7cc Update outages and messages
+be0d62a Update outages and messages
+65da4c0 Update outages and messages
+53cf90f Update outages and messages
+0b9f3eb Update outages and messages
+ad3919d Update outages and messages
+4469540 Update outages and messages
+a656d96 Update outages and messages
+36a1fb9 Group streets and lanes by prefix in news feed to avoid prefix repetitions
+328475b Change partial outages format in news feed to use prefix 'частково:'
+8c2a46e Optimize news feed text by grouping partial streets and add change detection to Telegram posts
+4da6a25 Fix Telegram posts using '(частково)' and enforce full house lists without abbreviations
+b969169 Update outages and messages
+9964513 Update outages and messages
+7558b15 Update outages and messages
+cbd4a40 Update outages and messages
+2329320 Update outages and messages
+7263540 Update outages and messages
+259d27f Update outages and messages
+bb06d35 Update outages and messages
+42ad2ca Update outages and messages
+b023f69 Update outages and messages
+9471a95 Update outages and messages
+fafc8e6 Update outages and messages
+cdf0c30 Update outages and messages
+f738481 Update outages and messages
+c359a8c Update outages and messages
+fe072c3 Update outages and messages
+82d21dd Update outages and messages
+a802510 Update outages and messages
+ae9fd5a Update outages and messages
+2897e8f Update outages and messages
+1c0b628 Update outages and messages
+acf5c5b Update outages and messages
+a9b5c50 Update outages and messages
+860cc81 Update outages and messages
+ade226f Update outages and messages
+53d6f12 Update outages and messages
+236f45b Update outages and messages
+39bec8f Update outages and messages
+9a1900c Update outages and messages
+6b5b57e Update outages and messages
+baab4c3 Update outages and messages
+0a80782 Update outages and messages
+21da57b Update outages and messages
+1ffd6a5 Update outages and messages
+b863db4 Update outages and messages
+a161946 Update outages and messages
+9730927 Update outages and messages
+589ce4e Update outages and messages
+d5a1b1c Update outages and messages
+508b9de Update outages and messages
+5c2d9ef Update outages and messages
+6fc70a5 Update outages and messages
+a44e52c Update outages and messages
+699db8d Update outages and messages
+7c76e0d Update outages and messages
+b3f1625 Update outages and messages
+97e22a4 Update outages and messages
+3b33444 Update outages and messages
+63c1de5 Update outages and messages
+054f1ee Update outages and messages
+a97530b Update outages and messages
+3886459 Update outages and messages
+efa8778 Improve news feed: Kyiv timezone, transition window, date rollover, global update label, baseline time tracking, and restore 'знеструмлення' word
+bfac477 Update outages and messages
+c3fb799 Update outages and messages
+73ca4af Update outages and messages
+d3eb1c9 Update outages and messages
+711f76d Update outages and messages
+cfb2983 Update outages and messages
+f740590 Update outages and messages
+5cf393b Move settlement name outside parentheses in feed texts
+5e47dec Filter out blocks, garages and poles from feed texts
+b506c38 Update outages and messages
+8d5103a Update outages and messages
+661e6c5 Update outages and messages
+493deb0 Update outages and messages
+2743250 Update outages and messages
+f288f86 Update outages and messages
+d45ff26 Update outages and messages
+6e78433 Update outages and messages
+8dac4a3 Update outages and messages
+f438363 Update outages and messages
+2f6d1ba Update outages and messages
+41371c9 Update outages and messages
+d1717f0 Update outages and messages
+1301ce6 Update outages and messages
+a7375a5 Update outages and messages
+38569b1 Update outages and messages
+eb3eb12 Update outages and messages
+6fb20d3 Update outages and messages
+e8e1c56 🤖 Авто-генерація стрічки та постів
+a0c2aea 🔄 Авто-оновлення: outages_snapshot.json
+4d8665e 🔄 Авто-оновлення: outages_snapshot.json
+c2bdeea 🔄 Авто-оновлення: outages_snapshot.json
+e93ca42 🤖 Авто-генерація стрічки та постів
+d7ff146 🔄 Авто-оновлення: outages_snapshot.json
+a09ef78 🤖 Авто-генерація стрічки та постів
+14b0e71 🔄 Авто-оновлення: outages_snapshot.json
+f19076c 🔄 Авто-оновлення: outages_snapshot.json
+1c00eee 🔄 Авто-оновлення: outages_snapshot.json
+ced1797 🔄 Авто-оновлення: outages_snapshot.json
+65abd44 🔄 Авто-оновлення: outages_snapshot.json
+df3894f 🔄 Авто-оновлення: outages_snapshot.json
+c4ff1ab 🔄 Авто-оновлення: outages_snapshot.json
+df49470 🔄 Авто-оновлення: outages_snapshot.json
+8542018 🔄 Авто-оновлення: outages_snapshot.json
+379e901 🔄 Авто-оновлення: outages_snapshot.json
+c8d003e 🔄 Авто-оновлення: outages_snapshot.json
+bd1e007 🔄 Авто-оновлення: outages_snapshot.json
+5199949 🔄 Авто-оновлення: outages_snapshot.json
+05dcaf4 🔄 Авто-оновлення: outages_snapshot.json
+cbf3526 🔄 Авто-оновлення: outages_snapshot.json
+c1a18d1 🔄 Авто-оновлення: outages_snapshot.json
+3da5533 🔄 Авто-оновлення: outages_snapshot.json
+235c684 🔄 Авто-оновлення: outages_snapshot.json
+5ca65d4 🔄 Авто-оновлення: outages_snapshot.json
+42385f7 🤖 Авто-генерація стрічки та постів
+d202a3a 🤖 Авто-генерація стрічки та постів
+f35bcae 🔄 Авто-оновлення: outages_snapshot.json
+
+=== Git Log for 'інтернаціоналістів' ===
+f4e023a Update outages and messages
+ed5e7cc Update outages and messages
+1c00eee 🔄 Авто-оновлення: outages_snapshot.json
+ced1797 🔄 Авто-оновлення: outages_snapshot.json
+
+=== Git Log for 'інтернаціональний' ===
+

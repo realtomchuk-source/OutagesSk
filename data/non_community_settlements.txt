@@ -1,0 +1,4 @@
+Archive settlements count: 39
+Community settlements count: 68
+Non-community settlements in archive.json:
+- м. Старокостянтинів
