@@ -407,10 +407,30 @@ try:
                     expanded.add(cleaned)
         return list(expanded)
 
+    def is_technical_object(street_name):
+        if not street_name:
+            return False
+        name_lower = street_name.lower().strip()
+        # Паттерни для КТП, ТП, ЗТП, ПЛ, КЛ, ПС, фідерів, опор тощо
+        tech_patterns = [
+            r"\b(к?тп|зтп|пс|пл|кл)\b[- ]?\d+",  # КТП-12, ТП 5, ПЛ-10
+            r"\b(опора|оп)\b[- ]?\d+",           # опора 12, оп. 45
+            r"\b(фідер|трансформатор)\b",       # фідер, трансформатор
+            r"\b[а-яа-я\d]+-\d+кв\b",            # Л-10кВ, ПЛ-10кВ
+            r"\b(ктп|зтп|тп|пс|пл|кл)\b$"        # поодинокі абревіатури в кінці
+        ]
+        for pattern in tech_patterns:
+            if re.search(pattern, name_lower):
+                return True
+        return False
+
     def apply_street_corrections(records):
-        official_streets_path = "data/official_streets.json"
+        official_streets_path = "data/clean_official_streets.json"
         corrections_path = "data/street_corrections.json"
         districts_path = "data/districts.json"
+        
+        from geocoder import OSMGeocoder
+        geocoder = OSMGeocoder()
         
         official_data = {}
         if os.path.exists(official_streets_path):
@@ -418,7 +438,7 @@ try:
                 with open(official_streets_path, "r", encoding="utf-8") as f:
                     official_data = json.load(f)
             except Exception as e:
-                print(f"[ERROR] Не вдалося завантажити official_streets.json: {e}")
+                print(f"[ERROR] Не вдалося завантажити clean_official_streets.json: {e}")
                 
         districts_data = {}
         if os.path.exists(districts_path):
@@ -464,6 +484,13 @@ try:
             
             for s in all_streets_set:
                 s_det = s_det_map.get(s)
+                
+                # Перевіряємо чи є назва технічним об'єктом обленерго (КТП, ТП, опора тощо)
+                if is_technical_object(s):
+                    # Технічні об'єкти ігноруємо, вони не є житловими вулицями
+                    corrected_count += 1
+                    continue
+                    
                 houses_str = s_det.get("houses", "") if s_det else ""
                 
                 # Пошук правил для вулиці у всіх розпарсених кандидатах населених пунктів
@@ -570,15 +597,47 @@ try:
                                     "auto": True
                                 }
                         else:
-                            # Перевіряємо чи є правило у Пісочниці в corrections_data
-                            rule = corrections_data.get("Пісочниця", {}).get(s)
-                            if not rule:
+                            # Вулицю взагалі не знайдено в локальному реєстрі.
+                            # Спробуємо підтвердити її через онлайн-геокодер OpenStreetMap.
+                            target_sett = sett_candidates[0]
+                            if geocoder.verify_street_in_settlement(target_sett, s):
+                                print(f"[AUTO-OSM] Вулиця '{s}' підтверджена в OSM для '{target_sett}'")
+                                
+                                # Додаємо нову вулицю до реєстру в пам'яті
+                                target_key = get_street_dict_key(target_sett)
+                                if target_key not in official_data:
+                                    official_data[target_key] = {}
+                                    
+                                expanded_houses = expand_house_ranges(houses_str)
+                                official_data[target_key][s] = {
+                                    "type": "вулиця",
+                                    "houses": sorted(list(set(expanded_houses))),
+                                    "blacklist": []
+                                }
+                                
+                                # Зберігаємо оновлений реєстр на диск
+                                try:
+                                    with open(official_streets_path, "w", encoding="utf-8") as f:
+                                        json.dump(official_data, f, ensure_ascii=False, indent=2)
+                                    print(f"[AUTO-OSM] Базу '{official_streets_path}' успішно оновлено новою вулицею '{s}'")
+                                except Exception as e:
+                                    print(f"[ERROR] Не вдалося зберегти оновлений реєстр: {e}")
+                                    
                                 rule = {
-                                    "action": "move_to_settlement",
-                                    "target_settlements": ["Пісочниця"],
-                                    "target_street": s,
+                                    "action": "rename",
+                                    "target": s,
                                     "auto": True
                                 }
+                            else:
+                                # Перевіряємо чи є правило у Пісочниці в corrections_data
+                                rule = corrections_data.get("Пісочниця", {}).get(s)
+                                if not rule:
+                                    rule = {
+                                        "action": "move_to_settlement",
+                                        "target_settlements": ["Пісочниця"],
+                                        "target_street": s,
+                                        "auto": True
+                                    }
                                 
                 if not rule:
                     if s in streets:
@@ -847,6 +906,14 @@ try:
 
     # Застосовуємо автокорекцію вулиць на основі офіційного словника перед збереженням
     all_records = apply_street_corrections(all_records)
+
+    # Запускаємо ШІ-суддю для автоматичної обробки та розпізнавання адрес із Пісочниці
+    try:
+        from ai_judge import AIJudge
+        judge = AIJudge()
+        all_records = judge.judge_sandbox_records(all_records)
+    except Exception as e:
+        print(f"[WARN] Не вдалося виконати ШІ-суддю для Пісочниці: {e}")
 
     # ------------------------------------------------------------
     # 6. Зберігаємо результат

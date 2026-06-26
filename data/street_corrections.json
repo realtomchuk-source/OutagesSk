@@ -208,6 +208,30 @@
       "action": "unverified",
       "timestamp": "2026-06-25T21:11:51.810431Z",
       "auto": true
+    },
+    "вул. Заставня": {
+      "action": "rename",
+      "target": "вул. Заставна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:33:35.876261"
+    },
+    "вул. Кобеева": {
+      "action": "rename",
+      "target": "вул. Кобєєва",
+      "auto": true,
+      "timestamp": "2026-06-26T20:33:35.876306"
+    },
+    "вул. Цвіточна": {
+      "action": "rename",
+      "target": "вул. Квіткова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:33:35.876315"
+    },
+    "вул. Ш.Алейхема": {
+      "action": "rename",
+      "target": "вул. Шолом-Алейхема",
+      "auto": true,
+      "timestamp": "2026-06-26T20:33:35.876318"
     }
   },
   "с. Волиця-Керекешина": {
@@ -1173,6 +1197,166 @@
       ],
       "target_street": "вул. Ясельна",
       "timestamp": "2026-06-24T13:08:18.307230Z"
+    },
+    "пров. Сонячний": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Берегова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Польова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Великі Мацевичі"
+      ],
+      "target_settlement": "с. Великі Мацевичі",
+      "target_street": "вул. Польова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Центральна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Капустин"
+      ],
+      "target_settlement": "с. Капустин",
+      "target_street": "вул. Центральна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Приймацька": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Чумацька",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Лісова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Великий Чернятин"
+      ],
+      "target_settlement": "с. Великий Чернятин",
+      "target_street": "вул. Лісова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Зарічна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Капустин"
+      ],
+      "target_settlement": "с. Капустин",
+      "target_street": "вул. Зарічна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Садова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Волиця-Керекешина"
+      ],
+      "target_settlement": "с. Волиця-Керекешина",
+      "target_street": "вул. Садова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Комсомольська": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Демківці"
+      ],
+      "target_settlement": "с. Демківці",
+      "target_street": "вул. Подільська",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Лесі Украінки": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Баглаї"
+      ],
+      "target_settlement": "с. Баглаї",
+      "target_street": "вул. Лесі Українки",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Миру": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Ємці"
+      ],
+      "target_settlement": "с. Ємці",
+      "target_street": "вул. Миру",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Шевченка": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Григорівка"
+      ],
+      "target_settlement": "с. Григорівка",
+      "target_street": "вул. Шевченка",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Миру": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "пров. Миру",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Шкільна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Росолівці"
+      ],
+      "target_settlement": "с. Росолівці",
+      "target_street": "вул. Шкільна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Корольова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Пашківці"
+      ],
+      "target_settlement": "с. Пашківці",
+      "target_street": "вул. Корольова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Залізничний": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Григорівка"
+      ],
+      "target_settlement": "с. Григорівка",
+      "target_street": "вул. Залізнична",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Пришкільна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Шкільна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -1962,6 +2146,14 @@
       "action": "unverified",
       "timestamp": "2026-06-25T00:24:27.854371Z",
       "auto": true
+    }
+  },
+  "с. Бутівці": {
+    "вул. Соколовського": {
+      "action": "rename",
+      "target": "вул. Соколенка",
+      "auto": true,
+      "timestamp": "2026-06-26T20:33:35.876362"
     }
   }
 }

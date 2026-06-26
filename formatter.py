@@ -308,7 +308,7 @@ Instructions:
     return None
 
 def apply_street_corrections(records):
-    official_streets_path = os.getenv("OFFICIAL_STREETS_PATH", "data/official_streets.json")
+    official_streets_path = os.getenv("OFFICIAL_STREETS_PATH", "data/clean_official_streets.json")
     corrections_path = os.getenv("STREET_CORRECTIONS_PATH", "data/street_corrections.json")
     districts_path = "data/districts.json"
     
@@ -318,7 +318,7 @@ def apply_street_corrections(records):
             with open(official_streets_path, "r", encoding="utf-8") as f:
                 official_data = json.load(f)
         except Exception as e:
-            print(f"[ERROR] Не вдалося завантажити official_streets.json: {e}")
+            print(f"[ERROR] Не вдалося завантажити clean_official_streets.json: {e}")
             
     districts_data = {}
     if os.path.exists(districts_path):

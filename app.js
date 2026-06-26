@@ -264,6 +264,7 @@ async function showDashboard() {
                 <button class="tab" onclick="switchTab('telegram')">Telegram</button>
                 <button class="tab" onclick="switchTab('analytics')">Аналітика</button>
                 <button class="tab" onclick="switchTab('streets')">Вулиці (Словник)</button>
+                <button class="tab" onclick="switchTab('suspicious')">Підозрілі (ШІ/Реєстр)</button>
                 <button class="tab" onclick="switchTab('archive')">Архів відключень</button>
                 <button class="tab" onclick="switchTab('msg_archive')">Архів повідомлень</button>
                 <button class="tab" onclick="switchTab('raw')">Сирі дані</button>
@@ -286,6 +287,8 @@ let archiveOutages = [];
 let officialStreets = {};
 window.streetCorrections = {};
 window.addressChangelog = [];
+window.suspiciousStreets = {};
+window.reviewRecommendations = [];
 let selectedSettlement = "м. Старокостянтинів";
 window.selectedStreet = "";
 window.showRawJson = false;
@@ -343,7 +346,7 @@ window.loadData = async function() {
         } catch(e) {}
         
         try {
-            const offResp = await fetch(`data/official_streets.json?t=${Date.now()}`);
+            const offResp = await fetch(`data/clean_official_streets.json?t=${Date.now()}`);
             if (offResp.ok) {
                 const rawOff = await offResp.json();
                 officialStreets = migrateStreetsStructure(rawOff);
@@ -378,6 +381,24 @@ window.loadData = async function() {
                 window.addressChangelog = [];
             }
         } catch(e) { window.addressChangelog = []; }
+
+        try {
+            const suspResp = await fetch(`data/suspicious_base_streets.json?t=${Date.now()}`);
+            if (suspResp.ok) {
+                window.suspiciousStreets = await suspResp.json();
+            } else {
+                window.suspiciousStreets = {};
+            }
+        } catch(e) { window.suspiciousStreets = {}; }
+
+        try {
+            const recResp = await fetch(`data/review_recommendations.json?t=${Date.now()}`);
+            if (recResp.ok) {
+                window.reviewRecommendations = await recResp.json();
+            } else {
+                window.reviewRecommendations = [];
+            }
+        } catch(e) { window.reviewRecommendations = []; }
 
         renderDashboard();
         renderTab(currentTab);
@@ -427,6 +448,7 @@ window.switchTab = function(tab) {
             (tab === 'telegram' && t.textContent === 'Telegram') ||
             (tab === 'analytics' && t.textContent === 'Аналітика') ||
             (tab === 'streets' && t.textContent.includes('Вулиці')) ||
+            (tab === 'suspicious' && t.textContent.includes('Підозрілі')) ||
             (tab === 'archive' && t.textContent.includes('Архів відключень')) ||
             (tab === 'msg_archive' && t.textContent.includes('Архів повідомлень')) ||
             (tab === 'raw' && t.textContent.includes('Сирі дані'))
@@ -442,6 +464,7 @@ function renderTab(tab) {
     else if (tab === 'telegram') renderTelegram(container);
     else if (tab === 'analytics') renderAnalytics(container);
     else if (tab === 'streets') renderStreets(container);
+    else if (tab === 'suspicious') renderSuspicious(container);
     else if (tab === 'archive') renderArchive(container);
     else if (tab === 'msg_archive') renderMsgArchive(container);
     else if (tab === 'raw') renderRaw(container);
@@ -1503,7 +1526,7 @@ function renderStreets(container) {
                 window.selectedStreet = nameClean;
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
-                await commitFileToGitHub("data/official_streets.json", jsonStr, `Додавання нової офіційної вулиці ${nameClean} вручну`);
+                await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Додавання нової офіційної вулиці ${nameClean} вручну`);
                 await logAddressAction('add_official_street', nameClean, "", []);
                 
                 renderStreets(document.getElementById('tabContent'));
@@ -1527,7 +1550,7 @@ function renderStreets(container) {
                 }
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
-                await commitFileToGitHub("data/official_streets.json", jsonStr, `Перейменування офіційної вулиці ${street} на ${nameClean}`);
+                await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Перейменування офіційної вулиці ${street} на ${nameClean}`);
 
                 let renamedCount = 0;
                 archiveOutages.forEach(rec => {
@@ -1646,7 +1669,7 @@ function renderStreets(container) {
                 }
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
-                await commitFileToGitHub("data/official_streets.json", jsonStr, `Перенесення вулиці ${street} з ${selectedSettlement} в [${targetsStr}]`);
+                await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Перенесення вулиці ${street} з ${selectedSettlement} в [${targetsStr}]`);
                 
                 // 2. Створюємо правило в street_corrections.json
                 if (!window.streetCorrections) window.streetCorrections = {};
@@ -1860,7 +1883,7 @@ function renderStreets(container) {
                     }
                     
                     const jsonStr = JSON.stringify(officialStreets, null, 2);
-                    await commitFileToGitHub("data/official_streets.json", jsonStr, `Перенесення вулиці ${street} в сумнівні`);
+                    await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Перенесення вулиці ${street} в сумнівні`);
                     
                     await logAddressAction('move_to_doubtful', street, "", houses);
                     
@@ -1889,7 +1912,7 @@ function renderStreets(container) {
             };
             
             const jsonStr = JSON.stringify(officialStreets, null, 2);
-            await commitFileToGitHub("data/official_streets.json", jsonStr, `Додавання вулиці ${street} до офіційних словників з обіленими будинками`);
+            await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Додавання вулиці ${street} до офіційних словників з обіленими будинками`);
             await logAddressAction('whitelist_street', street, "", doubtfulHouses);
             
             renderStreets(document.getElementById('tabContent'));
@@ -2081,7 +2104,7 @@ function renderStreets(container) {
             officialStreets[selectedSettlement][currentStreet].houses = houses;
             
             const jsonStr = JSON.stringify(officialStreets, null, 2);
-            await commitFileToGitHub("data/official_streets.json", jsonStr, `Додавання будинку ${val} на ${currentStreet}`);
+            await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Додавання будинку ${val} на ${currentStreet}`);
             await logAddressAction('add_house', currentStreet, "", [val]);
             
             renderStreets(document.getElementById('tabContent'));
@@ -2099,7 +2122,7 @@ function renderStreets(container) {
                 officialStreets[selectedSettlement][currentStreet].houses = houses;
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
-                await commitFileToGitHub("data/official_streets.json", jsonStr, `Вилучення будинку ${houseNum} з ${currentStreet}`);
+                await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Вилучення будинку ${houseNum} з ${currentStreet}`);
                 await logAddressAction('delete_house', currentStreet, "", [houseNum]);
                 
                 renderStreets(document.getElementById('tabContent'));
@@ -2121,7 +2144,7 @@ function renderStreets(container) {
             officialStreets[selectedSettlement][currentStreet].houses = houses;
             
             const jsonStr = JSON.stringify(officialStreets, null, 2);
-            await commitFileToGitHub("data/official_streets.json", jsonStr, `Обілення будинку ${houseNum} на ${currentStreet}`);
+            await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Обілення будинку ${houseNum} на ${currentStreet}`);
             await logAddressAction('whitelist_house', currentStreet, "", [houseNum]);
             
             renderStreets(document.getElementById('tabContent'));
@@ -2148,7 +2171,7 @@ function renderStreets(container) {
                 officialStreets[selectedSettlement][currentStreet].houses = houses;
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
-                await commitFileToGitHub("data/official_streets.json", jsonStr, `Редагування будинку на ${currentStreet}: ${houseNum} -> ${cleanedNum}`);
+                await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Редагування будинку на ${currentStreet}: ${houseNum} -> ${cleanedNum}`);
                 await logAddressAction('edit_official_house', currentStreet, `${houseNum} -> ${cleanedNum}`, [cleanedNum]);
                 
                 renderStreets(document.getElementById('tabContent'));
@@ -2185,7 +2208,7 @@ function renderStreets(container) {
                 officialStreets[selectedSettlement][currentStreet].houses = houses;
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
-                await commitFileToGitHub("data/official_streets.json", jsonStr, `Виправлення сумнівного будинку на ${currentStreet}: ${houseNum} -> ${cleanedNum}`);
+                await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Виправлення сумнівного будинку на ${currentStreet}: ${houseNum} -> ${cleanedNum}`);
                 await logAddressAction('correct_doubtful_house', currentStreet, `${houseNum} -> ${cleanedNum}`, [cleanedNum]);
 
                 renderStreets(document.getElementById('tabContent'));
@@ -2207,7 +2230,7 @@ function renderStreets(container) {
                 }
                 
                 const jsonStr = JSON.stringify(officialStreets, null, 2);
-                await commitFileToGitHub("data/official_streets.json", jsonStr, `Ігнорування будинку ${houseNum} на ${currentStreet}`);
+                await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Ігнорування будинку ${houseNum} на ${currentStreet}`);
                 await logAddressAction('ignore_doubtful_house', currentStreet, "", [houseNum]);
                 
                 renderStreets(document.getElementById('tabContent'));
@@ -2218,7 +2241,7 @@ function renderStreets(container) {
     if (!window.saveStreetsToGitHub) {
         window.saveStreetsToGitHub = function() {
             const jsonStr = JSON.stringify(officialStreets, null, 2);
-            commitFileToGitHub("data/official_streets.json", jsonStr, `Оновлення словника адрес для ${selectedSettlement} вручну`);
+            commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Оновлення словника адрес для ${selectedSettlement} вручну`);
         };
     }
 
@@ -2546,6 +2569,322 @@ function renderStatus() {
     }
     area.innerHTML = `<div class="status-bar ${statusClass}">${icon} ${text}</div>`;
 }
+
+window.copyToClipboard = function(text) {
+    navigator.clipboard.writeText(text).then(() => alert('Скопійовано!'));
+}
+
+// ============================================================================
+// Вкладка "Підозрілі вулиці (ШІ / Реєстр)"
+// ============================================================================
+
+function renderSuspicious(container) {
+    let html = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h3>🔍 Підозрілі вулиці (ШІ / Реєстр)</h3>
+            <div style="display:flex; gap: 10px; align-items:center; flex-wrap: wrap;">
+                <input type="text" id="suspSearch" placeholder="Пошук вулиці..." onkeyup="window.filterSuspicious()" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); width: 220px;">
+            </div>
+        </div>
+        <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 15px;">
+            Тут відображаються вулиці з бази адрес громади, які не були підтверджені картами OpenStreetMap. Ви можете затвердити їх, перейменувати, перенести до іншого села або видалити. Зміни зберігаються автоматично на локальний диск.
+        </p>
+    `;
+
+    let grouped = window.suspiciousStreets || {};
+    let settlements = Object.keys(grouped).sort();
+    
+    let totalSusp = 0;
+    settlements.forEach(sett => {
+        totalSusp += Object.keys(grouped[sett]).length;
+    });
+
+    if (totalSusp === 0) {
+        html += `
+            <div style="padding: 40px; text-align: center; border: 2px dashed var(--success); border-radius: var(--radius); background: rgba(46,204,113,0.03); margin-top: 20px;">
+                <span style="font-size: 40px;">🎉</span>
+                <h4 style="color: var(--success); margin: 10px 0 5px 0; font-size:18px;">Всі вулиці верифіковані!</h4>
+                <p style="color: var(--secondary-text); font-size:14px;">Немає непідтверджених чи сумнівних адрес у базі.</p>
+            </div>
+        `;
+        container.innerHTML = html;
+        return;
+    }
+
+    html += `<div class="susp-list" style="display:flex; flex-direction:column; gap:20px; width: 100%; margin-top: 15px;">`;
+
+    settlements.forEach(settlement => {
+        let streets = grouped[settlement] || {};
+        let streetNames = Object.keys(streets).sort();
+        if (streetNames.length === 0) return;
+
+        html += `
+            <div class="susp-settlement-card" style="border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; background: var(--card-bg); box-shadow: var(--shadow);">
+                <h4 style="margin: 0 0 12px 0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 8px; font-size:16px;">🏡 ${escapeHtml(settlement)} (${streetNames.length})</h4>
+                <div style="display:flex; flex-direction:column; gap: 10px;">
+        `;
+
+        streetNames.forEach(street => {
+            const info = streets[street];
+            const houses = info.houses || [];
+            const reason = info.reason || "Не знайдено на OSM";
+            
+            // Find AI recommendation if exists
+            const cleanStreetNameForMatch = street.toLowerCase().replace(/^(вул\.|пров\.|вулиця|провулок)\s*/, "").trim();
+            const aiRec = window.reviewRecommendations.find(r => {
+                const rSettClean = r.settlement.toLowerCase().replace(/^(с\.|м\.)\s*/, "").trim();
+                const settClean = settlement.toLowerCase().replace(/^(с\.|м\.)\s*/, "").trim();
+                const rStrClean = r.street.toLowerCase().replace(/^(вул\.|пров\.|вулиця|провулок)\s*/, "").trim();
+                return rSettClean === settClean && rStrClean === cleanStreetNameForMatch;
+            });
+
+            let aiBadge = "";
+            let aiReasonHtml = "";
+            let aiTargetStr = "";
+            if (aiRec) {
+                const action = aiRec.action;
+                const target = aiRec.target_street;
+                const explanation = aiRec.reason;
+                aiTargetStr = target || "";
+
+                if (action === 'approve') {
+                    aiBadge = `<span style="background: rgba(46,204,113,0.12); color:#27ae60; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:bold; border: 1px solid rgba(46,204,113,0.3); margin-left: 8px;">🤖 ШІ: Затвердити</span>`;
+                } else if (action === 'rename') {
+                    aiBadge = `<span style="background: rgba(74,108,247,0.12); color:var(--primary); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:bold; border: 1px solid rgba(74,108,247,0.3); margin-left: 8px;">🤖 ШІ: Перейменувати на ${escapeHtml(target)}</span>`;
+                } else if (action === 'delete') {
+                    aiBadge = `<span style="background: rgba(231,76,60,0.12); color:var(--danger); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:bold; border: 1px solid rgba(231,76,60,0.3); margin-left: 8px;">🤖 ШІ: Видалити</span>`;
+                }
+
+                if (explanation) {
+                    aiReasonHtml = `<div style="font-size:12px; margin-top:4px; opacity:0.85; font-style:italic;"><strong>Обґрунтування ШІ:</strong> ${escapeHtml(explanation)}</div>`;
+                }
+            }
+
+            const housesStr = houses.length > 0 ? houses.slice(0, 30).join(", ") + (houses.length > 30 ? "..." : "") : "немає будинків";
+
+            html += `
+                <div class="susp-street-item" data-street-name="${escapeHtml(street).toLowerCase()}" style="border: 1px solid var(--border); border-radius: 6px; padding: 12px; background: var(--bg); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+                    <div style="flex:1; min-width: 250px;">
+                        <div style="display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
+                            <strong style="font-size:15px; color:var(--text);">${escapeHtml(street)}</strong>
+                            <span style="font-size:11px; background:var(--border); padding:1px 6px; border-radius:8px; color:var(--secondary-text);">${escapeHtml(info.type || 'вулиця')}</span>
+                            ${aiBadge}
+                        </div>
+                        <div style="font-size:12px; color: var(--secondary-text); margin-top: 6px;">
+                            <strong>Будинки:</strong> ${escapeHtml(housesStr)}
+                        </div>
+                        <div style="font-size:12px; color: var(--danger); margin-top: 2px;">
+                            <strong>Причина:</strong> ${escapeHtml(reason)}
+                        </div>
+                        ${aiReasonHtml}
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button onclick="window.approveSuspStreet('${escapeHtml(settlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="background:#2ecc71; color:white; padding:6px 12px; font-size:13px; font-weight:bold; border-radius:4px; border:none; cursor:pointer;" title="Затвердити як є">✓ Затвердити</button>
+                        <button onclick="window.renameSuspStreet('${escapeHtml(settlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}', '${escapeHtml(aiTargetStr).replace(/'/g, "\\'")}')" class="btn" style="background:#4a6cf7; color:white; padding:6px 12px; font-size:13px; font-weight:bold; border-radius:4px; border:none; cursor:pointer;" title="Виправити назву">✏️ Перейменувати</button>
+                        <button onclick="window.moveSuspStreet('${escapeHtml(settlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="background:#e67e22; color:white; padding:6px 12px; font-size:13px; font-weight:bold; border-radius:4px; border:none; cursor:pointer;" title="Перенести до іншого села">🚚 Перенести</button>
+                        <button onclick="window.deleteSuspStreet('${escapeHtml(settlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="background:#e74c3c; color:white; padding:6px 12px; font-size:13px; font-weight:bold; border-radius:4px; border:none; cursor:pointer;" title="Вилучити вулицю з бази">🗑️ Видалити</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+window.filterSuspicious = function() {
+    const q = document.getElementById("suspSearch").value.toLowerCase().trim();
+    document.querySelectorAll(".susp-street-item").forEach(item => {
+        const text = item.getAttribute("data-street-name") || "";
+        if (!q || text.includes(q)) {
+            item.style.display = "flex";
+        } else {
+            item.style.display = "none";
+        }
+    });
+}
+
+window.approveSuspStreet = async function(settlement, street) {
+    if (!confirm(`Ви дійсно бажаєте затвердити вулицю '${street}' у населеному пункті '${settlement}'?`)) {
+        return;
+    }
+    const streetInfo = window.suspiciousStreets[settlement][street];
+    if (!streetInfo) return;
+
+    const cleanInfo = { ...streetInfo };
+    delete cleanInfo.reason;
+
+    if (!officialStreets[settlement]) {
+        officialStreets[settlement] = {};
+    }
+    officialStreets[settlement][street] = cleanInfo;
+
+    delete window.suspiciousStreets[settlement][street];
+    if (Object.keys(window.suspiciousStreets[settlement]).length === 0) {
+        delete window.suspiciousStreets[settlement];
+    }
+
+    const offStr = JSON.stringify(officialStreets, null, 2);
+    await commitFileToGitHub("data/clean_official_streets.json", offStr, `Затвердження вулиці ${street} в ${settlement} з підозрілих`);
+    
+    const suspStr = JSON.stringify(window.suspiciousStreets, null, 2);
+    await commitFileToGitHub("data/suspicious_base_streets.json", suspStr, `Вилучення вулиці ${street} з підозрілих`);
+
+    await logAddressAction('approve_suspicious_street', street, "", streetInfo.houses || []);
+    renderSuspicious(document.getElementById('tabContent'));
+};
+
+window.renameSuspStreet = async function(settlement, street, defaultNewName) {
+    const promptName = defaultNewName || street;
+    const newName = prompt(`Редагування та затвердження підозрілої вулиці '${street}' для ${settlement}.\n\nВведіть правильну назву вулиці:`, promptName);
+    if (!newName || !newName.trim() || newName.trim() === street) {
+        return;
+    }
+    const nameClean = newName.trim();
+    const streetInfo = window.suspiciousStreets[settlement][street];
+    if (!streetInfo) return;
+
+    const cleanInfo = { ...streetInfo };
+    delete cleanInfo.reason;
+
+    if (!officialStreets[settlement]) {
+        officialStreets[settlement] = {};
+    }
+    officialStreets[settlement][nameClean] = cleanInfo;
+
+    let settKey = settlement.trim();
+    if (!settKey.startsWith("с. ") && !settKey.startsWith("м. ")) {
+        if (settKey === "Старокостянтинів") settKey = "м. Старокостянтинів";
+        else settKey = "с. " + settKey;
+    }
+    if (!window.streetCorrections[settKey]) {
+        window.streetCorrections[settKey] = {};
+    }
+    window.streetCorrections[settKey][street] = {
+        action: "rename",
+        target: nameClean,
+        auto: true,
+        timestamp: new Date().toISOString()
+    };
+
+    delete window.suspiciousStreets[settlement][street];
+    if (Object.keys(window.suspiciousStreets[settlement]).length === 0) {
+        delete window.suspiciousStreets[settlement];
+    }
+
+    const offStr = JSON.stringify(officialStreets, null, 2);
+    await commitFileToGitHub("data/clean_official_streets.json", offStr, `Перейменування та затвердження підозрілої вулиці ${street} на ${nameClean} в ${settlement}`);
+    
+    const suspStr = JSON.stringify(window.suspiciousStreets, null, 2);
+    await commitFileToGitHub("data/suspicious_base_streets.json", suspStr, `Вилучення вулиці ${street} з підозрілих після перейменування`);
+
+    const corrStr = JSON.stringify(window.streetCorrections, null, 2);
+    await commitFileToGitHub("data/street_corrections.json", corrStr, `Додавання правила перейменування для підозрілої вулиці: ${street} -> ${nameClean}`);
+
+    await logAddressAction('rename_suspicious_street', street, nameClean, streetInfo.houses || []);
+    renderSuspicious(document.getElementById('tabContent'));
+};
+
+window.moveSuspStreet = async function(settlement, street) {
+    let settlements = Object.keys(officialStreets).sort();
+    let promptMsg = `Перенесення підозрілої вулиці '${street}' з '${settlement}' в інший населений пункт.\n\n` +
+                    `Введіть назву населеного пункту або його номер зі списку:\n` +
+                    settlements.map((s, idx) => `${idx + 1}. ${s}`).join("\n");
+    let targetInput = prompt(promptMsg);
+    if (!targetInput) return;
+
+    let targetSett = targetInput.trim();
+    const targetIdx = parseInt(targetSett) - 1;
+    if (!isNaN(targetIdx) && targetIdx >= 0 && targetIdx < settlements.length) {
+        targetSett = settlements[targetIdx];
+    } else {
+        const found = settlements.find(s => s.toLowerCase().includes(targetSett.toLowerCase()));
+        if (found) {
+            targetSett = found;
+        }
+    }
+
+    if (!officialStreets[targetSett]) {
+        alert(`Населений пункт '${targetSett}' не знайдено в базі!`);
+        return;
+    }
+
+    if (!confirm(`Ви впевнені, що хочете перенести вулицю '${street}' з '${settlement}' в '${targetSett}'?`)) {
+        return;
+    }
+
+    const streetInfo = window.suspiciousStreets[settlement][street];
+    if (!streetInfo) return;
+
+    const cleanInfo = { ...streetInfo };
+    delete cleanInfo.reason;
+
+    if (!officialStreets[targetSett][street]) {
+        officialStreets[targetSett][street] = cleanInfo;
+    } else {
+        const existingHouses = new Set(officialStreets[targetSett][street].houses || []);
+        (cleanInfo.houses || []).forEach(h => existingHouses.add(h));
+        officialStreets[targetSett][street].houses = Array.from(existingHouses);
+    }
+
+    let settKey = settlement.trim();
+    if (!settKey.startsWith("с. ") && !settKey.startsWith("м. ")) {
+        if (settKey === "Старокостянтинів") settKey = "м. Старокостянтинів";
+        else settKey = "с. " + settKey;
+    }
+    if (!window.streetCorrections[settKey]) {
+        window.streetCorrections[settKey] = {};
+    }
+    window.streetCorrections[settKey][street] = {
+        action: "move_to_settlement",
+        target_settlement: targetSett,
+        target_street: street,
+        auto: true,
+        timestamp: new Date().toISOString()
+    };
+
+    delete window.suspiciousStreets[settlement][street];
+    if (Object.keys(window.suspiciousStreets[settlement]).length === 0) {
+        delete window.suspiciousStreets[settlement];
+    }
+
+    const offStr = JSON.stringify(officialStreets, null, 2);
+    await commitFileToGitHub("data/clean_official_streets.json", offStr, `Перенесення та затвердження підозрілої вулиці ${street} з ${settlement} в ${targetSett}`);
+    
+    const suspStr = JSON.stringify(window.suspiciousStreets, null, 2);
+    await commitFileToGitHub("data/suspicious_base_streets.json", suspStr, `Вилучення вулиці ${street} з підозрілих після перенесення`);
+
+    const corrStr = JSON.stringify(window.streetCorrections, null, 2);
+    await commitFileToGitHub("data/street_corrections.json", corrStr, `Додавання правила перенесення для підозрілої вулиці: ${street} -> ${targetSett}`);
+
+    await logAddressAction('move_suspicious_street', street, targetSett, streetInfo.houses || []);
+    renderSuspicious(document.getElementById('tabContent'));
+};
+
+window.deleteSuspStreet = async function(settlement, street) {
+    if (!confirm(`Ви дійсно бажаєте ВИДАЛИТИ вулицю '${street}' з підозрілих (і взагалі з бази)?`)) {
+        return;
+    }
+    const streetInfo = window.suspiciousStreets[settlement][street];
+    if (!streetInfo) return;
+
+    delete window.suspiciousStreets[settlement][street];
+    if (Object.keys(window.suspiciousStreets[settlement]).length === 0) {
+        delete window.suspiciousStreets[settlement];
+    }
+
+    const suspStr = JSON.stringify(window.suspiciousStreets, null, 2);
+    await commitFileToGitHub("data/suspicious_base_streets.json", suspStr, `Видалення підозрілої вулиці ${street} з ${settlement}`);
+
+    await logAddressAction('delete_suspicious_street', street, "", streetInfo.houses || []);
+    renderSuspicious(document.getElementById('tabContent'));
+};
 
 window.copyToClipboard = function(text) {
     navigator.clipboard.writeText(text).then(() => alert('Скопійовано!'));

@@ -8,3 +8,5 @@ html_dumps/
 *.log
 git_log_app_js.txt
 stash_diff.txt
+data/geocoding_cache.json
+page.html

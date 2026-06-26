@@ -12447,5 +12447,17 @@
       "33/1",
       "33б2"
     ]
+  },
+  {
+    "timestamp": "2026-06-26T17:50:01.920Z",
+    "action": "approve_suspicious_street",
+    "settlement": "м. Старокостянтинів",
+    "old_name": "вул. Абрикосова",
+    "new_name": "",
+    "houses": [
+      "1",
+      "2",
+      "3"
+    ]
   }
 ]

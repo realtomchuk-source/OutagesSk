@@ -1,0 +1,3413 @@
+[
+  {
+    "type": "way",
+    "id": 31999188,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Богуна",
+      "name:en": "Bohuna Street",
+      "name:ru": "Богуна улица",
+      "name:uk": "вулиця Богуна",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 32007701,
+    "tags": {
+      "highway": "secondary",
+      "lanes": "2",
+      "loc_ref": "О-231402",
+      "maxspeed": "50",
+      "name": "Меджибіжська вулиця",
+      "name:en": "Medzhybizhska Street",
+      "name:ru": "Меджибожская улица",
+      "name:uk": "Меджибіжська вулиця",
+      "old_name": "вулиця Горького",
+      "ref": "О-231402",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 83206797,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "Старомлинська вулиця",
+      "name:ru": "Старомельницкая улица",
+      "name:uk": "Старомлинська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 95447720,
+    "tags": {
+      "hgv": "no",
+      "highway": "secondary",
+      "maxspeed": "50",
+      "name": "вулиця Івана Кожедуба",
+      "name:en": "Ivana Kozheduba Street",
+      "name:ru": "улица Чкалова",
+      "name:uk": "вулиця Івана Кожедуба",
+      "old_name": "вулиця Чкалова",
+      "old_name:en": "Chkalova Street",
+      "old_name:pl": "ulica Czkałowa",
+      "old_name:uk": "вулиця Чкалова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 151053946,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Орлика",
+      "name:en": "Orlyka Street",
+      "name:ru": "Орлика улица",
+      "name:uk": "вулиця Орлика",
+      "surface": "paved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 151053979,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Корольова",
+      "name:en": "Korolova Street",
+      "name:pl": "ulica Korolowa",
+      "name:ru": "Королёва улица",
+      "name:uk": "вулиця Корольова",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 154372432,
+    "tags": {
+      "highway": "tertiary",
+      "name": "Веснянківське шосе",
+      "name:ru": "Веснянковское шоссе",
+      "name:uk": "Веснянківське шосе",
+      "ref": "О-231401"
+    }
+  },
+  {
+    "type": "way",
+    "id": 158064488,
+    "tags": {
+      "bridge": "yes",
+      "highway": "primary",
+      "lane_markings": "no",
+      "layer": "1",
+      "lit": "yes",
+      "maxspeed:type": "UA:urban",
+      "maxweight": "20",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 158064489,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "maxspeed:type": "UA:urban",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 158064490,
+    "tags": {
+      "bridge": "yes",
+      "highway": "primary",
+      "horse": "no",
+      "lanes": "2",
+      "layer": "1",
+      "maxspeed": "50",
+      "maxweight:signed": "no",
+      "name": "Соборна вулиця",
+      "name:en": "Soborna Street",
+      "name:ru": "1-го Мая улица",
+      "name:uk": "Соборна вулиця",
+      "nat_ref": "Н-03",
+      "old_name": "вулиця 1 Травня",
+      "old_name:en": "1-ho Travnia Street",
+      "old_name:uk": "вулиця 1 Травня",
+      "opening_date": "2019-08-02",
+      "ref": "Н-03",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 158064494,
+    "tags": {
+      "highway": "primary",
+      "lanes": "2",
+      "maxspeed": "50",
+      "name": "Соборна вулиця",
+      "name:en": "Soborna Street",
+      "name:ru": "1-го Мая улица",
+      "name:uk": "Соборна вулиця",
+      "nat_ref": "Н-03",
+      "old_name": "вулиця 1 Травня",
+      "old_name:en": "1-ho Travnia Street",
+      "old_name:uk": "вулиця 1 Травня",
+      "ref": "Н-03",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 158569687,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "oneway": "yes",
+      "ref": "Н-03",
+      "smoothness": "intermediate",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 158569688,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "oneway": "yes",
+      "ref": "Н-03",
+      "smoothness": "intermediate",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 159877226,
+    "tags": {
+      "description:name": "Вулицю названо на честь Михайла Рудяка, відомого земляка й мецената з старокостянтинівщини",
+      "highway": "residential",
+      "maxspeed": "50",
+      "name": "вулиця Михайла Рудяка",
+      "name:ru": "Михаила Рудяка улица",
+      "name:uk": "вулиця Михайла Рудяка",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 159883057,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Кринички",
+      "name:en": "Krynychky Street",
+      "name:ru": "Кринички улица",
+      "name:uk": "вулиця Кринички"
+    }
+  },
+  {
+    "type": "way",
+    "id": 159883061,
+    "tags": {
+      "alt_name": "Драча Івана вулиця",
+      "full_name": "Івана Драча вулиця",
+      "highway": "residential",
+      "name": "вулиця Драча",
+      "name:en": "Dracha Street",
+      "name:pl": "ulica Dracza",
+      "name:ru": "Льва Толстого улица",
+      "name:uk": "вулиця Драча",
+      "old_name": "вулиця Льва Толстого",
+      "old_name:en": "Lva Tolstoho Street",
+      "old_name:pl": "ulica Lwa Tołstoja",
+      "old_name:uk": "вулиця Льва Толстого",
+      "surface": "dirt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 159896013,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:uk": "вулиця Острозького",
+      "oneway": "yes",
+      "ref": "Т-23-24"
+    }
+  },
+  {
+    "type": "way",
+    "id": 159969947,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Миру",
+      "name:en": "Myru Street",
+      "name:pl": "ulica Pokoju",
+      "name:uk": "вулиця Миру",
+      "ref": "Т-23-24",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 159969948,
+    "tags": {
+      "highway": "primary",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "intermediate",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 159969949,
+    "tags": {
+      "highway": "primary",
+      "maxspeed": "50",
+      "name": "вулиця Михайла Рудяка",
+      "name:ru": "Михаила Рудяка улица",
+      "name:uk": "вулиця Михайла Рудяка",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265391,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Вишневецького",
+      "name:ru": "Вишневецкого улица",
+      "name:uk": "вулиця Вишневецького",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265400,
+    "tags": {
+      "highway": "residential",
+      "name": "Партизанська вулиця",
+      "name:en": "Partyzanska Street",
+      "name:pl": "ulica Partyzancka",
+      "name:ru": "Партизанская улица",
+      "name:uk": "Партизанська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265406,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "Чумацька вулиця",
+      "name:ru": "Байдукова улица",
+      "name:uk": "Чумацька вулиця",
+      "old_name": "вулиця Байдукова",
+      "old_name:en": "Baidukova Street",
+      "old_name:uk": "вулиця Байдукова",
+      "oneway": "no",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265407,
+    "tags": {
+      "highway": "residential",
+      "name": "Слободянська вулиця",
+      "name:ru": "Слободянская улица",
+      "name:uk": "Слободянська вулиця",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265409,
+    "tags": {
+      "highway": "residential",
+      "name": "Демократичний провулок",
+      "name:ru": "Демократический переулок",
+      "name:uk": "Демократичний провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265411,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "Пилявецька вулиця",
+      "name:ru": "Степанова улица",
+      "name:uk": "Пилявецька вулиця",
+      "old_name": "вулиця Степанова",
+      "old_name:en": "Stepanova Street",
+      "old_name:uk": "вулиця Степанова",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265413,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "30",
+      "name": "Любарський провулок",
+      "name:ru": "Чкалова переулок",
+      "name:uk": "Любарський провулок",
+      "old_name": "провулок Чкалова",
+      "old_name:en": "Chkalova Lane",
+      "old_name:uk": "провулок Чкалова",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265414,
+    "tags": {
+      "highway": "residential",
+      "name": "Новоміський провулок",
+      "name:uk": "Новоміський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265417,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "50",
+      "name": "Заводська вулиця",
+      "name:en": "Zavodska Street",
+      "name:ru": "Заводская улица",
+      "name:uk": "Заводська вулиця",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265418,
+    "tags": {
+      "highway": "residential",
+      "name": "Шкільний провулок",
+      "name:ru": "2-й Калинина переулок",
+      "name:uk": "Шкільний провулок",
+      "old_name": "2-й провулок Калініна"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265420,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "Східна вулиця",
+      "name:en": "Skhidna Street",
+      "name:pl": "ulica Wschodnia",
+      "name:ru": "Восточная улица",
+      "name:uk": "Східна вулиця",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265424,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "провулок Голоти",
+      "name:uk": "провулок Голоти",
+      "old_name": "провулок Гончарова",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265425,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Величка",
+      "name:uk": "провулок Величка",
+      "old_name": "провулок Щорса"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265426,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Боженка",
+      "name:ru": "Боженко переулок",
+      "name:uk": "провулок Боженка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265427,
+    "tags": {
+      "highway": "residential",
+      "name": "Любомирська вулиця",
+      "name:ru": "Колхозная улица",
+      "name:uk": "Любомирська вулиця",
+      "old_name": "Колгоспна вулиця",
+      "old_name:pl": "ulica Kołchozowa",
+      "old_name:uk": "Колгоспна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265428,
+    "tags": {
+      "highway": "residential",
+      "name": "Зарічний провулок",
+      "name:pl": "zaułek Zarzeczny",
+      "name:ru": "Заречный переулок",
+      "name:uk": "Зарічний провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265429,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "Пілотська вулиця",
+      "name:ru": "Пилотская улица",
+      "name:uk": "Пілотська вулиця",
+      "old_name": "вулиця Мічуріна",
+      "old_name:pl": "ulica Miczurina",
+      "old_name:uk": "вулиця Мічуріна",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265431,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Кобилянської",
+      "name:ru": "Кобылянской переулок",
+      "name:uk": "провулок Кобилянської",
+      "old_name": "провулок Бєлінського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265434,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "30",
+      "name": "2-й провулок Мічуріна",
+      "name:uk": "2-й провулок Мічуріна",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265435,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Котляревського",
+      "name:en": "Kotlyarevskogo Lane",
+      "name:ru": "Котляревского переулок",
+      "name:uk": "провулок Котляревського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265437,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Горбатова",
+      "name:en": "Horbatova Street",
+      "name:pl": "ulica Gorbatowa",
+      "name:ru": "Горбатова улица",
+      "name:uk": "вулиця Горбатова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265439,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Богдана Хмельницького",
+      "name:pl": "ulica Bohdana Chmielnickiego",
+      "name:ru": "Богдана Хмельницкого улица",
+      "name:uk": "вулиця Богдана Хмельницького"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167265443,
+    "tags": {
+      "highway": "residential",
+      "name": "Старомлинська вулиця",
+      "name:ru": "Старомельницкая улица",
+      "name:uk": "Старомлинська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405078,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Січових Стрільців",
+      "name:en": "Sichovykh Striltsiv Street",
+      "name:pl": "ulica Siczowych Strzelców",
+      "name:ru": "Сечевых Стрельцов улица",
+      "name:uk": "вулиця Січових Стрільців"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405079,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Юридика",
+      "name:en": "Yudyka Street",
+      "name:pl": "ulica Jurydyka",
+      "name:ru": "улица Юридика",
+      "name:uk": "вулиця Юридика",
+      "old_name:ru": "улица 26-ти Бакинских Комиссаров улица",
+      "old_name:uk": "вулиця 26-ти Бакинських Комісарів"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405081,
+    "tags": {
+      "highway": "residential",
+      "name": "Проскурівська вулиця",
+      "name:en": "Proskurivska Street",
+      "name:ru": "Матросова улица",
+      "name:uk": "Проскурівська вулиця",
+      "old_name": "вулиця Матросова",
+      "old_name:en": "Matrosova Street",
+      "old_name:pl": "ulica Matrosowa",
+      "old_name:uk": "вулиця Матросова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405083,
+    "tags": {
+      "highway": "tertiary",
+      "name": "Велика Закузьминська вулиця",
+      "name:en": "Velyka Zakuzmynska Street",
+      "name:ru": "Большая Закузьминская улица",
+      "name:uk": "Велика Закузьминська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405084,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Шевченка",
+      "name:en": "Shevchenka Street",
+      "name:pl": "ulica Szewczenki",
+      "name:ru": "Шевченко улица",
+      "name:uk": "вулиця Шевченка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405085,
+    "tags": {
+      "highway": "residential",
+      "name": "Замкова вулиця",
+      "name:en": "Zamkova Street",
+      "name:pl": "ulica Zamkowa",
+      "name:ru": "Замковая улица",
+      "name:uk": "Замкова вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405087,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Перемоги",
+      "name:en": "Peremohy Street",
+      "name:pl": "ulica Zwycięstwa",
+      "name:ru": "Победы улица",
+      "name:uk": "вулиця Перемоги"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405088,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Кріпосний Вал",
+      "name:en": "Kriposnyi Val Street",
+      "name:ru": "Крепостной Вал улица",
+      "name:uk": "вулиця Кріпосний Вал"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405090,
+    "tags": {
+      "highway": "service",
+      "name": "1-й Проскурівський провулок",
+      "name:uk": "1-й Проскурівський провулок",
+      "service": "alley"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167405092,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Сосюри",
+      "name:en": "Sosiury Street",
+      "name:ru": "Сосюры улица",
+      "name:uk": "вулиця Сосюри"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167875813,
+    "tags": {
+      "highway": "primary",
+      "lanes": "2",
+      "lit": "yes",
+      "maxspeed:type": "UA:urban",
+      "maxweight": "3.5",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167875815,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "lit": "yes",
+      "maxspeed:type": "UA:urban",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "oneway": "yes",
+      "ref": "Н-03",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167875817,
+    "tags": {
+      "highway": "secondary",
+      "lane_markings": "no",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:ru": "Острожского улица",
+      "name:uk": "вулиця Острозького",
+      "oneway": "yes",
+      "ref": "Т-23-24",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167875819,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Івана Федорова",
+      "name:en": "Ivana Fedorova Street",
+      "name:pl": "ulica Iwana Fiodorowa",
+      "name:ru": "Ивана Фёдорова улица",
+      "name:uk": "вулиця Івана Федорова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167875823,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "lit": "yes",
+      "maxspeed:type": "UA:urban",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "oneway": "yes",
+      "ref": "Н-03",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167875825,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "lit": "yes",
+      "maxspeed:type": "UA:urban",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "oneway": "yes",
+      "ref": "Н-03",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167875826,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Наливайка",
+      "name:en": "Nalyvaika Street",
+      "name:pl": "ulica Nalewajki",
+      "name:ru": "Наливайко улица",
+      "name:uk": "вулиця Наливайка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167904330,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Леонтовича",
+      "name:ru": "Стаханова улица",
+      "name:uk": "вулиця Леонтовича",
+      "old_name": "вулиця Стаханова",
+      "old_name:en": "Stahanova Street",
+      "old_name:pl": "ulica Stachanowa",
+      "old_name:uk": "вулиця Стаханова",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167904331,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Косинського",
+      "name:en": "Kosynskoho Street",
+      "name:ru": "Косинского улица",
+      "name:uk": "вулиця Косинського",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167905371,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Сагайдачного",
+      "name:en": "Sahaidachnoho Street",
+      "name:pl": "ulica Sahajdacznego",
+      "name:ru": "Сагайдачного улица",
+      "name:uk": "вулиця Сагайдачного"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167905372,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Шолом-Алейхема",
+      "name:en": "Sholom-Aleikhema Street",
+      "name:pl": "ulica Szolema Alejchema",
+      "name:ru": "Шолом-Алейхема улица",
+      "name:uk": "вулиця Шолом-Алейхема"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167907258,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Івана Сірка",
+      "name:en": "Ivana Sirka Street",
+      "name:ru": "Ивана Сирко улица",
+      "name:uk": "вулиця Івана Сірка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167907362,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Барановича",
+      "name:en": "Baranovycha Street",
+      "name:ru": "Барановича улица",
+      "name:uk": "вулиця Барановича"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167907511,
+    "tags": {
+      "highway": "residential",
+      "name": "Болохівська вулиця",
+      "name:en": "Bolokhivska Street",
+      "name:ru": "Болоховская улица",
+      "name:uk": "Болохівська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167907560,
+    "tags": {
+      "highway": "residential",
+      "name": "Болохівський провулок",
+      "name:ru": "Тимирязева улица",
+      "name:uk": "Болохівський провулок",
+      "old_name": "провулок Тімірязєва",
+      "old_name:uk": "провулок Тімірязєва"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167908529,
+    "tags": {
+      "highway": "residential",
+      "name": "Газопровідна вулиця",
+      "name:en": "Hazoprovidna Street",
+      "name:pl": "ulica Gazociągowa",
+      "name:ru": "Газопроводная улица",
+      "name:uk": "Газопровідна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 167952435,
+    "tags": {
+      "highway": "unclassified",
+      "name": "Чернятинська вулиця",
+      "name:uk": "Чернятинська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 168064211,
+    "tags": {
+      "highway": "residential",
+      "name": "Заслуцька вулиця",
+      "name:en": "Zaslutska Street",
+      "name:ru": "Заслуцкая улица",
+      "name:uk": "Заслуцька вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176810086,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Симоненка",
+      "name:en": "Symonenka Lane",
+      "name:uk": "провулок Симоненка",
+      "old_name": "провулок Чернишевського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176810090,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Вернадського",
+      "name:pl": "ulica Wernadskiego",
+      "name:ru": "Вернадского улица",
+      "name:uk": "вулиця Вернадського",
+      "note": "рішення 34 сесії міської ради від 27.09.2013 року № 3 перейменування вул. Паризької комуни на честь українського вченого Володимира Івановича Вернадського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176810093,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Василя Стуса",
+      "name:pl": "ulica Wasyla Stusa",
+      "name:ru": "Василия Стуса улица",
+      "name:uk": "вулиця Василя Стуса"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176810096,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Крашевського",
+      "name:ru": "Крашевского улица",
+      "name:uk": "вулиця Крашевського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822092,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "Новоміська вулиця",
+      "name:ru": "1-й Крупской переулок",
+      "name:uk": "Новоміська вулиця",
+      "old_name": "1-й провулок Крупської",
+      "old_name:pl": "1-y zaułek Krupskiej",
+      "old_name:uk": "1-й провулок Крупської",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822095,
+    "tags": {
+      "alt_name": "Короленка провулок",
+      "fixme": "Це Чорновола чи Короленка? За рішенням міськради про перейменування має бути Чорновола",
+      "highway": "residential",
+      "name": "вулиця Чорновола",
+      "name:ru": "Короленко переулок",
+      "name:uk": "вулиця Чорновола",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822096,
+    "tags": {
+      "highway": "service",
+      "name": "2-й Проскурівський провулок",
+      "name:uk": "2-й Проскурівський провулок",
+      "service": "alley"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822097,
+    "tags": {
+      "highway": "residential",
+      "name": "4-й Лісовий провулок",
+      "name:pl": "4-y zaułek Leśny",
+      "name:ru": "4-й Лесной переулок",
+      "name:uk": "4-й Лісовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822098,
+    "tags": {
+      "highway": "residential",
+      "name": "3-й Лісовий провулок",
+      "name:pl": "3-i zaułek Leśny",
+      "name:ru": "3-й Лесной переулок",
+      "name:uk": "3-й Лісовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822099,
+    "tags": {
+      "highway": "service",
+      "name": "3-й Проскурівський провулок",
+      "name:uk": "3-й Проскурівський провулок",
+      "service": "alley"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822103,
+    "tags": {
+      "highway": "residential",
+      "name": "1-й Польовий провулок",
+      "name:pl": "1-y zaułek Polowy",
+      "name:ru": "1-й Полевой переулок",
+      "name:uk": "1-й Польовий провулок",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822104,
+    "tags": {
+      "highway": "service",
+      "name": "4-й Проскурівський провулок",
+      "name:uk": "4-й Проскурівський провулок",
+      "service": "alley"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822108,
+    "tags": {
+      "highway": "service",
+      "name": "Київський провулок",
+      "name:uk": "Київський провулок",
+      "service": "alley"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822110,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Механізаторів",
+      "name:ru": "Механизаторов переулок",
+      "name:uk": "провулок Механізаторів"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822111,
+    "tags": {
+      "highway": "residential",
+      "name": "2-й Польовий провулок",
+      "name:pl": "2-i zaułek Polowy",
+      "name:ru": "2-й Полевой переулок",
+      "name:uk": "2-й Польовий провулок",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822113,
+    "tags": {
+      "highway": "service",
+      "name": "Ялинковий провулок",
+      "name:uk": "Ялинковий провулок",
+      "service": "alley"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822115,
+    "tags": {
+      "highway": "residential",
+      "name": "Козацький провулок",
+      "name:ru": "Казацкий переулок",
+      "name:uk": "Козацький провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822116,
+    "tags": {
+      "highway": "residential",
+      "name": "Лебединий провулок",
+      "name:ru": "Гастелло переулок",
+      "name:uk": "Лебединий провулок",
+      "old_name": "провулок Гастелло",
+      "old_name:uk": "провулок Гастелло"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822118,
+    "tags": {
+      "highway": "residential",
+      "name": "4-й Польовий провулок",
+      "name:pl": "4-y zaułek Polowy",
+      "name:ru": "4-й Полевой переулок",
+      "name:uk": "4-й Польовий провулок",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822119,
+    "tags": {
+      "highway": "residential",
+      "name": "3-й Польовий провулок",
+      "name:pl": "3-i zaułek Polowy",
+      "name:ru": "3-й Полевой переулок",
+      "name:uk": "3-й Польовий провулок",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822121,
+    "tags": {
+      "highway": "residential",
+      "name": "Лебединий провулок",
+      "name:ru": "Гастелло переулок",
+      "name:uk": "Лебединий провулок",
+      "old_name": "провулок Гастелло",
+      "old_name:uk": "провулок Гастелло"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822123,
+    "tags": {
+      "highway": "residential",
+      "name": "Трипільський провулок",
+      "name:ru": "Трипольский переулок",
+      "name:uk": "Трипільський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822126,
+    "tags": {
+      "highway": "residential",
+      "name": "Новоміська вулиця",
+      "name:uk": "Новоміська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822127,
+    "tags": {
+      "highway": "residential",
+      "name": "Зарічна вулиця",
+      "name:en": "Zarichna Street",
+      "name:pl": "ulica Zarzeczna",
+      "name:ru": "Заречная улица",
+      "name:uk": "Зарічна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822128,
+    "tags": {
+      "highway": "residential",
+      "name": "Татарський провулок",
+      "name:ru": "Майора Шаланды переулок",
+      "name:uk": "Татарський провулок",
+      "old_name": "провулок Майора Шаланди",
+      "old_name:uk": "провулок Майора Шаланди"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822131,
+    "tags": {
+      "highway": "residential",
+      "name": "Новоміська вулиця",
+      "name:ru": "2-й Крупской переулок",
+      "name:uk": "Новоміська вулиця",
+      "old_name": "2-й провулок Крупської",
+      "old_name:pl": "2-i zaułek Krupskiej",
+      "old_name:uk": "2-й провулок Крупської"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822136,
+    "tags": {
+      "highway": "residential",
+      "name": "Набережна вулиця",
+      "name:en": "Naberezhna Street",
+      "name:pl": "ulica Nadbrzeżna",
+      "name:ru": "Набережная улица",
+      "name:uk": "Набережна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822138,
+    "tags": {
+      "highway": "residential",
+      "name": "Лісова вулиця",
+      "name:pl": "ulica Leśna",
+      "name:ru": "Лесная улица",
+      "name:uk": "Лісова вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 176822142,
+    "tags": {
+      "highway": "residential",
+      "name": "Шахівська вулиця",
+      "name:ru": "Шаховская улица",
+      "name:uk": "Шахівська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 181581954,
+    "tags": {
+      "highway": "tertiary",
+      "lanes": "2",
+      "maxspeed": "50",
+      "name": "Ессенська вулиця",
+      "name:en": "Essenska Street",
+      "name:uk": "Ессенська вулиця",
+      "oneway": "no",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 182154428,
+    "tags": {
+      "highway": "residential",
+      "int_name": "Zarichna street",
+      "maxspeed": "40",
+      "name": "Зарічна вулиця",
+      "name:en": "Zarichna Street",
+      "name:pl": "ulica Zarzeczna",
+      "name:ru": "Заречная улица",
+      "name:uk": "Зарічна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 182157159,
+    "tags": {
+      "highway": "residential",
+      "name": "Зарічна вулиця",
+      "name:en": "Zarichna Street",
+      "name:pl": "ulica Zarzeczna",
+      "name:ru": "Заречная улица",
+      "name:uk": "Зарічна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406426,
+    "tags": {
+      "highway": "residential",
+      "name": "Лікарняна вулиця",
+      "name:en": "Likarniana Street",
+      "name:pl": "ulica Szpitalna",
+      "name:ru": "Больничная улица",
+      "name:uk": "Лікарняна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406427,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:uk": "вулиця Острозького",
+      "oneway": "yes"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406429,
+    "tags": {
+      "highway": "residential",
+      "name": "Фестивальний провулок",
+      "name:en": "Festyvalnyi Lane",
+      "name:ru": "Фестивальный переулок",
+      "name:uk": "Фестивальний провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406430,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Бурлуцького",
+      "name:ru": "Бурлуцкого улица",
+      "name:uk": "вулиця Бурлуцького"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406431,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Свободи",
+      "name:uk": "вулиця Свободи",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406432,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Яворницького",
+      "name:ru": "Яворницкого переулок",
+      "name:uk": "провулок Яворницького",
+      "old_name": "Червонофлотський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406433,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Виговського",
+      "name:pl": "ulica Wyhowskiego",
+      "name:ru": "Выговского улица",
+      "name:uk": "вулиця Виговського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406434,
+    "tags": {
+      "alt_name": "Болбочана Петра вулиця",
+      "full_name": "Петра Болбочана вулиця",
+      "highway": "residential",
+      "name": "вулиця Болбочана",
+      "name:ru": "Покрышкина улица",
+      "name:uk": "вулиця Болбочана",
+      "old_name": "вулиця Покришкіна",
+      "old_name:uk": "вулиця Покришкіна"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406436,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Миру",
+      "name:pl": "ulica Pokoju",
+      "name:ru": "Мира улица",
+      "name:uk": "вулиця Миру"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406437,
+    "tags": {
+      "highway": "residential",
+      "name": "Контотопська вулиця",
+      "name:ru": "Гагарина улица",
+      "name:uk": "Контотопська вулиця",
+      "old_name": "вулиця Гагаріна",
+      "old_name:pl": "ulica Gagarina",
+      "old_name:uk": "вулиця Гагаріна"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406438,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Коновальця",
+      "name:uk": "вулиця Коновальця",
+      "old_name": "вулиця Черняховського",
+      "old_name:pl": "ulica Czerniachowskiego",
+      "old_name:uk": "вулиця Черняховського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199406439,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Героїв Небесної Сотні",
+      "name:uk": "вулиця Героїв Небесної Сотні",
+      "old_name": "вулиця Красовського",
+      "old_name:en": "Krasovskoho Street",
+      "old_name:uk": "вулиця Красовського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407033,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "50",
+      "name": "вулиця Захисників України",
+      "name:pl": "ulica Obrońców Ukrainy",
+      "name:ru": "Пушкина улица",
+      "name:uk": "вулиця Захисників України",
+      "old_name": "вулиця Пушкіна",
+      "old_name:en": "Pushkina Street",
+      "old_name:pl": "ulica Puszkina",
+      "old_name:uk": "вулиця Пушкіна",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407034,
+    "tags": {
+      "highway": "residential",
+      "name": "Привокзальна вулиця",
+      "name:en": "Pryvokzalna Street",
+      "name:ru": "Привокзальная улица",
+      "name:uk": "Привокзальна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407035,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Бондарчука",
+      "name:en": "Bondarchuk Street",
+      "name:ru": "Бондарчука улица",
+      "name:uk": "вулиця Бондарчука"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407036,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Григоренка",
+      "name:uk": "провулок Григоренка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407038,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Тичини",
+      "name:pl": "ulica Tyczyny",
+      "name:ru": "Тычины улица",
+      "name:uk": "вулиця Тичини"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407039,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Мельника",
+      "name:uk": "провулок Мельника"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407040,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Головболгарбуд",
+      "name:en": "Holovbolharbud Street",
+      "name:ru": "Главболгарстрой улица",
+      "name:uk": "вулиця Головболгарбуд",
+      "oneway": "yes"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407043,
+    "tags": {
+      "footway": "sidewalk",
+      "highway": "footway",
+      "name": "вулиця Хохтіф",
+      "name:en": "Khokhtif Street",
+      "name:uk": "вулиця Хохтіф",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407044,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Дружби",
+      "name:pl": "ulica Przyjaźni",
+      "name:ru": "Дружбы улица",
+      "name:uk": "вулиця Дружби"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407046,
+    "tags": {
+      "highway": "residential",
+      "name": "Ліцейна вулиця",
+      "name:ru": "Прокопюка улица",
+      "name:uk": "Ліцейна вулиця",
+      "old_name": "вулиця Прокопʼюка",
+      "old_name:en": "Prokopiuka Street",
+      "old_name:uk": "вулиця Прокопюка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407048,
+    "tags": {
+      "highway": "residential",
+      "name": "Софійська вулиця",
+      "name:en": "Sofiiska Street",
+      "name:ru": "Софийская улица",
+      "name:uk": "Софійська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407049,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Довженка",
+      "name:en": "Dovgenka Street",
+      "name:ru": "Довженко улица",
+      "name:uk": "вулиця Довженка",
+      "old_name": "вулиця Пугачова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407050,
+    "tags": {
+      "highway": "tertiary",
+      "name": "вулиця Чайковського",
+      "name:uk": "вулиця Чайковського",
+      "name:uk-Latn": "vulytsia Heroiv Ukrainy",
+      "old_name": "вулиця Чайковського",
+      "old_name:pl": "ulica Czajkowskiego",
+      "old_name:uk-Latn": "vulytsia Chaikovskoho",
+      "source:name:uk": "https://www.adm-km.gov.ua/doc/dirmil/2024/07/0727r_250724_1.pdf"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407051,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "50",
+      "name": "вулиця Сковороди",
+      "name:en": "Skovorody Street",
+      "name:uk": "вулиця Сковороди",
+      "old_name": "вулиця Лермонтова",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407052,
+    "tags": {
+      "highway": "residential",
+      "name": "Залізнична вулиця",
+      "name:en": "Zaliznychna Street",
+      "name:pl": "ulica Zaliznyczna",
+      "name:ru": "Железнодорожная улица",
+      "name:uk": "Залізнична вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407053,
+    "tags": {
+      "highway": "residential",
+      "name": "Залізнична вулиця",
+      "name:en": "Zaliznychna Street",
+      "name:pl": "ulica Zaliznyczna",
+      "name:uk": "Залізнична вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407054,
+    "tags": {
+      "highway": "tertiary",
+      "name": "вулиця Кривоноса",
+      "name:en": "Kryvonosa Street",
+      "name:ru": "Кривоноса улица",
+      "name:uk": "вулиця Кривоноса"
+    }
+  },
+  {
+    "type": "way",
+    "id": 199407055,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "вулиця Стельмаха",
+      "name:en": "Stelmaha Street",
+      "name:ru": "Стельмаха улица",
+      "name:uk": "вулиця Стельмаха"
+    }
+  },
+  {
+    "type": "way",
+    "id": 201142389,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Франка",
+      "name:en": "Franka Street",
+      "name:pl": "ulica Franki",
+      "name:ru": "Франко улица",
+      "name:uk": "вулиця Франка",
+      "ref": "Т-23-24",
+      "smoothness": "good"
+    }
+  },
+  {
+    "type": "way",
+    "id": 255660197,
+    "tags": {
+      "cycleway:left": "lane",
+      "hgv": "no",
+      "highway": "secondary",
+      "maxspeed": "50",
+      "name": "вулиця Івана Кожедуба",
+      "name:en": "Ivana Kozheduba Street",
+      "name:ru": "улица Чкалова",
+      "name:uk": "вулиця Івана Кожедуба",
+      "old_name": "вулиця Чкалова",
+      "old_name:en": "Chkalova Street",
+      "old_name:pl": "ulica Czkałowa",
+      "old_name:uk": "вулиця Чкалова",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 255660198,
+    "tags": {
+      "bridge": "yes",
+      "cycleway:left": "lane",
+      "highway": "secondary",
+      "layer": "1",
+      "maxspeed": "40",
+      "maxweight": "20",
+      "name": "вулиця Чкалова",
+      "name:en": "Chkalova Street",
+      "name:pl": "ulica Czkałowa",
+      "name:ru": "Чкалова улица",
+      "name:uk": "вулиця Чкалова",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274096560,
+    "tags": {
+      "highway": "residential",
+      "name": "Софійська вулиця",
+      "name:en": "Sofiiska Street",
+      "name:ru": "Попова улица",
+      "name:uk": "Софійська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274219226,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Героїв Крут",
+      "name:ru": "Героев Крут улица",
+      "name:uk": "вулиця Героїв Крут"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274353925,
+    "tags": {
+      "highway": "residential",
+      "name": "Гетьманський провулок",
+      "name:ru": "Челюскина переулок",
+      "name:uk": "Гетьманський провулок",
+      "old_name": "провулок Челюскіна",
+      "old_name:uk": "провулок Челюскіна"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274356430,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Бурлуцького",
+      "name:ru": "Борлуцкого переулок",
+      "name:uk": "провулок Бурлуцького"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274356740,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Борлуцького",
+      "name:ru": "Борлуцкого переулок",
+      "name:uk": "провулок Борлуцького"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274357255,
+    "tags": {
+      "highway": "residential",
+      "name": "Гетьманський провулок",
+      "name:ru": "Челюскина переулок",
+      "name:uk": "Гетьманський провулок",
+      "old_name": "провулок Челюскіна",
+      "old_name:uk": "провулок Челюскіна"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274363756,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Теліги",
+      "name:ru": "Телиги улица",
+      "name:uk": "вулиця Теліги"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274363758,
+    "tags": {
+      "highway": "residential",
+      "name": "Січневий провулок",
+      "name:ru": "Январский переулок",
+      "name:uk": "Січневий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274363760,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Пулюя",
+      "name:ru": "Пулюя переулок",
+      "name:uk": "провулок Пулюя"
+    }
+  },
+  {
+    "type": "way",
+    "id": 274473185,
+    "tags": {
+      "full_name": "Василія Кочубея вулиця",
+      "highway": "residential",
+      "name": "вулиця Кочубея",
+      "name:ru": "Чайкиной переулок",
+      "name:uk": "вулиця Кочубея",
+      "old_name": "вулиця Чайкіної",
+      "old_name:uk": "вулиця Чайкіної"
+    }
+  },
+  {
+    "type": "way",
+    "id": 292434118,
+    "tags": {
+      "highway": "residential",
+      "name": "Ізяславська вулиця",
+      "name:ru": "Изяславская улица",
+      "name:uk": "Ізяславська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 311476627,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Олеся Гончара",
+      "name:pl": "ulica Olesia Gonczara",
+      "name:ru": "Олеся Гончара улица",
+      "name:uk": "вулиця Олеся Гончара"
+    }
+  },
+  {
+    "type": "way",
+    "id": 311545763,
+    "tags": {
+      "highway": "service",
+      "maxspeed": "50",
+      "name": "провулок Мануїльського",
+      "name:ru": "Мануильского переулок",
+      "name:uk": "провулок Мануїльського",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 311545764,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "провулок Вербицького",
+      "name:ru": "Лихачёва переулок",
+      "name:uk": "провулок Вербицького",
+      "old_name": "провулок Ліхачова",
+      "old_name:uk": "провулок Ліхачова",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 311545766,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "провулок Гольдфадена",
+      "name:ru": "Гольдфадена переулок",
+      "name:uk": "провулок Гольдфадена",
+      "old_name": "провулок Мануїльського",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 311545768,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "Левадна вулиця",
+      "name:uk": "Левадна вулиця",
+      "name:uk-Latn": "Levadna vulytsia",
+      "old_name": "вулиця 30 Років Перемоги",
+      "old_name:uk-Latn": "vulytsia 30 Rokiv Peremohy",
+      "source:name:uk": "https://www.adm-km.gov.ua/doc/dirmil/2024/07/0727r_250724_1.pdf",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 312103837,
+    "tags": {
+      "bridge": "yes",
+      "highway": "unclassified",
+      "layer": "1",
+      "name": "Чернятинська вулиця",
+      "name:uk": "Чернятинська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 361865192,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок 9 Березня",
+      "name:ru": "9-го Марта переулок",
+      "name:uk": "провулок 9 Березня"
+    }
+  },
+  {
+    "type": "way",
+    "id": 364894660,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Балашова",
+      "name:ru": "Балашова переулок",
+      "name:uk": "провулок Балашова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 364894661,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Дружби",
+      "name:ru": "Дружбы переулок",
+      "name:uk": "провулок Дружби"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376233170,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Новики",
+      "name:uk": "вулиця Новики",
+      "surface": "paved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376233173,
+    "tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "highway": "residential",
+      "horse": "yes",
+      "name": "1-ша Житомирська вулиця",
+      "name:pl": "1-a ulica Żytomierska",
+      "name:uk": "1-ша Житомирська вулиця",
+      "smoothness": "bad",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376233174,
+    "tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "highway": "residential",
+      "horse": "yes",
+      "name": "2-га Житомирська вулиця",
+      "name:pl": "2-a ulica Żytomierska",
+      "name:ru": "2-я Житомирская улица",
+      "name:uk": "2-га Житомирська вулиця",
+      "surface": "unpaved",
+      "width": "3"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376235390,
+    "tags": {
+      "highway": "primary",
+      "maxspeed": "50",
+      "name": "Київська вулиця",
+      "name:pl": "ulica Kijowska",
+      "name:ru": "Киевская улица",
+      "name:uk": "Київська вулиця",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376246199,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "40",
+      "name": "Демократична вулиця",
+      "name:ru": "Демократическая улица",
+      "name:uk": "Демократична вулиця",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376251986,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:ru": "Острожского улица",
+      "name:uk": "вулиця Острозького",
+      "oneway": "no",
+      "ref": "Т-23-24"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376251990,
+    "tags": {
+      "highway": "secondary",
+      "lane_markings": "no",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:ru": "Острожского улица",
+      "name:uk": "вулиця Острозького",
+      "oneway": "yes",
+      "ref": "Т-23-24",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376251991,
+    "tags": {
+      "highway": "tertiary",
+      "maxspeed": "50",
+      "name": "вулиця Авіаторів",
+      "name:uk": "вулиця Авіаторів",
+      "old_name": "вулиця Попова",
+      "old_name:en": "Popova Street",
+      "old_name:pl": "ulica Popowa",
+      "old_name:uk": "вулиця Попова",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376251992,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Косинського",
+      "name:en": "Kosynskoho Street",
+      "name:ru": "Косинского улица",
+      "name:uk": "вулиця Косинського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376251993,
+    "tags": {
+      "highway": "primary",
+      "maxspeed:type": "UA:urban",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376251994,
+    "tags": {
+      "highway": "primary",
+      "lit": "yes",
+      "maxspeed:type": "UA:urban",
+      "maxweight": "3.5",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376255287,
+    "tags": {
+      "hgv": "no",
+      "highway": "secondary",
+      "maxspeed": "50",
+      "name": "Житомирське шосе",
+      "name:pl": "szosa Żytomierska",
+      "name:ru": "Житомирское шоссе",
+      "name:uk": "Житомирське шосе"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376257209,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Івана Федорова",
+      "name:en": "Ivana Fedorova Street",
+      "name:pl": "ulica Iwana Fiodorowa",
+      "name:ru": "Ивана Фёдорова улица",
+      "name:uk": "вулиця Івана Федорова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376286274,
+    "tags": {
+      "highway": "residential",
+      "name": "5-й Польовий провулок",
+      "name:pl": "5-y zaułek Polowy",
+      "name:ru": "5-й Полевой переулок",
+      "name:uk": "5-й Польовий провулок",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376286275,
+    "tags": {
+      "highway": "residential",
+      "name": "6-й Польовий провулок",
+      "name:pl": "6-y zaułek Polowy",
+      "name:ru": "6-й Полевой переулок",
+      "name:uk": "6-й Польовий провулок",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376286276,
+    "tags": {
+      "highway": "residential",
+      "name": "7-й Польовий провулок",
+      "name:pl": "7-y zaułek Polowy",
+      "name:ru": "7-й Полевой переулок",
+      "name:uk": "7-й Польовий провулок",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376286277,
+    "tags": {
+      "highway": "residential",
+      "name": "8-й Польовий провулок",
+      "name:pl": "8-y zaułek Polowy",
+      "name:ru": "8-й Полевой переулок",
+      "name:uk": "8-й Польовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376286282,
+    "tags": {
+      "highway": "secondary",
+      "loc_ref": "Т-06-12",
+      "maxspeed": "90",
+      "name": "Старицька вулиця",
+      "name:ru": "Старицкая улица",
+      "name:uk": "Старицька вулиця",
+      "old_name": "вулиця Урицького",
+      "ref": "Т-06-12",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376286382,
+    "tags": {
+      "highway": "residential",
+      "name": "Трипільський провулок",
+      "name:ru": "Трипольский переулок",
+      "name:uk": "Трипільський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376287116,
+    "tags": {
+      "highway": "service",
+      "name": "Трипільський провулок",
+      "name:ru": "Трипольский переулок",
+      "name:uk": "Трипільський провулок",
+      "service": "alley"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376289035,
+    "tags": {
+      "highway": "residential",
+      "name": "Залужна вулиця",
+      "name:ru": "Короленко улица",
+      "name:uk": "Залужна вулиця",
+      "old_name": "вулиця Короленка",
+      "old_name:pl": "ulica Korolenki",
+      "old_name:uk": "вулиця Короленка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376289036,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Чикирди",
+      "name:ru": "Чикирди переулок",
+      "name:uk": "провулок Чикирди",
+      "note": "перейменування (провулок Калініна) на честь журналіста підпільника, уродженця Старокостянтинівщини Олександра Чикирди"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376290211,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Механізаторів",
+      "name:ru": "Механизаторов переулок",
+      "name:uk": "провулок Механізаторів"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376291988,
+    "tags": {
+      "highway": "residential",
+      "name": "2-й Лісовий провулок",
+      "name:pl": "2-i zaułek Leśny",
+      "name:ru": "2-й Лесной переулок",
+      "name:uk": "2-й Лісовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376291991,
+    "tags": {
+      "highway": "residential",
+      "name": "1-й Лісовий провулок",
+      "name:pl": "1-y zaułek Leśny",
+      "name:ru": "1-й Лесной переулок",
+      "name:uk": "1-й Лісовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376291993,
+    "tags": {
+      "highway": "residential",
+      "name": "Садибна вулиця",
+      "name:ru": "Кобеева улица",
+      "name:uk": "Садибна вулиця",
+      "old_name": "вулиця Кобеєва",
+      "old_name:uk": "вулиця Кобеєва"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376291996,
+    "tags": {
+      "highway": "residential",
+      "name": "Технічна вулиця",
+      "name:pl": "ulica Techniczna",
+      "name:ru": "Техническая улица",
+      "name:uk": "Технічна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376291998,
+    "tags": {
+      "highway": "residential",
+      "name": "Депутатський провулок",
+      "name:ru": "Депутатский переулок",
+      "name:uk": "Депутатський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376292000,
+    "tags": {
+      "highway": "residential",
+      "name": "Центральний провулок",
+      "name:pl": "zaułek Centralny",
+      "name:ru": "Центральный переулок",
+      "name:uk": "Центральний провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376292096,
+    "tags": {
+      "highway": "residential",
+      "name": "Спортивний провулок",
+      "name:pl": "zaułek Sportowy",
+      "name:ru": "Спортивный переулок",
+      "name:uk": "Спортивний провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376294086,
+    "tags": {
+      "highway": "residential",
+      "name": "29-й Польовий провулок",
+      "name:pl": "29-y zaułek Polowy",
+      "name:ru": "29-й Полевой переулок",
+      "name:uk": "29-й Польовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376294088,
+    "tags": {
+      "highway": "residential",
+      "name": "25-й Польовий провулок",
+      "name:pl": "25-y zaułek Polowy",
+      "name:ru": "25-й Полевой переулок",
+      "name:uk": "25-й Польовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376294224,
+    "tags": {
+      "highway": "residential",
+      "name": "Лісова вулиця",
+      "name:pl": "ulica Leśna",
+      "name:ru": "Лесная улица",
+      "name:uk": "Лісова вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376294546,
+    "tags": {
+      "highway": "residential",
+      "name": "24-й Польовий провулок",
+      "name:pl": "24-y zaułek Polowy",
+      "name:ru": "24-й Полевой переулок",
+      "name:uk": "24-й Польовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376295938,
+    "tags": {
+      "highway": "residential",
+      "name": "бульвар Острозького",
+      "name:uk": "бульвар Острозького"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376295941,
+    "tags": {
+      "highway": "residential",
+      "name": "17-й Польовий провулок",
+      "name:pl": "17-y zaułek Polowy",
+      "name:ru": "17-й Полевой переулок",
+      "name:uk": "17-й Польовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376295942,
+    "tags": {
+      "highway": "residential",
+      "name": "18-й Польовий провулок",
+      "name:pl": "18-y zaułek Polowy",
+      "name:ru": "18-й Полевой переулок",
+      "name:uk": "18-й Польовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376295943,
+    "tags": {
+      "highway": "residential",
+      "name": "19-й Польовий провулок",
+      "name:pl": "19-y zaułek Polowy",
+      "name:ru": "19-й Полевой переулок",
+      "name:uk": "19-й Польовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376296121,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Лесі Українки",
+      "name:ru": "Леси Украинки переулок",
+      "name:uk": "вулиця Лесі Українки"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376296359,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Лесі Українки",
+      "name:ru": "Леси Украинки переулок",
+      "name:uk": "вулиця Лесі Українки"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376297166,
+    "tags": {
+      "highway": "residential",
+      "name": "Татарська вулиця",
+      "name:pl": "ulica Tatarska",
+      "name:ru": "Пионерский переулок",
+      "name:uk": "Татарська вулиця",
+      "old_name": "Піонерський провулок",
+      "old_name:pl": "zaułek Pionierski",
+      "old_name:uk": "Піонерський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376297167,
+    "tags": {
+      "highway": "residential",
+      "name": "Садова вулиця",
+      "name:pl": "ulica Sadowa",
+      "name:ru": "Садовая улица",
+      "name:uk": "Садова вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376297573,
+    "tags": {
+      "alt_name": "Бортнянського Дмитра провулок",
+      "full_name": "Дмитра Бортнянського провулок",
+      "highway": "residential",
+      "name": "провулок Бортнянського",
+      "name:ru": "Панфилова переулок",
+      "name:uk": "провулок Бортнянського",
+      "old_name": "провулок Панфілова",
+      "old_name:pl": "zaułek Panfiłowa",
+      "old_name:uk": "провулок Панфілова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376298237,
+    "tags": {
+      "highway": "primary",
+      "maxspeed": "50",
+      "name": "Ізяславська вулиця",
+      "name:ru": "Изяславская улица",
+      "name:uk": "Ізяславська вулиця",
+      "old_ref": "Р-05",
+      "ref": "Н-25",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376298238,
+    "tags": {
+      "highway": "residential",
+      "name": "Мирний провулок",
+      "name:ru": "Мирный переулок",
+      "name:uk": "Мирний провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376298239,
+    "tags": {
+      "highway": "residential",
+      "name": "Мирний провулок",
+      "name:ru": "Мирный переулок",
+      "name:uk": "Мирний провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376299556,
+    "tags": {
+      "full_name": "Василія Кочубея вулиця",
+      "highway": "residential",
+      "name": "вулиця Кочубея",
+      "name:ru": "Чайкиной переулок",
+      "name:uk": "вулиця Кочубея",
+      "old_name": "провулок Чайкіної",
+      "old_name:uk": "провулок Чайкіної"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376301052,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Ченцових",
+      "name:uk": "вулиця Ченцових",
+      "old_name": "вулиця Котика",
+      "old_name:uk": "вулиця Котика"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376301053,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Свободи",
+      "name:pl": "zaułek Wolności",
+      "name:uk": "провулок Свободи"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376303464,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Кожедуба",
+      "name:ru": "Циолковского переулок",
+      "name:uk": "вулиця Кожедуба",
+      "old_name": "провулок Ціолковського",
+      "old_name:pl": "zaułek Ciołkowskiego",
+      "old_name:uk": "провулок Ціолковського"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376306980,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Космонавтів",
+      "name:pl": "zaułek Kosmonautów",
+      "name:ru": "Космонавтов переулок",
+      "name:uk": "провулок Космонавтів"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376307292,
+    "tags": {
+      "highway": "residential",
+      "name": "Козацький провулок",
+      "name:ru": "Казацкий переулок",
+      "name:uk": "Козацький провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376313782,
+    "tags": {
+      "highway": "residential",
+      "name": "Залужний провулок",
+      "name:ru": "Короленко переулок",
+      "name:uk": "Залужний провулок",
+      "old_name": "провулок Короленка",
+      "old_name:pl": "zaułek Korolenki",
+      "old_name:uk": "провулок Короленка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376336718,
+    "tags": {
+      "highway": "residential",
+      "name": "4-й Лісовий провулок",
+      "name:pl": "4-y zaułek Leśny",
+      "name:ru": "4-й Лесной переулок",
+      "name:uk": "4-й Лісовий провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376431465,
+    "tags": {
+      "highway": "residential",
+      "name": "Прибережний провулок",
+      "name:ru": "Прибрежный переулок",
+      "name:uk": "Прибережний провулок",
+      "old_name": "провулок Аврори"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376435469,
+    "tags": {
+      "highway": "primary",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "intermediate",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 376435470,
+    "tags": {
+      "bridge": "yes",
+      "highway": "primary",
+      "layer": "1",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "intermediate",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377056803,
+    "tags": {
+      "highway": "residential",
+      "name": "Подільський провулок",
+      "name:uk": "Подільський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377721984,
+    "tags": {
+      "highway": "residential",
+      "name": "Меджибіжська вулиця",
+      "name:ru": "Меджибожская улица",
+      "name:uk": "Меджибіжська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377723417,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Олеся Гончара",
+      "name:pl": "ulica Olesia Gonczara",
+      "name:ru": "Олеся Гончара улица",
+      "name:uk": "вулиця Олеся Гончара",
+      "note": "рішення 34 сесії міської ради від 27.09.2013 року №3 перейменування вул. Ворошилова на честь українського письменника Олеся (Олександра) Терентійовича Гончара"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377723934,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок 20-ої Дистанції Колії",
+      "name:en": "20th Dystantsii Kolii Lane",
+      "name:ru": "Василия Стуса улица",
+      "name:uk": "провулок 20-ої Дистанції Колії"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377724399,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Василя Стуса",
+      "name:pl": "ulica Wasyla Stusa",
+      "name:ru": "Симоненко улица",
+      "name:uk": "вулиця Василя Стуса"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377725403,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Кондратюка",
+      "name:ru": "Кондратюка улица",
+      "name:uk": "вулиця Кондратюка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377725507,
+    "tags": {
+      "highway": "residential",
+      "name": "Меджибіжська вулиця",
+      "name:en": "Medzhybizhska Street",
+      "name:ru": "Меджибожская улица",
+      "name:uk": "Меджибіжська вулиця",
+      "old_name": "вулиця Горького"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377732307,
+    "tags": {
+      "highway": "residential",
+      "maxspeed": "50",
+      "name": "Гетьманська вулиця",
+      "name:ru": "Пушкина улица",
+      "name:uk": "Гетьманська вулиця",
+      "old_name": "вулиця Челюскіна",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377732309,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Малишка",
+      "name:ru": "Малышко улица",
+      "name:uk": "вулиця Малишка",
+      "note": "на честь українського поета Андрія Самойловича Малишка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377732310,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Глібова",
+      "name:ru": "Глебова улица",
+      "name:uk": "вулиця Глібова",
+      "note": "вул. Крилова перейменовано на честь українського сатирика-баснописця Леоніда Івановича Глібова",
+      "old_name": "вулиця Крилова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377734526,
+    "tags": {
+      "highway": "residential",
+      "name": "Любомирська вулиця",
+      "name:ru": "Колхозная улица",
+      "name:uk": "Любомирська вулиця",
+      "old_name": "Колгоспна вулиця",
+      "old_name:pl": "ulica Kołchozowa",
+      "old_name:uk": "Колгоспна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377734527,
+    "tags": {
+      "highway": "primary",
+      "maxspeed": "50",
+      "name": "Київська вулиця",
+      "name:pl": "ulica Kijowska",
+      "name:ru": "Киевская улица",
+      "name:uk": "Київська вулиця",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "intermediate",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377734529,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Героїв Чорнобильців",
+      "name:ru": "Героев чорнобильцев улица",
+      "name:uk": "вулиця Героїв Чорнобильців"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377736225,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Глібова",
+      "name:ru": "Крылова переулок",
+      "name:uk": "провулок Глібова",
+      "old_name": "провулок Крилова",
+      "old_name:pl": "zaułek Kryłowa",
+      "old_name:uk": "провулок Крилова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377744478,
+    "tags": {
+      "alt_name": "Мирного вулиця",
+      "bicycle": "yes",
+      "comment": "на честь українського письменника Панаса Мирного",
+      "foot": "yes",
+      "highway": "residential",
+      "horse": "yes",
+      "motor_vehicle": "yes",
+      "name": "вулиця Панаса Мирного",
+      "name:ru": "Мирного улица",
+      "name:uk": "вулиця Панаса Мирного",
+      "old_name": "вулиця Добролюбова",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377744479,
+    "tags": {
+      "bicycle": "yes",
+      "comment": "перейменування на честь польського письменника Юзефа Ігнаці Крашевського, який проживав на території Старокостянтинівщини",
+      "foot": "yes",
+      "highway": "residential",
+      "horse": "yes",
+      "motor_vehicle": "yes",
+      "name": "вулиця Крашевського",
+      "name:ru": "Крашевского улица",
+      "name:uk": "вулиця Крашевського",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377947653,
+    "tags": {
+      "highway": "residential",
+      "name": "Ізяславська вулиця",
+      "name:ru": "Изяславская улица",
+      "name:uk": "Ізяславська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377991497,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Олеся Гончара",
+      "name:pl": "ulica Olesia Gonczara",
+      "name:ru": "Олеся Гончара улица",
+      "name:uk": "вулиця Олеся Гончара"
+    }
+  },
+  {
+    "type": "way",
+    "id": 377994685,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Героїв Чорнобильців",
+      "name:ru": "Героев чорнобильцев улица",
+      "name:uk": "вулиця Героїв Чорнобильців"
+    }
+  },
+  {
+    "type": "way",
+    "id": 378711366,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:ru": "Острожского улица",
+      "name:uk": "вулиця Острозького",
+      "ref": "Т-23-24",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 415878737,
+    "tags": {
+      "highway": "secondary",
+      "name": "Веснянківське шосе",
+      "name:ru": "Веснянковское шоссе",
+      "name:uk": "Веснянківське шосе",
+      "ref": "Т-23-26"
+    }
+  },
+  {
+    "type": "way",
+    "id": 416723805,
+    "tags": {
+      "highway": "secondary",
+      "lanes": "2",
+      "maxspeed": "50",
+      "name": "Меджибіжська вулиця",
+      "name:en": "Medzhybizhska Street",
+      "name:ru": "Меджибожская улица",
+      "name:uk": "Меджибіжська вулиця",
+      "old_name": "вулиця Горького",
+      "ref": "Т-23-26",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 706125008,
+    "tags": {
+      "highway": "service",
+      "name": "1-й Олімпійський провулок",
+      "name:uk": "1-й Олімпійський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 773102576,
+    "tags": {
+      "highway": "primary",
+      "junction": "roundabout",
+      "lane_markings": "no",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "oneway": "yes",
+      "ref": "Н-03",
+      "smoothness": "intermediate",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 773102577,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "maxspeed": "50",
+      "name": "Ізяславська вулиця",
+      "name:ru": "Изяславская улица",
+      "name:uk": "Ізяславська вулиця",
+      "old_ref": "Р-05",
+      "oneway": "yes",
+      "ref": "Н-25",
+      "smoothness": "intermediate",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 773102578,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 840406605,
+    "tags": {
+      "highway": "footway",
+      "name": "вулиця Глібова",
+      "name:ru": "Глебова улица",
+      "name:uk": "вулиця Глібова",
+      "note": "вул. Крилова перейменовано на честь українського сатирика-баснописця Леоніда Івановича Глібова",
+      "old_name": "вулиця Крилова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 865015989,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Франка",
+      "name:en": "Franka Street",
+      "name:pl": "ulica Franki",
+      "name:ru": "Франко улица",
+      "name:uk": "вулиця Франка",
+      "ref": "Т-23-24",
+      "smoothness": "good",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 883353206,
+    "tags": {
+      "highway": "unclassified",
+      "name": "Чернятинська вулиця",
+      "name:uk": "Чернятинська вулиця",
+      "source": "maxar"
+    }
+  },
+  {
+    "type": "way",
+    "id": 888332777,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "lit": "yes",
+      "maxspeed:type": "UA:urban",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "oneway": "yes",
+      "ref": "Н-03",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1020554512,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Болбочана",
+      "name:uk": "провулок Болбочана"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1021499860,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Івана Багряного",
+      "name:uk": "провулок Івана Багряного",
+      "name:uk-Latn": "provulok Ivana Bahrianoho"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1021499862,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Глінки",
+      "name:uk": "провулок Глінки",
+      "name:uk-Latn": "provulok Hlinky"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1021499863,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Матейка",
+      "name:pl": "ulica Matejki",
+      "name:uk": "вулиця Матейка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1063681169,
+    "tags": {
+      "highway": "primary",
+      "lit": "yes",
+      "maxspeed:type": "UA:urban",
+      "maxweight": "3.5",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1063681170,
+    "tags": {
+      "highway": "primary",
+      "lane_markings": "no",
+      "maxspeed:type": "UA:urban",
+      "name": "вулиця Грушевського",
+      "name:en": "Hrushevskoho Street",
+      "name:pl": "ulica Gruszewskiego",
+      "name:ru": "Грушевского улица",
+      "name:uk": "вулиця Грушевського",
+      "nat_ref": "Н-03",
+      "ref": "Н-03",
+      "smoothness": "bad",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1098837015,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Франка",
+      "name:en": "Franka Street",
+      "name:pl": "ulica Franki",
+      "name:uk": "вулиця Франка",
+      "ref": "Т-23-24",
+      "smoothness": "good"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1124630247,
+    "tags": {
+      "highway": "service",
+      "name": "6-й Проскурівський провулок",
+      "name:uk": "6-й Проскурівський провулок",
+      "service": "driveway"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1124630248,
+    "tags": {
+      "highway": "service",
+      "name": "5-й Проскурівський провулок",
+      "name:uk": "5-й Проскурівський провулок",
+      "service": "driveway"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1124630252,
+    "tags": {
+      "highway": "unclassified",
+      "name": "Чернятинська вулиця",
+      "name:uk": "Чернятинська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1124630260,
+    "tags": {
+      "highway": "unclassified",
+      "maxspeed": "50",
+      "name": "Чернятинська вулиця",
+      "name:uk": "Чернятинська вулиця",
+      "oneway": "no",
+      "surface": "asphalt"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1124630264,
+    "tags": {
+      "highway": "residential",
+      "name": "Технічна вулиця",
+      "name:pl": "ulica Techniczna",
+      "name:uk": "Технічна вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1124655736,
+    "tags": {
+      "highway": "residential",
+      "name": "Замостянський провулок",
+      "name:uk": "Замостянський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1124655741,
+    "tags": {
+      "highway": "residential",
+      "name": "Бальзаківський провулок",
+      "name:uk": "Бальзаківський провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1124655743,
+    "tags": {
+      "highway": "service",
+      "name": "Рибацький провулок",
+      "name:uk": "Рибацький провулок",
+      "service": "driveway"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1163879313,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Симоненка",
+      "name:en": "Symonenka Street",
+      "name:ru": "улица Симоненко",
+      "name:uk": "вулиця Симоненка",
+      "old_name": "Будьонного провулок"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1327946217,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Наливайка",
+      "name:en": "Nalyvaika Street",
+      "name:pl": "ulica Nalewajki",
+      "name:ru": "Наливайко улица",
+      "name:uk": "вулиця Наливайка"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1328614333,
+    "tags": {
+      "highway": "residential",
+      "name": "вулиця Кріпосний Вал",
+      "name:en": "Kriposnyi Val Street",
+      "name:ru": "Крепостной Вал улица",
+      "name:uk": "вулиця Кріпосний Вал"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1330748467,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Добровольців України",
+      "name:uk": "провулок Добровольців України",
+      "name:uk-Latn": "provulok Dobrovoltsiv Ukrainy",
+      "old_name": "Інтернаціональний провулок",
+      "old_name:uk-Latn": "Internatsionalnyi provulok",
+      "source:name:uk": "https://www.adm-km.gov.ua/doc/dirmil/2024/07/0727r_250724_1.pdf"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1353413922,
+    "tags": {
+      "highway": "track",
+      "name": "Малиновий провулок",
+      "name:uk": "Малиновий провулок",
+      "name:uk-Latn": "Malynovyi provulok",
+      "surface": "unpaved",
+      "trail_visibility": "bad"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1353413923,
+    "tags": {
+      "highway": "track",
+      "name": "Абрикосовий провулок",
+      "name:uk": "Абрикосовий провулок",
+      "name:uk-Latn": "Abrykosovyi provulok"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1353413925,
+    "tags": {
+      "highway": "residential",
+      "name": "Пілотський провулок",
+      "name:uk": "Пілотський провулок",
+      "name:uk-Latn": "Pilotskyi provulok",
+      "old_name": "провулок Мічуріна",
+      "old_name:uk-Latn": "provulok Michurina"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1353417637,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Добровольців України",
+      "name:uk": "провулок Добровольців України",
+      "name:uk-Latn": "provulok Dobrovoltsiv Ukrainy",
+      "old_name": "Інтернаціональний провулок",
+      "old_name:uk-Latn": "Internatsionalnyi provulok",
+      "source:name:uk": "https://www.adm-km.gov.ua/doc/dirmil/2024/07/0727r_250724_1.pdf"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1412590425,
+    "tags": {
+      "highway": "tertiary",
+      "name": "Залізнична вулиця",
+      "name:en": "Zaliznychna Street",
+      "name:pl": "ulica Zaliznyczna",
+      "name:uk": "Залізнична вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1460460573,
+    "tags": {
+      "highway": "residential",
+      "name": "Софійська вулиця",
+      "name:en": "Sofiiska Street",
+      "name:ru": "Софийская улица",
+      "name:uk": "Софійська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1460460574,
+    "tags": {
+      "highway": "residential",
+      "name": "Софійська вулиця",
+      "name:en": "Sofiiska Street",
+      "name:ru": "Софийская улица",
+      "name:uk": "Софійська вулиця"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1470826743,
+    "tags": {
+      "highway": "residential",
+      "name": "провулок Глібова",
+      "name:ru": "Крылова переулок",
+      "name:uk": "провулок Глібова",
+      "old_name": "провулок Крилова",
+      "old_name:pl": "zaułek Kryłowa",
+      "old_name:uk": "провулок Крилова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1470826744,
+    "tags": {
+      "highway": "footway",
+      "name": "провулок Глібова",
+      "name:ru": "Крылова переулок",
+      "name:uk": "провулок Глібова",
+      "old_name": "провулок Крилова",
+      "old_name:pl": "zaułek Kryłowa",
+      "old_name:uk": "провулок Крилова"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1473565900,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:ru": "Острожского улица",
+      "name:uk": "вулиця Острозького",
+      "oneway": "no",
+      "ref": "Т-23-24"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1473565901,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:ru": "Острожского улица",
+      "name:uk": "вулиця Острозького",
+      "oneway": "no",
+      "ref": "Т-23-24"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1482903293,
+    "tags": {
+      "highway": "residential",
+      "name": "5-а Південна вулиця",
+      "surface": "unpaved"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1506817873,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:ru": "Острожского улица",
+      "name:uk": "вулиця Острозького",
+      "oneway": "no",
+      "ref": "Т-23-24"
+    }
+  },
+  {
+    "type": "way",
+    "id": 1506817874,
+    "tags": {
+      "highway": "secondary",
+      "name": "вулиця Острозького",
+      "name:en": "Ostrozkoho Street",
+      "name:ru": "Острожского улица",
+      "name:uk": "вулиця Острозького",
+      "oneway": "no",
+      "ref": "Т-23-24"
+    }
+  }
+]

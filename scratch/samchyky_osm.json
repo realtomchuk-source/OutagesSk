@@ -1,0 +1,65 @@
+[
+  {
+    "type": "node",
+    "id": 337546091,
+    "tags": {
+      "katotth": "UA68040390600099719",
+      "koatuu": "6824287101",
+      "name": "Самчики",
+      "name:en": "Samchyky",
+      "name:ko": "삼치키",
+      "name:pl": "Samczyki",
+      "name:prefix": "село",
+      "name:ru": "Самчики",
+      "name:uk": "Самчики",
+      "place": "village",
+      "population": "1682",
+      "postal_code": "31182",
+      "wikidata": "Q4407147",
+      "wikipedia": "uk:Самчики",
+      "wikipedia:ru": "Самчики"
+    }
+  },
+  {
+    "type": "node",
+    "id": 11578469746,
+    "tags": {
+      "bus": "yes",
+      "highway": "bus_stop",
+      "name": "Самчики",
+      "name:uk": "Самчики",
+      "public_transport": "platform"
+    }
+  },
+  {
+    "type": "node",
+    "id": 11578469749,
+    "tags": {
+      "bus": "yes",
+      "highway": "bus_stop",
+      "name": "Самчики",
+      "name:uk": "Самчики",
+      "public_transport": "platform"
+    }
+  },
+  {
+    "type": "way",
+    "id": 372353549,
+    "tags": {
+      "barrier": "fence",
+      "branch": "Старокостянтинівський РЕМ",
+      "name": "Самчики",
+      "name:uk": "Самчики",
+      "operator": "Хмельницькобленерго",
+      "operator:en": "Khmelnytskoblenergo",
+      "operator:uk": "Хмельницькобленерго",
+      "operator:wikidata": "Q60986632",
+      "power": "substation",
+      "rating": "5 MVA",
+      "substation": "distribution",
+      "voltage": "35000;10000",
+      "voltage:primary": "35000",
+      "voltage:secondary": "10000"
+    }
+  }
+]
