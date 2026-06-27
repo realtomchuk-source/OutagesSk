@@ -1146,12 +1146,27 @@ function renderStreets(container) {
     let allSettlementStreets = new Set();
     archiveOutages.forEach(rec => {
         if (rec.settlement && getStreetDictKey(rec.settlement) === selectedSettlement) {
+            let origKey = getStreetDictKey(rec.original_settlement || rec.settlement);
             if (rec.streets_detailed) {
                 rec.streets_detailed.forEach(s => {
-                    if (s.name) allSettlementStreets.add(s.name.trim());
+                    if (s.name) {
+                        const nameTrim = s.name.trim();
+                        const hasRule = window.streetCorrections && window.streetCorrections[origKey] && window.streetCorrections[origKey][nameTrim];
+                        const isWhitelisted = officialStreets[origKey] && officialStreets[origKey][nameTrim];
+                        if (!hasRule && !isWhitelisted) {
+                            allSettlementStreets.add(nameTrim);
+                        }
+                    }
                 });
             } else if (rec.streets) {
-                rec.streets.forEach(s => allSettlementStreets.add(s.trim()));
+                rec.streets.forEach(s => {
+                    const nameTrim = s.trim();
+                    const hasRule = window.streetCorrections && window.streetCorrections[origKey] && window.streetCorrections[origKey][nameTrim];
+                    const isWhitelisted = officialStreets[origKey] && officialStreets[origKey][nameTrim];
+                    if (!hasRule && !isWhitelisted) {
+                        allSettlementStreets.add(nameTrim);
+                    }
+                });
             }
         }
     });
