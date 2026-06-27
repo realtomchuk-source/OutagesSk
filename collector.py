@@ -908,12 +908,14 @@ try:
     all_records = apply_street_corrections(all_records)
 
     # Запускаємо ШІ-суддю для автоматичної обробки та розпізнавання адрес із Пісочниці
-    try:
-        from ai_judge import AIJudge
-        judge = AIJudge()
-        all_records = judge.judge_sandbox_records(all_records)
-    except Exception as e:
-        print(f"[WARN] Не вдалося виконати ШІ-суддю для Пісочниці: {e}")
+    # На GitHub Actions запускається автоматично, а локально - тільки за запитом з адмінки
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        try:
+            from ai_judge import AIJudge
+            judge = AIJudge()
+            all_records = judge.judge_sandbox_records(all_records)
+        except Exception as e:
+            print(f"[WARN] Не вдалося виконати ШІ-суддю для Пісочниці: {e}")
 
     # ------------------------------------------------------------
     # 6. Зберігаємо результат

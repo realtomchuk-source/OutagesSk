@@ -20,8 +20,9 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 if not GOOGLE_API_KEY and not OPENROUTER_API_KEY:
-    print("[ERROR] Жодного API-ключа не знайдено в .env (GEMINI_API_KEY або OPENROUTER_API_KEY)")
-    sys.exit(1)
+    print("[WARN] Жодного API-ключа не знайдено в .env (GEMINI_API_KEY або OPENROUTER_API_KEY). AI-функції будуть недоступні.")
+    if __name__ == "__main__":
+        sys.exit(1)
 
 GOOGLE_MODEL = "gemini-2.0-flash"
 OPENROUTER_MODEL = "google/gemini-2.5-flash"

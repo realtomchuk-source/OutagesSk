@@ -3,6 +3,7 @@ import json
 import os
 import sys
 import subprocess
+from datetime import datetime, timedelta, timezone
 
 # Фікс для Windows консолі
 try:
@@ -12,7 +13,57 @@ except AttributeError:
 
 PORT = 8000
 
+def check_ai_rate_limit(write_new=False):
+    """
+    Перевіряє, чи минула 1 година з моменту останнього запиту до ШІ.
+    Повертає (allowed: bool, seconds_left: int).
+    """
+    state_path = "data/ai_limit_state.json"
+    default_state = {"last_ai_request_time": "1970-01-01T00:00:00Z"}
+    
+    state = default_state
+    if os.path.exists(state_path):
+        try:
+            with open(state_path, "r", encoding="utf-8") as f:
+                state = json.load(f)
+        except Exception:
+            pass
+            
+    last_time_str = state.get("last_ai_request_time", "1970-01-01T00:00:00Z")
+    try:
+        last_time = datetime.fromisoformat(last_time_str.replace("Z", "+00:00"))
+    except Exception:
+        last_time = datetime.fromtimestamp(0, tz=timezone.utc)
+        
+    now = datetime.now(timezone.utc)
+    diff = now - last_time
+    cooldown = 3600  # 1 година в секундах
+    
+    if diff.total_seconds() >= cooldown:
+        if write_new:
+            state["last_ai_request_time"] = now.isoformat().replace("+00:00", "Z")
+            try:
+                os.makedirs(os.path.dirname(state_path), exist_ok=True)
+                with open(state_path, "w", encoding="utf-8") as f:
+                    json.dump(state, f, ensure_ascii=False, indent=2)
+            except Exception:
+                pass
+        return True, 0
+    else:
+        seconds_left = int(cooldown - diff.total_seconds())
+        return False, seconds_left
+
 class HybridAdminHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path.startswith('/api/ai_status'):
+            allowed, seconds_left = check_ai_rate_limit(write_new=False)
+            self.send_success_response({
+                "allowed": allowed,
+                "seconds_left": seconds_left
+            })
+        else:
+            super().do_GET()
+
     def do_POST(self):
         if self.path == '/api/save':
             content_length = int(self.headers['Content-Length'])
@@ -99,6 +150,93 @@ class HybridAdminHandler(http.server.SimpleHTTPRequestHandler):
             except Exception as e:
                 print(f"[SERVER] Git Publish error: {str(e)}")
                 self.send_error_response(500, f"Git Publish error: {str(e)}")
+                
+        elif self.path == '/api/run_ai_judge_single':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                data = json.loads(post_data.decode('utf-8'))
+                original_settlement = data.get('settlement')
+                street_name = data.get('street')
+                houses = data.get('houses', [])
+                
+                if not original_settlement or not street_name:
+                    self.send_error_response(400, "Missing settlement or street")
+                    return
+                
+                # Перевірка ліміту часу
+                allowed, seconds_left = check_ai_rate_limit(write_new=True)
+                if not allowed:
+                    self.send_error_response(429, f"Зачекайте ще {seconds_left} секунд перед наступним запитом до ШІ.")
+                    return
+                
+                # Динамічний імпорт для уникнення проблем
+                sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+                from ai_judge import AIJudge
+                judge = AIJudge()
+                
+                candidates = judge.get_candidates(original_settlement, street_name)
+                decision = judge.ask_gemini_judge(original_settlement, street_name, houses, candidates)
+                
+                self.send_success_response({
+                    "status": "ok",
+                    "decision": decision
+                })
+            except Exception as e:
+                print(f"[SERVER] run_ai_judge_single error: {str(e)}")
+                self.send_error_response(500, f"Помилка ШІ: {str(e)}")
+                
+        elif self.path == '/api/clean_houses_ai':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                data = json.loads(post_data.decode('utf-8'))
+                street_name = data.get('street')
+                houses = data.get('houses', [])
+                
+                if not street_name or not houses:
+                    self.send_error_response(400, "Missing street or houses list")
+                    return
+                
+                # Перевірка ліміту часу
+                allowed, seconds_left = check_ai_rate_limit(write_new=True)
+                if not allowed:
+                    self.send_error_response(429, f"Зачекайте ще {seconds_left} секунд перед наступним запитом до ШІ.")
+                    return
+                
+                # Виклик Gemini для очищення номерів
+                sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+                from formatter import ask_ai
+                prompt = f"""Ти — експерт-топоніміст Старокостянтинівської громади.
+Тобі надано список номерів будинків та об'єктів для вулиці '{street_name}'.
+Деякі з цих записів є технічним сміттям (наприклад: 'опора 12', 'КТП-143', 'будка', 'ділянка', 'садиба', 'ДАЧА', 'ліхтар' тощо) або дублікатами.
+Очисти цей список: вилучи всі технічні об'єкти та нежитлові будівлі. Залиши тільки реальні житлові номери будинків (наприклад: '1', '12а', '43/2').
+
+СПИСОК ДЛЯ ОЧИЩЕННЯ:
+{", ".join(houses)}
+
+Поверни результат строго у форматі JSON (масив рядків) без жодної markdown розмітки. Формат відповіді:
+[
+  "номер1",
+  "номер2",
+  ...
+]"""
+                response_text = ask_ai(prompt)
+                if not response_text:
+                    raise Exception("Порожня відповідь від ШІ")
+                    
+                import re
+                cleaned_text = re.sub(r"^```(?:json)?\s*", "", response_text, flags=re.MULTILINE)
+                cleaned_text = re.sub(r"\s*```$", "", cleaned_text, flags=re.MULTILINE).strip()
+                
+                cleaned_houses = json.loads(cleaned_text)
+                self.send_success_response({
+                    "status": "ok",
+                    "cleaned_houses": cleaned_houses
+                })
+            except Exception as e:
+                print(f"[SERVER] clean_houses_ai error: {str(e)}")
+                self.send_error_response(500, f"Помилка ШІ: {str(e)}")
         else:
             self.send_error_response(404, "Endpoint not found")
 

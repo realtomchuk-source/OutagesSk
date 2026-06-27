@@ -273,6 +273,7 @@ async function showDashboard() {
         </div>
         <div id="statusArea"></div>`;
     await loadData();
+    window.startAiStatusPolling();
     if (!window.autoRefresh) {
         window.autoRefresh = setInterval(loadData, 300000);
     }
@@ -1163,7 +1164,10 @@ function renderStreets(container) {
 
     let html = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-            <h3>Словник адрес громади</h3>
+            <div style="display:flex; align-items:center; gap: 15px; flex-wrap: wrap;">
+                <h3 style="margin:0;">Словник адрес громади</h3>
+                <div class="ai-status-indicator" style="font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 4px; background: var(--bg); border: 1px solid var(--border);"></div>
+            </div>
             <div style="display:flex; gap: 10px; align-items:center; flex-wrap: wrap;">
                 <label for="settlementSelect" style="font-weight: bold; font-size: 14px;">Населений пункт:</label>
                 <select id="settlementSelect" onchange="window.changeSettlement(this.value)" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); min-width: 200px;">
@@ -1197,12 +1201,14 @@ function renderStreets(container) {
             const isSelected = street === window.selectedStreet;
             const bgStyle = isSelected ? 'background: rgba(40,167,69,0.08); border: 1px solid #28a745;' : 'border-bottom: 1px solid var(--border);';
             const fontStyle = isSelected ? 'font-weight: bold; color: #28a745;' : '';
+            
+            const streetObj = settlementData[street] || {};
+            const osmWarning = streetObj.osm_verified === false ? `<span title="Вулицю не знайдено в базі OpenStreetMap" style="cursor:help; margin-left:5px;">⚠️</span>` : '';
+            
             html += `
                 <li style="display:flex; justify-content:space-between; align-items:center; padding: 8px 10px; margin-bottom: 4px; border-radius: 4px; ${bgStyle} cursor:pointer;" onclick="window.selectStreet('${escapeHtml(street).replace(/'/g, "\\'")}')">
-                    <span style="${fontStyle}">${escapeHtml(street)}</span>
+                    <span style="${fontStyle}">${escapeHtml(street)}${osmWarning}</span>
                     <div style="display:flex; gap: 5px;" onclick="event.stopPropagation();">
-                        <button onclick="window.moveStreetSettlement('${escapeHtml(street).replace(/'/g, "\\'")}')" style="background:transparent; border:none; cursor:pointer; font-size:14px;" title="Перенести в інший н.п.">🚚</button>
-                        <button onclick="window.editStreetName('${escapeHtml(street).replace(/'/g, "\\'")}')" style="background:transparent; border:none; cursor:pointer; font-size:14px;" title="Редагувати назву">✏️</button>
                         <button onclick="window.deleteStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" style="background:transparent; border:none; cursor:pointer; font-size:14px;" title="Перенести в сумнівні">❌</button>
                     </div>
                 </li>`;
@@ -1234,15 +1240,27 @@ function renderStreets(container) {
                     origSettSuffix = ` <span style="font-size:11px; font-weight:normal; opacity:0.75; display:block; margin-top:2px; color:var(--text);">(ориг: ${escapeHtml(Array.from(origSetts).join(", "))})</span>`;
                 }
             }
+            let buttonsHtml = "";
+            if (selectedSettlement === "Пісочниця") {
+                buttonsHtml = `
+                    <button onclick="window.runSingleStreetAiJudge('${escapeHtml(selectedSettlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}', this)" class="btn btn-ai" style="padding:4px 8px; font-size:12px; background:#8e44ad; border:none; color:#fff; cursor:pointer;" title="Запитати ШІ (🤖)">🤖</button>
+                    <button onclick="window.editDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#007bff; border:none; color:#fff; cursor:pointer;" title="Редагувати (✏️)">✏️</button>
+                    <button onclick="window.moveStreetSettlement('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#e67e22; border:none; color:#fff; cursor:pointer;" title="Перенести в інший н.п. (🚚)">🚚</button>
+                    <button onclick="window.hideDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#17a2b8; border:none; color:#fff; cursor:pointer;" title="Приховати з публікацій (👁️)">👁️</button>
+                    <button onclick="window.deleteDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#e74c3c; border:none; color:#fff; cursor:pointer;" title="Видалити (🗑️)">🗑️</button>
+                `;
+            } else {
+                buttonsHtml = `
+                    <button onclick="window.whitelistStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#28a745; border:none; color:#fff; cursor:pointer;" title="Обілити (✓)">✓</button>
+                    <button onclick="window.editDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#007bff; border:none; color:#fff; cursor:pointer;" title="Редагувати (✏️)">✏️</button>
+                    <button onclick="window.moveStreetSettlement('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#e67e22; border:none; color:#fff; cursor:pointer;" title="Перенести в інший н.п. (🚚)">🚚</button>
+                `;
+            }
             html += `
                 <li style="display:flex; justify-content:space-between; align-items:center; padding: 8px 10px; border-bottom: 1px solid rgba(220,53,69,0.05); font-size: 14px; color: var(--danger);">
                     <strong style="max-width: 50%; word-break: break-all;">${escapeHtml(street)}${origSettSuffix}</strong>
                     <div style="display:flex; gap: 5px;">
-                        <button onclick="window.whitelistStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#28a745; border:none; color:#fff; cursor:pointer;" title="Обілити (✓)">✓</button>
-                        <button onclick="window.editDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#007bff; border:none; color:#fff; cursor:pointer;" title="Редагувати (✏️)">✏️</button>
-                        <button onclick="window.moveStreetSettlement('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#e67e22; border:none; color:#fff; cursor:pointer;" title="Перенести в інший н.п. (🚚)">🚚</button>
-                        <button onclick="window.hideDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#17a2b8; border:none; color:#fff; cursor:pointer;" title="Приховати з публікацій (👁️)">👁️</button>
-                        <button onclick="window.deleteDoubtfulStreet('${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="padding:4px 8px; font-size:12px; background:#e74c3c; border:none; color:#fff; cursor:pointer;" title="Видалити (🗑️)">🗑️</button>
+                        ${buttonsHtml}
                     </div>
                 </li>`;
         });
@@ -1295,7 +1313,10 @@ function renderStreets(container) {
 
         html += `
             <div>
-                <h5 style="margin: 0 0 8px 0; color:var(--danger);">⚠️ Виявлені в архіві (${doubtfulHouses.length})</h5>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                    <h5 style="margin: 0; color:var(--danger);">⚠️ Виявлені в архіві (${doubtfulHouses.length})</h5>
+                    ${doubtfulHouses.length > 0 ? `<button id="btnAiCleanHousesDirect" class="btn" style="padding: 4px 8px; font-size: 11px; background:#4a6cf7; color:#fff; border:none; border-radius:4px; cursor:pointer;" onclick="window.runDirectHousesAiClean('${escapeHtml(currentStreet).replace(/'/g, "\\'")}')">🧹 Очистити ШІ</button>` : ''}
+                </div>
                 <div style="border: 1px solid var(--danger); border-radius: 4px; padding: 10px; background: rgba(220,53,69,0.01); max-height: 200px; overflow-y: auto; display:flex; flex-wrap:wrap; gap:6px; align-content: flex-start;">`;
         if (doubtfulHouses.length === 0) {
             html += `<span style="font-size:12px; color:var(--secondary-text); font-style:italic; width: 100%;">Немає нових сумнівних будинків для цієї вулиці.</span>`;
@@ -1607,7 +1628,10 @@ function renderStreets(container) {
     if (!window.moveStreetSettlement) {
         window.moveStreetSettlement = async function(street) {
             let settlements = Object.keys(officialStreets).filter(s => s !== selectedSettlement).sort();
-            let promptMsg = `Перенесення офіційної вулиці '${street}' з '${selectedSettlement}' в інші населені пункти.\n\n` +
+            if (selectedSettlement !== "Пісочниця") {
+                settlements.push("Пісочниця");
+            }
+            let promptMsg = `Перенесення офіційної/сумнівної вулиці '${street}' з '${selectedSettlement}' в інші населені пункти.\n\n` +
                             `Введіть назви через кому або їх номери зі списку через кому (наприклад: 28, 63):\n` +
                             settlements.map((s, idx) => `${idx + 1}. ${s}`).join("\n");
             let targetInput = prompt(promptMsg);
@@ -1634,7 +1658,7 @@ function renderStreets(container) {
             
             // Валідуємо, що всі обрані н.п. існують в базі
             for (let t of targets) {
-                if (!officialStreets[t]) {
+                if (t !== "Пісочниця" && !officialStreets[t]) {
                     alert(`Населений пункт '${t}' не знайдено в базі!`);
                     return;
                 }
@@ -1643,7 +1667,7 @@ function renderStreets(container) {
             const targetsStr = targets.join(", ");
             let confirmMsg = `Ви впевнені, що хочете перенести вулицю '${street}' з '${selectedSettlement}' в:\n` +
                              `[ ${targetsStr} ]?\n\n` +
-                             `Це прибере її з '${selectedSettlement}', додасть до офіційних словників обраних н.п. та налаштує правило автоматичного вибору (трирівнева логіка).`;
+                             `Це прибере її з '${selectedSettlement}' та перенаправить до обраних н.п. (буде налаштовано правило автоматичного вибору).`;
             
             if (confirm(confirmMsg)) {
                 const houses = getDoubtfulHousesForStreet(selectedSettlement, street);
@@ -1654,6 +1678,7 @@ function renderStreets(container) {
                     delete officialStreets[selectedSettlement][street];
                 }
                 for (let t of targets) {
+                    if (t === "Пісочниця") continue; // Пісочниця не має офіційного білого списку
                     if (!officialStreets[t][street]) {
                         officialStreets[t][street] = JSON.parse(JSON.stringify(streetData));
                     } else {
@@ -2582,7 +2607,8 @@ function renderSuspicious(container) {
     let html = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
             <h3>🔍 Підозрілі вулиці (ШІ / Реєстр)</h3>
-            <div style="display:flex; gap: 10px; align-items:center; flex-wrap: wrap;">
+            <div style="display:flex; gap: 15px; align-items:center; flex-wrap: wrap;">
+                <div class="ai-status-indicator" style="font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 4px; background: var(--bg); border: 1px solid var(--border);"></div>
                 <input type="text" id="suspSearch" placeholder="Пошук вулиці..." onkeyup="window.filterSuspicious()" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); width: 220px;">
             </div>
         </div>
@@ -2679,6 +2705,7 @@ function renderSuspicious(container) {
                         ${aiReasonHtml}
                     </div>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button onclick="window.runSingleStreetAiJudge('${escapeHtml(settlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}', this)" class="btn btn-ai" style="background:#8e44ad; color:white; padding:6px 12px; font-size:13px; font-weight:bold; border-radius:4px; border:none; cursor:pointer;" title="Отримати рекомендацію ШІ для цієї вулиці">🤖 Запитати ШІ</button>
                         <button onclick="window.approveSuspStreet('${escapeHtml(settlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="background:#2ecc71; color:white; padding:6px 12px; font-size:13px; font-weight:bold; border-radius:4px; border:none; cursor:pointer;" title="Затвердити як є">✓ Затвердити</button>
                         <button onclick="window.renameSuspStreet('${escapeHtml(settlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}', '${escapeHtml(aiTargetStr).replace(/'/g, "\\'")}')" class="btn" style="background:#4a6cf7; color:white; padding:6px 12px; font-size:13px; font-weight:bold; border-radius:4px; border:none; cursor:pointer;" title="Виправити назву">✏️ Перейменувати</button>
                         <button onclick="window.moveSuspStreet('${escapeHtml(settlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}')" class="btn" style="background:#e67e22; color:white; padding:6px 12px; font-size:13px; font-weight:bold; border-radius:4px; border:none; cursor:pointer;" title="Перенести до іншого села">🚚 Перенести</button>
@@ -2711,84 +2738,15 @@ window.filterSuspicious = function() {
 }
 
 window.approveSuspStreet = async function(settlement, street) {
-    if (!confirm(`Ви дійсно бажаєте затвердити вулицю '${street}' у населеному пункті '${settlement}'?`)) {
-        return;
-    }
-    const streetInfo = window.suspiciousStreets[settlement][street];
-    if (!streetInfo) return;
-
-    const cleanInfo = { ...streetInfo };
-    delete cleanInfo.reason;
-
-    if (!officialStreets[settlement]) {
-        officialStreets[settlement] = {};
-    }
-    officialStreets[settlement][street] = cleanInfo;
-
-    delete window.suspiciousStreets[settlement][street];
-    if (Object.keys(window.suspiciousStreets[settlement]).length === 0) {
-        delete window.suspiciousStreets[settlement];
-    }
-
-    const offStr = JSON.stringify(officialStreets, null, 2);
-    await commitFileToGitHub("data/clean_official_streets.json", offStr, `Затвердження вулиці ${street} в ${settlement} з підозрілих`);
-    
-    const suspStr = JSON.stringify(window.suspiciousStreets, null, 2);
-    await commitFileToGitHub("data/suspicious_base_streets.json", suspStr, `Вилучення вулиці ${street} з підозрілих`);
-
-    await logAddressAction('approve_suspicious_street', street, "", streetInfo.houses || []);
-    renderSuspicious(document.getElementById('tabContent'));
+    const streetInfo = (window.suspiciousStreets && window.suspiciousStreets[settlement] && window.suspiciousStreets[settlement][street]) || {};
+    const houses = streetInfo.houses || [];
+    window.openModerationModal(settlement, street, houses, true, street, settlement);
 };
 
 window.renameSuspStreet = async function(settlement, street, defaultNewName) {
-    const promptName = defaultNewName || street;
-    const newName = prompt(`Редагування та затвердження підозрілої вулиці '${street}' для ${settlement}.\n\nВведіть правильну назву вулиці:`, promptName);
-    if (!newName || !newName.trim() || newName.trim() === street) {
-        return;
-    }
-    const nameClean = newName.trim();
-    const streetInfo = window.suspiciousStreets[settlement][street];
-    if (!streetInfo) return;
-
-    const cleanInfo = { ...streetInfo };
-    delete cleanInfo.reason;
-
-    if (!officialStreets[settlement]) {
-        officialStreets[settlement] = {};
-    }
-    officialStreets[settlement][nameClean] = cleanInfo;
-
-    let settKey = settlement.trim();
-    if (!settKey.startsWith("с. ") && !settKey.startsWith("м. ")) {
-        if (settKey === "Старокостянтинів") settKey = "м. Старокостянтинів";
-        else settKey = "с. " + settKey;
-    }
-    if (!window.streetCorrections[settKey]) {
-        window.streetCorrections[settKey] = {};
-    }
-    window.streetCorrections[settKey][street] = {
-        action: "rename",
-        target: nameClean,
-        auto: true,
-        timestamp: new Date().toISOString()
-    };
-
-    delete window.suspiciousStreets[settlement][street];
-    if (Object.keys(window.suspiciousStreets[settlement]).length === 0) {
-        delete window.suspiciousStreets[settlement];
-    }
-
-    const offStr = JSON.stringify(officialStreets, null, 2);
-    await commitFileToGitHub("data/clean_official_streets.json", offStr, `Перейменування та затвердження підозрілої вулиці ${street} на ${nameClean} в ${settlement}`);
-    
-    const suspStr = JSON.stringify(window.suspiciousStreets, null, 2);
-    await commitFileToGitHub("data/suspicious_base_streets.json", suspStr, `Вилучення вулиці ${street} з підозрілих після перейменування`);
-
-    const corrStr = JSON.stringify(window.streetCorrections, null, 2);
-    await commitFileToGitHub("data/street_corrections.json", corrStr, `Додавання правила перейменування для підозрілої вулиці: ${street} -> ${nameClean}`);
-
-    await logAddressAction('rename_suspicious_street', street, nameClean, streetInfo.houses || []);
-    renderSuspicious(document.getElementById('tabContent'));
+    const streetInfo = (window.suspiciousStreets && window.suspiciousStreets[settlement] && window.suspiciousStreets[settlement][street]) || {};
+    const houses = streetInfo.houses || [];
+    window.openModerationModal(settlement, street, houses, true, defaultNewName || street, settlement);
 };
 
 window.moveSuspStreet = async function(settlement, street) {
@@ -2889,6 +2847,513 @@ window.deleteSuspStreet = async function(settlement, street) {
 window.copyToClipboard = function(text) {
     navigator.clipboard.writeText(text).then(() => alert('Скопійовано!'));
 }
+
+// ============================================================================
+// Оптимізовані методи модерації, лімітів ШІ та фонової перевірки OSM
+// ============================================================================
+
+window.cleanHousesRegex = function(housesArray) {
+    const trashWords = /опора|ктп|будка|ділянка|садиба|дача|ліхтар|св-во|нежитл|лінія|генератор|пл\b|гараж/i;
+    return housesArray.filter(h => {
+        const clean = h.trim();
+        return clean.length > 0 && /\d/.test(clean) && !trashWords.test(clean);
+    });
+}
+
+window.openModerationModal = function(settlement, street, initialHousesArray, isSuspicious, prefillStreetName = "", originalSettlement = "") {
+    window.currentModSettlement = settlement;
+    window.currentModStreet = street;
+    window.currentModIsSuspicious = isSuspicious;
+    window.currentModOriginalSettlement = originalSettlement || settlement;
+    
+    const autoCleaned = window.cleanHousesRegex(initialHousesArray);
+    const initialHousesJoined = autoCleaned.join(', ');
+    const targetNamePrefill = prefillStreetName || street;
+    
+    const existing = document.getElementById('modModal');
+    if (existing) existing.remove();
+    
+    const modalDiv = document.createElement('div');
+    modalDiv.id = 'modModal';
+    modalDiv.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:99999; font-family:system-ui, sans-serif;";
+    
+    modalDiv.innerHTML = `
+        <div style="background:var(--bg, #fff); color:var(--text, #333); border: 1px solid var(--border, #ccc); border-radius:8px; padding:20px; width:450px; max-width:90%; box-shadow:0 4px 15px rgba(0,0,0,0.2); display:flex; flex-direction:column; gap:15px;">
+            <h3 style="margin:0; font-size:18px; color:var(--primary, #007bff);">Модерація адреси: ${escapeHtml(street)}</h3>
+            <p style="font-size:11px; margin:0; color:var(--secondary-text, #666);">Населений пункт: <strong>${escapeHtml(settlement)}</strong></p>
+            <div>
+                <label style="font-weight:bold; font-size:13px; display:block; margin-bottom:5px;">Назва вулиці:</label>
+                <input type="text" id="modStreetName" value="${escapeHtml(targetNamePrefill)}" style="width:100%; padding:8px; border-radius:4px; border:1px solid var(--border, #ccc); background:var(--bg, #fff); color:var(--text, #333);">
+            </div>
+            <div>
+                <label style="font-weight:bold; font-size:13px; display:block; margin-bottom:5px;">Номери будинків (через кому):</label>
+                <textarea id="modHouses" style="width:100%; height:100px; padding:8px; border-radius:4px; border:1px solid var(--border, #ccc); background:var(--bg, #fff); color:var(--text, #333); font-family:monospace; resize:vertical;">${escapeHtml(initialHousesJoined)}</textarea>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
+                    <span style="font-size:11px; color:var(--secondary-text, #666);">* Авто-очищено regex</span>
+                    <button id="modBtnAiClean" class="btn" style="padding:4px 8px; font-size:12px; background:#4a6cf7; color:#fff; border:none; border-radius:4px; cursor:pointer;" onclick="window.runModAiClean()">🧹 Очистити ШІ</button>
+                </div>
+                <div id="modAiTimer" style="font-size:11px; text-align:right; margin-top:3px; display:none;"></div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="btn" style="background:#e74c3c; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;" onclick="window.closeModModal()">Скасувати</button>
+                <button class="btn" style="background:#2ecc71; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;" onclick="window.saveModModal()">Зберегти</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modalDiv);
+    window.refreshAiStatus();
+}
+
+window.closeModModal = function() {
+    const existing = document.getElementById('modModal');
+    if (existing) existing.remove();
+}
+
+window.runModAiClean = async function() {
+    const btn = document.getElementById('modBtnAiClean');
+    if (!btn) return;
+    
+    const streetName = document.getElementById('modStreetName').value.trim();
+    const housesText = document.getElementById('modHouses').value;
+    const housesArray = housesText.split(',').map(h => h.trim()).filter(h => h.length > 0);
+    
+    if (housesArray.length === 0) {
+        alert("Список будинків порожній!");
+        return;
+    }
+    
+    const oldText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = "⌛ Очищення...";
+    
+    try {
+        const resp = await fetch(`${API_BASE}/api/clean_houses_ai`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ street: streetName, houses: housesArray })
+        });
+        
+        const data = await resp.json();
+        if (resp.ok && data.status === 'ok') {
+            document.getElementById('modHouses').value = data.cleaned_houses.join(', ');
+            alert("✅ Сміття успішно відсіяно через ШІ!");
+        } else {
+            alert("❌ Помилка виклику ШІ: " + (data.message || "Невідома помилка"));
+        }
+    } catch (err) {
+        alert("❌ Помилка мережі: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = oldText;
+        window.refreshAiStatus();
+    }
+}
+
+window.saveModModal = async function() {
+    const newName = document.getElementById('modStreetName').value.trim();
+    const housesText = document.getElementById('modHouses').value;
+    if (!newName) {
+        alert("Введіть назву вулиці!");
+        return;
+    }
+    
+    const cleanedHouses = housesText.split(',')
+        .map(h => h.trim())
+        .filter(h => h.length > 0);
+        
+    const settlement = window.currentModSettlement;
+    const originalStreet = window.currentModStreet;
+    const isSuspicious = window.currentModIsSuspicious;
+    const originalSettlement = window.currentModOriginalSettlement;
+    
+    if (settlement !== "Пісочниця") {
+        if (!officialStreets[settlement]) {
+            officialStreets[settlement] = {};
+        }
+        officialStreets[settlement][newName] = {
+            type: newName.toLowerCase().includes("пров") ? "провулок" : "вулиця",
+            houses: cleanedHouses,
+            blacklist: []
+        };
+    }
+    
+    if (newName !== originalStreet || settlement !== originalSettlement) {
+        if (officialStreets[originalSettlement] && officialStreets[originalSettlement][originalStreet]) {
+            delete officialStreets[originalSettlement][originalStreet];
+        }
+    }
+    
+    if (newName !== originalStreet || settlement !== originalSettlement) {
+        let settKey = originalSettlement.trim();
+        if (settKey !== "Пісочниця" && !settKey.startsWith("с. ") && !settKey.startsWith("м. ")) {
+            if (settKey === "Старокостянтинів") settKey = "м. Starokostiantyniv";
+            else settKey = "с. " + settKey;
+        }
+        if (!window.streetCorrections) window.streetCorrections = {};
+        if (!window.streetCorrections[settKey]) {
+            window.streetCorrections[settKey] = {};
+        }
+        
+        if (settlement !== originalSettlement) {
+            window.streetCorrections[settKey][originalStreet] = {
+                action: "move_to_settlement",
+                target_settlements: [settlement],
+                target_street: newName,
+                timestamp: new Date().toISOString()
+            };
+        } else {
+            window.streetCorrections[settKey][originalStreet] = {
+                action: "rename",
+                target: newName,
+                timestamp: new Date().toISOString()
+            };
+        }
+        const correctionsStr = JSON.stringify(window.streetCorrections, null, 2);
+        await commitFileToGitHub("data/street_corrections.json", correctionsStr, `Створення правила автокорекції: ${originalStreet} в ${originalSettlement} -> ${newName} в ${settlement}`);
+    }
+    
+    if (isSuspicious) {
+        if (window.suspiciousStreets && window.suspiciousStreets[originalSettlement]) {
+            delete window.suspiciousStreets[originalSettlement][originalStreet];
+            if (Object.keys(window.suspiciousStreets[originalSettlement]).length === 0) {
+                delete window.suspiciousStreets[originalSettlement];
+            }
+        }
+        const suspStr = JSON.stringify(window.suspiciousStreets, null, 2);
+        await commitFileToGitHub("data/suspicious_base_streets.json", suspStr, `Вилучення вулиці ${originalStreet} з підозрілих після модерації`);
+    }
+    
+    let changedArchive = false;
+    archiveOutages.forEach(rec => {
+        let recSett = rec.settlement || "м. Старокостянтинів";
+        if (getStreetDictKey(recSett) === getStreetDictKey(originalSettlement)) {
+            if (rec.streets) {
+                const idx = rec.streets.map(s => s.trim()).indexOf(originalStreet);
+                if (idx !== -1) {
+                    if (settlement === originalSettlement) {
+                        rec.streets[idx] = newName;
+                    } else {
+                        rec.streets.splice(idx, 1);
+                    }
+                    changedArchive = true;
+                }
+            }
+            if (rec.streets_detailed) {
+                const idx = rec.streets_detailed.findIndex(s => s.name && s.name.trim() === originalStreet);
+                if (idx !== -1) {
+                    if (settlement === originalSettlement) {
+                        rec.streets_detailed[idx].name = newName;
+                    } else {
+                        rec.streets_detailed.splice(idx, 1);
+                    }
+                    changedArchive = true;
+                }
+            }
+        }
+    });
+    if (changedArchive) {
+        const archiveStr = JSON.stringify(archiveOutages, null, 2);
+        await commitFileToGitHub("data/archive.json", archiveStr, `Оновлення вулиці ${originalStreet} в архіві відключень`);
+    }
+
+    let changedRaw = false;
+    rawOutages.forEach(rec => {
+        let recSett = rec.settlement || "м. Старокостянтинів";
+        if (getStreetDictKey(recSett) === getStreetDictKey(originalSettlement)) {
+            if (rec.streets) {
+                const idx = rec.streets.map(s => s.trim()).indexOf(originalStreet);
+                if (idx !== -1) {
+                    if (settlement === originalSettlement) {
+                        rec.streets[idx] = newName;
+                    } else {
+                        rec.streets.splice(idx, 1);
+                    }
+                    changedRaw = true;
+                }
+            }
+            if (rec.streets_detailed) {
+                const idx = rec.streets_detailed.findIndex(s => s.name && s.name.trim() === originalStreet);
+                if (idx !== -1) {
+                    if (settlement === originalSettlement) {
+                        rec.streets_detailed[idx].name = newName;
+                    } else {
+                        rec.streets_detailed.splice(idx, 1);
+                    }
+                    changedRaw = true;
+                }
+            }
+        }
+    });
+    if (changedRaw) {
+        const rawStr = JSON.stringify(rawOutages, null, 2);
+        await commitFileToGitHub("data/outages_snapshot.json", rawStr, `Оновлення вулиці ${originalStreet} в активних відключеннях`);
+    }
+    
+    const offStr = JSON.stringify(officialStreets, null, 2);
+    await commitFileToGitHub("data/clean_official_streets.json", offStr, `Затвердження/модерація вулиці ${newName} в ${settlement}`);
+    
+    await logAddressAction(isSuspicious ? 'approve_suspicious_street' : 'whitelist_street', originalStreet, newName === originalStreet ? "" : newName, cleanedHouses);
+    
+    if (settlement !== "Пісочниця") {
+        window.runBackgroundOsmVerification(settlement, newName);
+    }
+    window.closeModModal();
+    
+    if (isSuspicious) {
+        renderSuspicious(document.getElementById('tabContent'));
+    } else {
+        renderStreets(document.getElementById('tabContent'));
+    }
+}
+
+window.runDirectHousesAiClean = async function(streetName) {
+    const btn = document.getElementById('btnAiCleanHousesDirect');
+    if (!btn) return;
+    
+    const doubtfulHouses = getDoubtfulHousesForStreet(selectedSettlement, streetName);
+    if (doubtfulHouses.length === 0) return;
+    
+    const oldText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = "⌛ Очищення...";
+    
+    try {
+        const resp = await fetch(`${API_BASE}/api/clean_houses_ai`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ street: streetName, houses: doubtfulHouses })
+        });
+        
+        const data = await resp.json();
+        if (resp.ok && data.status === 'ok') {
+            const cleaned = data.cleaned_houses || [];
+            
+            if (!officialStreets[selectedSettlement]) {
+                officialStreets[selectedSettlement] = {};
+            }
+            if (!officialStreets[selectedSettlement][streetName]) {
+                officialStreets[selectedSettlement][streetName] = {
+                    type: streetName.toLowerCase().includes("пров") ? "провулок" : "вулиця",
+                    houses: [],
+                    blacklist: []
+                };
+            }
+            
+            const officialSet = new Set(officialStreets[selectedSettlement][streetName].houses || []);
+            cleaned.forEach(h => officialSet.add(h));
+            officialStreets[selectedSettlement][streetName].houses = Array.from(officialSet);
+            
+            const jsonStr = JSON.stringify(officialStreets, null, 2);
+            await commitFileToGitHub("data/clean_official_streets.json", jsonStr, `Очищення та імпорт номерів будинків через ШІ для ${streetName} в ${selectedSettlement}`);
+            await logAddressAction('whitelist_street', streetName, "", cleaned);
+            
+            alert(`✅ Збережено! Додано ${cleaned.length} чистих номерів будинків до офіційних.`);
+            renderStreets(document.getElementById('tabContent'));
+        } else {
+            alert("❌ Помилка ШІ: " + (data.message || "Невідома помилка"));
+        }
+    } catch (err) {
+        alert("❌ Помилка мережі: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = oldText;
+        window.refreshAiStatus();
+    }
+}
+
+window.runSingleStreetAiJudge = async function(settlement, street, btn) {
+    if (!btn) return;
+    const oldText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = "⌛ ШІ думає...";
+    
+    let houses = [];
+    if (window.suspiciousStreets && window.suspiciousStreets[settlement] && window.suspiciousStreets[settlement][street]) {
+        houses = window.suspiciousStreets[settlement][street].houses || [];
+    } else {
+        houses = getDoubtfulHousesForStreet(settlement, street) || [];
+    }
+    
+    try {
+        const resp = await fetch(`${API_BASE}/api/run_ai_judge_single`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ settlement, street, houses })
+        });
+        
+        const data = await resp.json();
+        if (resp.ok && data.status === 'ok') {
+            const dec = data.decision;
+            if (dec && dec.matched) {
+                const confPercent = Math.round(dec.confidence * 100);
+                const recMsg = `🤖 Рекомендація ШІ:\n` +
+                               `- Дія: ${dec.target_settlement !== settlement ? 'Перенести до ' + dec.target_settlement : 'Перейменувати'} на '${dec.target_street}'\n` +
+                               `- Впевненість: ${confPercent}%\n` +
+                               `- Пояснення: ${dec.explanation}\n\n` +
+                               `Застосувати цю рекомендацію (відкрити вікно модерації з новими даними)?`;
+                               
+                if (confirm(recMsg)) {
+                    window.openModerationModal(dec.target_settlement, street, houses, true, dec.target_street, settlement);
+                }
+            } else {
+                alert(`🤖 ШІ не зміг впевнено розпізнати цю адресу.\nПояснення: ${dec ? dec.explanation : "немає"}`);
+            }
+        } else {
+            alert("❌ Помилка виклику ШІ: " + (data.message || "Невідома помилка"));
+        }
+    } catch (err) {
+        alert("❌ Помилка мережі: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = oldText;
+        window.refreshAiStatus();
+    }
+}
+
+window.getAiStatus = async function() {
+    try {
+        const resp = await fetch(`${API_BASE}/api/ai_status`);
+        if (resp.ok) {
+            return await resp.json();
+        }
+    } catch (err) {
+        console.error("Failed to get AI status:", err);
+    }
+    return { allowed: true, seconds_left: 0 };
+}
+
+let aiStatusInterval = null;
+let currentSecondsLeft = 0;
+
+window.startAiStatusPolling = function() {
+    if (aiStatusInterval) clearInterval(aiStatusInterval);
+    
+    window.refreshAiStatus();
+    
+    aiStatusInterval = setInterval(() => {
+        if (currentSecondsLeft > 0) {
+            currentSecondsLeft--;
+            window.updateAiUIElements();
+        } else {
+            window.refreshAiStatus();
+        }
+    }, 1000);
+}
+
+window.refreshAiStatus = async function() {
+    const status = await window.getAiStatus();
+    currentSecondsLeft = status.seconds_left || 0;
+    window.updateAiUIElements();
+}
+
+window.updateAiUIElements = function() {
+    const isAllowed = currentSecondsLeft <= 0;
+    
+    const aiButtons = [
+        document.getElementById('modBtnAiClean'),
+        document.getElementById('btnAiCleanHousesDirect'),
+        document.getElementById('btnAiJudgeQueue')
+    ];
+    
+    document.querySelectorAll('.btn-ai').forEach(btn => {
+        if (!aiButtons.includes(btn)) aiButtons.push(btn);
+    });
+    
+    const formattedTime = window.formatCooldownTime(currentSecondsLeft);
+    
+    const statusIndicators = document.querySelectorAll('.ai-status-indicator');
+    statusIndicators.forEach(ind => {
+        if (isAllowed) {
+            ind.innerHTML = `<span style="color:#28a745; font-weight:bold; font-size: 13px;">🟢 ШІ Готовий до роботи</span>`;
+        } else {
+            ind.innerHTML = `<span style="color:#e67e22; font-weight:bold; font-size: 13px;">⏳ ШІ відпочиває. Наступний запит через ${formattedTime}</span>`;
+        }
+    });
+    
+    const modalTimer = document.getElementById('modAiTimer');
+    if (modalTimer) {
+        if (isAllowed) {
+            modalTimer.style.display = 'none';
+        } else {
+            modalTimer.style.display = 'block';
+            modalTimer.innerHTML = `<span style="color:#e67e22;">Таймаут: ШІ відпочиває ще ${formattedTime}</span>`;
+        }
+    }
+    
+    aiButtons.forEach(btn => {
+        if (btn) {
+            btn.disabled = !isAllowed;
+            if (!isAllowed) {
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                btn.title = `ШІ заблоковано через ліміт частоти запитів. Залишилось: ${formattedTime}`;
+            } else {
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.title = "Викликати ШІ";
+            }
+        }
+    });
+}
+
+window.formatCooldownTime = function(seconds) {
+    if (seconds <= 0) return "00:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+window.runBackgroundOsmVerification = async function(settlement, street) {
+    try {
+        const q = `${street}, ${settlement}, Хмельницька область, Україна`;
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`;
+        
+        const resp = await fetch(url, {
+            headers: { 'User-Agent': 'StarokostiantynivOutageMonitor/1.0' }
+        });
+        if (resp.ok) {
+            const data = await resp.json();
+            const verified = data.length > 0;
+            
+            if (officialStreets[settlement] && officialStreets[settlement][street]) {
+                officialStreets[settlement][street].osm_verified = verified;
+                
+                const jsonStr = JSON.stringify(officialStreets, null, 2);
+                await fetch(`${API_BASE}/api/save`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ filePath: "data/clean_official_streets.json", content: jsonStr })
+                });
+                console.log(`[OSM VERIFY] фонова перевірка '${street}' в '${settlement}': ${verified}`);
+            }
+        }
+    } catch (err) {
+        console.error("[OSM VERIFY] Geocoding request failed:", err);
+    }
+}
+
+window.whitelistStreet = async function(street) {
+    if (selectedSettlement === "Пісочниця") {
+        alert("Для верифікації сумнівної вулиці з Пісочниці, будь ласка, спочатку перенесіть її до правильного населеного пункту за допомогою кнопки 🚚.");
+        return;
+    }
+    const doubtfulHouses = getDoubtfulHousesForStreet(selectedSettlement, street);
+    window.openModerationModal(selectedSettlement, street, doubtfulHouses, false, street, selectedSettlement);
+};
+
+window.editDoubtfulStreet = async function(street) {
+    const doubtfulHouses = getDoubtfulHousesForStreet(selectedSettlement, street);
+    window.openModerationModal(selectedSettlement, street, doubtfulHouses, false, street, selectedSettlement);
+};
 
 if (typeof ADMIN_HASH === 'undefined') {
     app.innerHTML = '<p style="color:red;">Помилка: auth_config.js не налаштовано. Запустіть formatter.py для ініціалізації.</p>';
