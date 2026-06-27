@@ -238,6 +238,17 @@
       ],
       "target_street": "вул. Приміська",
       "timestamp": "2026-06-27T13:15:29.111Z"
+    },
+    "вул. Пушкіна": {
+      "action": "unverified",
+      "timestamp": "2026-06-27T19:47:54.030971Z",
+      "auto": true
+    },
+    "вул. Хмельницького Богдана": {
+      "action": "rename",
+      "target": "вул. Хмельницького",
+      "timestamp": "2026-06-27T19:47:54.559624Z",
+      "auto": true
     }
   },
   "с. Волиця-Керекешина": {
@@ -529,7 +540,18 @@
     }
   },
   "с. Раштівка": {},
-  "с. Росолівці": {},
+  "с. Росолівці": {
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-06-27T19:47:55.059021Z",
+      "auto": true
+    },
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-06-27T19:47:55.576185Z",
+      "auto": true
+    }
+  },
   "с. Самчики": {
     "вул. Ділянка ПК 0+57,89 - ПК": {
       "action": "delete",
@@ -934,6 +956,11 @@
     "вул. Хмельницького": {
       "action": "unverified",
       "timestamp": "2026-06-24T16:40:31.956963Z",
+      "auto": true
+    },
+    "вул. Травнева": {
+      "action": "unverified",
+      "timestamp": "2026-06-27T19:47:53.497090Z",
       "auto": true
     }
   },
@@ -1361,6 +1388,26 @@
       ],
       "target_settlement": "м. Старокостянтинів",
       "target_street": "вул. Шкільна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Ветеранів": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Пашківці"
+      ],
+      "target_settlement": "с. Пашківці",
+      "target_street": "вул. Травнева",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Молодіжна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Молодіжна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
     }
@@ -2161,5 +2208,7 @@
       "auto": true,
       "timestamp": "2026-06-26T20:33:35.876362"
     }
-  }
+  },
+  "с. Зеленці": {},
+  "с. Баглаї": {}
 }
