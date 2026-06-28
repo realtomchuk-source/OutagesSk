@@ -1430,6 +1430,16 @@
       "target_street": "вул. Підлісна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Дружби": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Капустин"
+      ],
+      "target_settlement": "с. Капустин",
+      "target_street": "вул. Дружби",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
