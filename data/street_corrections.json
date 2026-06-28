@@ -1420,6 +1420,16 @@
       "target_street": "вул. Хмельницького",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Підлісна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Підлісна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
