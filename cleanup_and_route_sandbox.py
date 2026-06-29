@@ -99,10 +99,23 @@ def route_sandbox():
         routed_intel = 0
         
         for rec in records_list:
-            if rec.get("settlement") != "Пісочниця":
-                continue
-                
+            current_sett = rec.get("settlement", "")
             orig = rec.get("original_settlement", "")
+            
+            # Normalize for comparison
+            def clean_name(n):
+                if not n:
+                    return ""
+                return re.sub(r"^(с\.|м\.|c\.|m\.)\s*", "", n.strip()).strip().lower().replace(" ", "")
+                
+            is_sandbox = (current_sett == "Пісочниця")
+            is_different = False
+            if orig and current_sett:
+                is_different = (clean_name(current_sett) != clean_name(orig))
+                
+            # We re-evaluate if it is in Sandbox, OR if its current settlement is different from the original one (previously routed)
+            if not is_sandbox and not is_different:
+                continue
             
             # Find representative street name for candidates lookup
             rep_street = ""
