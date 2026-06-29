@@ -45,7 +45,7 @@ def route_sandbox():
         with open(snapshot_path, "r", encoding="utf-8") as f:
             snapshot = json.load(f)
             
-    print(f"Loaded {len(archive)} archive records and {len(snapshot)} snapshot records.")
+    print(f"[ROUTER] Loaded {len(archive)} archive records and {len(snapshot)} snapshot records.")
     
     # Helper to resolve candidates to our hromada with exclusion check
     def get_hromada_candidates(original_settlement, street_name):
@@ -164,7 +164,7 @@ def route_sandbox():
                         rec["settlement"] = best_cand
                         routed_intel += 1
                         
-        print(f"[{list_name}] Routed {routed_direct} directly and {routed_intel} using intel matching.")
+        print(f"[ROUTER] [{list_name}] Routed {routed_direct} directly and {routed_intel} using intel matching.")
 
     # 2. Run routing on archive and snapshot
     process_records(archive, "Archive")
@@ -178,7 +178,7 @@ def route_sandbox():
         with open(snapshot_path, "w", encoding="utf-8") as f:
             json.dump(snapshot, f, ensure_ascii=False, indent=2)
             
-    print("Files successfully updated and saved.")
+    print("[ROUTER] Files successfully updated and saved.")
 
 if __name__ == "__main__":
     route_sandbox()

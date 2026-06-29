@@ -979,6 +979,13 @@ try:
         json.dump(filtered_archive, f, ensure_ascii=False, indent=2)
     print(f"✅ Архів оновлено (всього {len(filtered_archive)} записів у archive.json)")
 
+    # Автоматичний інтелектуальний розподіл з Пісочниці по реальних селах
+    try:
+        from cleanup_and_route_sandbox import route_sandbox
+        route_sandbox()
+    except Exception as err:
+        print(f"[WARN] Помилка під час автоматичного розподілу Пісочниці: {err}")
+
     write_update_log({
         "timestamp": datetime.now().isoformat(),
         "stage": "collector",
