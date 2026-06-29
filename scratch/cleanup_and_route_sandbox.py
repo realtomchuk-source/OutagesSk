@@ -16,6 +16,7 @@ def route_sandbox():
     snapshot_path = "data/outages_snapshot.json"
     villages_path = "data/villages.json"
     clean_streets_path = "data/clean_official_streets.json"
+    corrections_path = "data/street_corrections.json"
     
     # 1. Load files
     if not os.path.exists(archive_path) or not os.path.exists(villages_path) or not os.path.exists(clean_streets_path):
@@ -31,6 +32,14 @@ def route_sandbox():
     with open(clean_streets_path, "r", encoding="utf-8") as f:
         clean_streets = json.load(f)
         
+    corrections = {}
+    if os.path.exists(corrections_path):
+        try:
+            with open(corrections_path, "r", encoding="utf-8") as f:
+                corrections = json.load(f)
+        except Exception as e:
+            print(f"Error loading corrections: {e}")
+            
     snapshot = []
     if os.path.exists(snapshot_path):
         with open(snapshot_path, "r", encoding="utf-8") as f:
@@ -38,8 +47,8 @@ def route_sandbox():
             
     print(f"Loaded {len(archive)} archive records and {len(snapshot)} snapshot records.")
     
-    # Helper to resolve candidates to our hromada
-    def get_hromada_candidates(original_settlement):
+    # Helper to resolve candidates to our hromada with exclusion check
+    def get_hromada_candidates(original_settlement, street_name):
         if not original_settlement:
             return []
         candidates = [c.strip() for c in original_settlement.split(",")]
@@ -55,11 +64,34 @@ def route_sandbox():
                     match = v
                     break
             if match:
-                if match == "Старокостянтинів":
-                    hromada_candidates.append("м. Старокостянтинів")
-                else:
-                    hromada_candidates.append(f"с. {match}")
-        return list(dict.fromkeys(hromada_candidates)) # remove duplicates
+                cand_key = "м. Старокостянтинів" if match == "Старокостянтинів" else f"с. {match}"
+                
+                # Check if there is a rule for this street under this candidate settlement to move it to Sandbox
+                rule = corrections.get(cand_key, {}).get(street_name, {})
+                if rule.get("action") == "move_to_settlement" and "Пісочниця" in rule.get("target_settlements", []):
+                    # User explicitly moved this street from this village to Sandbox, so exclude it!
+                    continue
+                hromada_candidates.append(cand_key)
+                
+        hromada_candidates = list(dict.fromkeys(hromada_candidates)) # remove duplicates
+        
+        # Fallback: if candidates are empty (or excluded), search all other settlements globally in whitelist
+        if not hromada_candidates and street_name:
+            global_candidates = []
+            for cc, cc_streets in clean_streets.items():
+                if cc == "Пісочниця":
+                    continue
+                # Check if this street is in this settlement's whitelist
+                for ws in cc_streets.keys():
+                    if ws.strip().lower() == street_name.strip().lower() or normalize_street_name(ws) == normalize_street_name(street_name):
+                        # Verify we don't have a rule moving this street to Sandbox here
+                        rule = corrections.get(cc, {}).get(street_name, {})
+                        if not (rule.get("action") == "move_to_settlement" and "Пісочниця" in rule.get("target_settlements", [])):
+                            global_candidates.append(cc)
+                        break
+            hromada_candidates = global_candidates
+            
+        return hromada_candidates
 
     # Routing logic
     def process_records(records_list, list_name):
@@ -71,7 +103,15 @@ def route_sandbox():
                 continue
                 
             orig = rec.get("original_settlement", "")
-            hromada_candidates = get_hromada_candidates(orig)
+            
+            # Find representative street name for candidates lookup
+            rep_street = ""
+            if rec.get("streets"):
+                rep_street = rec["streets"][0]
+            elif rec.get("streets_detailed") and rec["streets_detailed"][0].get("name"):
+                rep_street = rec["streets_detailed"][0]["name"]
+                
+            hromada_candidates = get_hromada_candidates(orig, rep_street)
             
             if not hromada_candidates:
                 continue
