@@ -12604,5 +12604,44 @@
       "22",
       "24"
     ]
+  },
+  {
+    "timestamp": "2026-06-29T11:59:04.925Z",
+    "action": "whitelist_street",
+    "settlement": "Пісочниця",
+    "old_name": "пров. 1 Кривоноса",
+    "new_name": "пров. Кривоноса",
+    "houses": [
+      "1",
+      "2",
+      "3",
+      "5"
+    ]
+  },
+  {
+    "timestamp": "2026-06-29T12:02:44.277Z",
+    "action": "whitelist_street",
+    "settlement": "Пісочниця",
+    "old_name": "пров. Кривоноса",
+    "new_name": "вул. Кривоноса",
+    "houses": [
+      "1",
+      "2",
+      "3",
+      "5"
+    ]
+  },
+  {
+    "timestamp": "2026-06-29T12:07:48.874Z",
+    "action": "move_settlement",
+    "settlement": "Пісочниця",
+    "old_name": "вул. Кривоноса",
+    "new_name": "м. Старокостянтинів",
+    "houses": [
+      "1",
+      "2",
+      "3",
+      "5"
+    ]
   }
 ]
