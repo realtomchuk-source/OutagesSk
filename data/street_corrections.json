@@ -249,6 +249,15 @@
       "target": "вул. Хмельницького",
       "timestamp": "2026-06-27T19:47:54.559624Z",
       "auto": true
+    },
+    "вул. Кооперативна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Малий Чернятин",
+        "с. Оріхівка"
+      ],
+      "target_street": "вул. Кооперативна",
+      "timestamp": "2026-06-29T13:02:08.856Z"
     }
   },
   "с. Волиця-Керекешина": {
@@ -2250,5 +2259,39 @@
     }
   },
   "с. Зеленці": {},
-  "с. Баглаї": {}
+  "с. Баглаї": {},
+  "с. Ємці": {
+    "вул. Зарічна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "Пісочниця"
+      ],
+      "target_street": "вул. Зарічна",
+      "timestamp": "2026-06-29T13:07:28.609Z"
+    },
+    "вул. Лісова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "Пісочниця"
+      ],
+      "target_street": "вул. Лісова",
+      "timestamp": "2026-06-29T13:13:23.697Z"
+    },
+    "вул. Франка": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "Пісочниця"
+      ],
+      "target_street": "вул. Франка",
+      "timestamp": "2026-06-29T13:13:37.741Z"
+    },
+    "вул. Центральна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "Пісочниця"
+      ],
+      "target_street": "вул. Центральна",
+      "timestamp": "2026-06-29T13:13:56.257Z"
+    }
+  }
 }
