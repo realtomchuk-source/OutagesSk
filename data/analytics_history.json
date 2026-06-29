@@ -1,0 +1,11 @@
+{
+  "history": [
+    {
+      "week_end_date": "2026-06-29",
+      "total_outages": 205,
+      "emergency_count": 23,
+      "planned_count": 182,
+      "total_hours": 1684.2
+    }
+  ]
+}

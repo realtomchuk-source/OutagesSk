@@ -883,9 +883,10 @@ try:
                     if s_det:
                         sandbox_detailed.append(s_det)
             
-            # If there are verified streets, keep the original record with them
+            # If there are verified streets, keep the original record with them (with standardized settlement name)
             if verified_streets or verified_detailed:
                 rec_ver = dict(rec)
+                rec_ver["settlement"] = dict_key
                 rec_ver["streets"] = verified_streets
                 rec_ver["streets_detailed"] = verified_detailed
                 final_records.append(rec_ver)
