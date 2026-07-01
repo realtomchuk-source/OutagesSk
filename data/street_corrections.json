@@ -559,7 +559,18 @@
       "auto": true
     }
   },
-  "с. Раштівка": {},
+  "с. Раштівка": {
+    "вул. За межами с.Раштівка на тереторії Великомацевицького старостинського округу": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:57:03.952061Z",
+      "auto": true
+    },
+    "вул. Кобєєва": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:57:04.487538Z",
+      "auto": true
+    }
+  },
   "с. Росолівці": {
     "вул. Миру": {
       "action": "unverified",
@@ -1500,6 +1511,66 @@
       "target_street": "вул. Шевченка",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Вишнева": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Григорівка"
+      ],
+      "target_settlement": "с. Григорівка",
+      "target_street": "вул. Вишнева",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Набережна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Великий Чернятин"
+      ],
+      "target_settlement": "с. Великий Чернятин",
+      "target_street": "вул. Набережна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Поштова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Сахнівці"
+      ],
+      "target_settlement": "с. Сахнівці",
+      "target_street": "вул. Поштова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Садовий": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Капустин"
+      ],
+      "target_settlement": "с. Капустин",
+      "target_street": "пров. Садовий",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Бабака Петра": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Костянець"
+      ],
+      "target_settlement": "с. Костянець",
+      "target_street": "вул. Петра Бабака",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Кобеева": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Кобєєва",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2151,6 +2222,36 @@
       "action": "unverified",
       "timestamp": "2026-06-29T18:59:30.813626Z",
       "auto": true
+    },
+    "вул. Вишнева": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:56:58.343175Z",
+      "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:56:58.938514Z",
+      "auto": true
+    },
+    "вул. Оболоня": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:56:59.445751Z",
+      "auto": true
+    },
+    "вул. Поштова": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:57:00.062394Z",
+      "auto": true
+    },
+    "вул. Садова": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:57:00.586204Z",
+      "auto": true
+    },
+    "пров. Садовий": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:57:01.101958Z",
+      "auto": true
     }
   },
   "с. Громівка": {},
@@ -2388,5 +2489,28 @@
     }
   },
   "с. Нападівка": {},
-  "с. Лажева": {}
+  "с. Лажева": {},
+  "с. Воронківці": {},
+  "с. Костянець": {
+    "вул. Миру": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:57:01.654971Z",
+      "auto": true
+    }
+  },
+  "с. Круча": {
+    "вул. П’ятихатки": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T22:57:02.179132Z",
+      "auto": true
+    }
+  },
+  "с. Малі Мацевичі": {
+    "вул. Березівського": {
+      "action": "rename",
+      "target": "вул. Березовського",
+      "timestamp": "2026-07-01T22:57:03.315012Z",
+      "auto": true
+    }
+  }
 }
