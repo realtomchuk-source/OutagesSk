@@ -1480,6 +1480,26 @@
       "target_street": "вул. Авіаторів",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Пятихатки": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Баглаї"
+      ],
+      "target_settlement": "с. Баглаї",
+      "target_street": "вул. Лесі Українки",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Шевченка": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Григорівка"
+      ],
+      "target_settlement": "с. Григорівка",
+      "target_street": "вул. Шевченка",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2307,7 +2327,23 @@
     }
   },
   "с. Зеленці": {},
-  "с. Баглаї": {},
+  "с. Баглаї": {
+    "вул. Дружби": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T11:12:55.667692Z",
+      "auto": true
+    },
+    "вул. Лісова": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T11:12:56.243312Z",
+      "auto": true
+    },
+    "вул. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-07-01T11:12:56.874822Z",
+      "auto": true
+    }
+  },
   "с. Ємці": {
     "вул. Зарічна": {
       "action": "move_to_settlement",
@@ -2351,5 +2387,6 @@
       "auto": true
     }
   },
-  "с. Нападівка": {}
+  "с. Нападівка": {},
+  "с. Лажева": {}
 }
