@@ -1571,6 +1571,26 @@
       "target_street": "вул. Кобєєва",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Центральний": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Баглаї"
+      ],
+      "target_settlement": "с. Баглаї",
+      "target_street": "вул. Центральна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Центральний": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Григорівка"
+      ],
+      "target_settlement": "с. Григорівка",
+      "target_street": "пров. Центральний",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2510,6 +2530,22 @@
       "action": "rename",
       "target": "вул. Березовського",
       "timestamp": "2026-07-01T22:57:03.315012Z",
+      "auto": true
+    }
+  },
+  "с. Малишівка": {},
+  "с. Хижники": {},
+  "с. Яремичі": {
+    "пров. Центральний": {
+      "action": "unverified",
+      "timestamp": "2026-07-03T10:31:03.562056Z",
+      "auto": true
+    }
+  },
+  "с. Веснянка": {
+    "вул. Польова": {
+      "action": "unverified",
+      "timestamp": "2026-07-03T10:31:04.885481Z",
       "auto": true
     }
   }
