@@ -872,7 +872,7 @@ try:
                 # вул. Озерна always goes to Sandbox
                 is_ozerna = (s.strip().lower() == "вул. озерна" or normalize_street_name(s) == "озерна")
                 
-                if is_official or (is_community and not is_ozerna):
+                if is_official and is_community:
                     if s in matched_streets:
                         verified_streets.append(s)
                     if s_det:
