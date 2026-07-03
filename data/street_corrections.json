@@ -557,6 +557,16 @@
       "action": "unverified",
       "timestamp": "2026-06-24T16:40:35.360950Z",
       "auto": true
+    },
+    "пров. Центральний": {
+      "action": "unverified",
+      "timestamp": "2026-07-03T15:39:42.270019Z",
+      "auto": true
+    },
+    "вул. Кам’янецька": {
+      "action": "unverified",
+      "timestamp": "2026-07-03T15:39:43.359442Z",
+      "auto": true
     }
   },
   "с. Раштівка": {
@@ -992,6 +1002,11 @@
     "вул. Травнева": {
       "action": "unverified",
       "timestamp": "2026-06-27T19:47:53.497090Z",
+      "auto": true
+    },
+    "вул. Круча": {
+      "action": "unverified",
+      "timestamp": "2026-07-03T15:39:44.389950Z",
       "auto": true
     }
   },
@@ -1591,6 +1606,126 @@
       "target_street": "пров. Центральний",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Калинова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Оксамитова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Героїв України": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Воронківці"
+      ],
+      "target_settlement": "с. Воронківці",
+      "target_street": "вул. Героїв України",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. автодорога місцевого значення С 231-422/11-25": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Попівці"
+      ],
+      "target_settlement": "с. Попівці",
+      "target_street": "вул. Заводська",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Весняний": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Григорівка"
+      ],
+      "target_settlement": "с. Григорівка",
+      "target_street": "пров. Центральний",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Ланковецька": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Кам’янецька",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Оболоня": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Великі Мацевичі"
+      ],
+      "target_settlement": "с. Великі Мацевичі",
+      "target_street": "вул. Яблунева",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Хмельницького": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Сахнівці"
+      ],
+      "target_settlement": "с. Сахнівці",
+      "target_street": "вул. Хмельницького",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Мирна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Воронківці"
+      ],
+      "target_settlement": "с. Воронківці",
+      "target_street": "вул. Мирна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Козацька": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Оріхівка"
+      ],
+      "target_settlement": "с. Оріхівка",
+      "target_street": "вул. Козацька",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Шемчука": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Григорівка"
+      ],
+      "target_settlement": "с. Григорівка",
+      "target_street": "вул. Шевченка",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Слави": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Капустин"
+      ],
+      "target_settlement": "с. Капустин",
+      "target_street": "пров. Садовий",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Кругова": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Круча",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -1634,6 +1769,11 @@
     "вул. Садова": {
       "action": "unverified",
       "timestamp": "2026-06-24T16:37:55.074772Z",
+      "auto": true
+    },
+    "вул. Оксамитова": {
+      "action": "unverified",
+      "timestamp": "2026-07-03T15:39:40.982007Z",
       "auto": true
     }
   },
@@ -2230,6 +2370,11 @@
       "action": "unverified",
       "timestamp": "2026-06-24T16:40:30.613137Z",
       "auto": true
+    },
+    "пров. Садовий": {
+      "action": "unverified",
+      "timestamp": "2026-07-03T15:39:43.855398Z",
+      "auto": true
     }
   },
   "с. Великі Мацевичі": {
@@ -2324,6 +2469,11 @@
     "вул. Пролетарська": {
       "action": "unverified",
       "timestamp": "2026-06-24T16:38:32.962435Z",
+      "auto": true
+    },
+    "вул. Подільська": {
+      "action": "unverified",
+      "timestamp": "2026-07-03T15:39:41.628489Z",
       "auto": true
     }
   },
@@ -2548,5 +2698,6 @@
       "timestamp": "2026-07-03T10:31:04.885481Z",
       "auto": true
     }
-  }
+  },
+  "с. Степок": {}
 }
