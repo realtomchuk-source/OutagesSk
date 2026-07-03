@@ -311,7 +311,7 @@ Instructions:
 def apply_street_corrections(records):
     official_streets_path = os.getenv("OFFICIAL_STREETS_PATH", "data/clean_official_streets.json")
     corrections_path = os.getenv("STREET_CORRECTIONS_PATH", "data/street_corrections.json")
-    districts_path = "data/districts.json"
+    settlements_path = "data/settlements.json"
     
     official_data = {}
     if os.path.exists(official_streets_path):
@@ -321,13 +321,13 @@ def apply_street_corrections(records):
         except Exception as e:
             print(f"[ERROR] Не вдалося завантажити clean_official_streets.json: {e}")
             
-    districts_data = {}
-    if os.path.exists(districts_path):
+    settlements_data = []
+    if os.path.exists(settlements_path):
         try:
-            with open(districts_path, "r", encoding="utf-8") as f:
-                districts_data = json.load(f)
+            with open(settlements_path, "r", encoding="utf-8") as f:
+                settlements_data = json.load(f)
         except Exception as e:
-            print(f"[ERROR] Не вдалося завантажити districts.json: {e}")
+            print(f"[ERROR] Не вдалося завантажити settlements.json: {e}")
             
     corrections_data = {}
     if os.path.exists(corrections_path):
@@ -630,8 +630,9 @@ def apply_street_corrections(records):
                 if sett_clean in ["Старокостянтинів", "м. Старокостянтинів", "Старокостянтинівська громада"]:
                     is_community = True
                 else:
-                    for villages in districts_data.values():
-                        if any(v.lower().replace(" ", "") == sett_clean.lower().replace(" ", "") for v in villages):
+                    for sett in settlements_data:
+                        sett_name_clean = sett["name"].lower().replace(" ", "")
+                        if sett_clean.lower().replace(" ", "") == sett_name_clean or any(sett_clean.lower().replace(" ", "") == alias.lower().replace("с.", "").replace("м.", "").replace(" ", "") for alias in sett.get("aliases", [])):
                             is_community = True
                             break
                             
@@ -718,12 +719,12 @@ if __name__ == "__main__":
         json.dump(outages, f, ensure_ascii=False, indent=2)
 
 try:
-    with open("data/districts.json", "r", encoding="utf-8") as f:
-        districts_raw = json.load(f)
+    with open("data/settlements.json", "r", encoding="utf-8") as f:
+        settlements_raw = json.load(f)
         districts = {}
-        for d_name, villages in districts_raw.items():
-            for v in villages:
-                districts[v] = d_name
+        for s in settlements_raw:
+            districts[s["name"]] = s["district"]
+            districts[f"{s['prefix']} {s['name']}".strip()] = s["district"]
 except FileNotFoundError:
     districts = {}
 
@@ -1218,6 +1219,7 @@ def add_message(m_id, m_date, m_type, m_content, m_hash=None, is_updated=False, 
 # Генерація Telegram-постів (з ШІ)
 # ------------------------------------------------------------
 def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=False):
+    allow_splitting = False # Force disable splitting posts into parts
     typ_str = "Аварійні" if is_emergency else "Планові"
     typ_header = "АВАРІЙНИХ" if is_emergency else "ПЛАНОВИХ"
     
@@ -1233,9 +1235,9 @@ def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=F
     
     if not grouped:
         if is_emergency:
-            content = f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} аварійних знеструмлень не зафіксовано."
+            content = f"Шановні мешканці Старокостянтинівської громади. За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} аварійних знеструмлень не зафіксовано."
         else:
-            content = f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} планових знеструмлень не передбачено."
+            content = f"Шановні мешканці Старокостянтинівської громади. За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення.\n\nНа {target_date.strftime('%d.%m.%Y')} планових знеструмлень не передбачено."
         return [{"id": base_msg_id, "content": content, "hash": "no_outages"}]
 
     raw_text_parts = []
@@ -1255,12 +1257,11 @@ def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=F
         ]
         
         district_name = ""
-        if settlement != "Старокостянтинів":
-            # Видаляємо префікси с. або м. перед пошуком в districts
-            clean_sett = re.sub(r"^(с\.|м\.|c\.|m\.)\s*", "", settlement.strip()).strip()
-            district_name = districts.get(clean_sett, "Невідомий")
-        else:
+        clean_sett = re.sub(r"^(с\.|м\.|c\.|m\.)\s*", "", settlement.strip()).strip()
+        if clean_sett == "Старокостянтинів":
             district_name = "Місто Старокостянтинів"
+        else:
+            district_name = districts.get(clean_sett, "Невідомий")
             
         streets_str_list = []
         for s_name in sorted(streets_dict.keys()):
@@ -1358,18 +1359,18 @@ def get_tg_post(items, target_date, is_emergency, base_msg_id, allow_splitting=F
         # Визначаємо заголовки
         if total_chunks == 1:
             if is_emergency:
-                intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення, зафіксовані станом на {target_date.strftime('%d.%m.%Y')}:"
+                intro_phrase = f"Шановні мешканці Старокостянтинівської громади. За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення, зафіксовані станом на {target_date.strftime('%d.%m.%Y')}:"
             else:
-                intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення, передбачені на {target_date.strftime('%d.%m.%Y')}:"
+                intro_phrase = f"Шановні мешканці Старокостянтинівської громади. За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення, передбачені на {target_date.strftime('%d.%m.%Y')}:"
         else:
             if is_emergency:
                 if idx == 0:
-                    intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення, зафіксовані станом на {target_date.strftime('%d.%m.%Y')} (Частина 1 з {total_chunks}):"
+                    intro_phrase = f"Шановні мешканці Старокостянтинівської громади. За оперативною інформацією АТ «Хмельницькобленерго», повідомляємо про аварійні знеструмлення, зафіксовані станом на {target_date.strftime('%d.%m.%Y')} (Частина 1 з {total_chunks}):"
                 else:
                     intro_phrase = f"Продовження аварійних знеструмлень на {target_date.strftime('%d.%m.%Y')} (Частина {idx+1} з {total_chunks}):"
             else:
                 if idx == 0:
-                    intro_phrase = f"Шановні мешканці Старокостянтинівської громади! За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення, передбачені на {target_date.strftime('%d.%m.%Y')} (Частина 1 з {total_chunks}):"
+                    intro_phrase = f"Шановні мешканці Старокостянтинівської громади. За офіційною інформацією АТ «Хмельницькобленерго», повідомляємо про планові знеструмлення, передбачені на {target_date.strftime('%d.%m.%Y')} (Частина 1 з {total_chunks}):"
                 else:
                     intro_phrase = f"Продовження планових відключень на {target_date.strftime('%d.%m.%Y')} (Частина {idx+1} з {total_chunks}):"
                     

@@ -268,6 +268,8 @@ async function showDashboard() {
                 <button class="tab" onclick="switchTab('archive')">Архів відключень</button>
                 <button class="tab" onclick="switchTab('msg_archive')">Архів повідомлень</button>
                 <button class="tab" onclick="switchTab('raw')">Сирі дані</button>
+                <button class="tab" onclick="switchTab('rules_audit')">Ревізія правил</button>
+                <button class="tab" onclick="switchTab('substations')">ТП та Мережа</button>
             </div>
             <div id="tabContent"></div>
         </div>
@@ -353,6 +355,24 @@ window.loadData = async function() {
                 officialStreets = migrateStreetsStructure(rawOff);
             }
         } catch(e) {}
+
+        try {
+            const settResp = await fetch(`data/settlements.json?t=${Date.now()}`);
+            if (settResp.ok) {
+                window.settlementsList = await settResp.json();
+            } else {
+                window.settlementsList = [];
+            }
+        } catch(e) { window.settlementsList = []; }
+
+        try {
+            const gridResp = await fetch(`data/grid_mapping.json?t=${Date.now()}`);
+            if (gridResp.ok) {
+                window.gridMapping = await gridResp.json();
+            } else {
+                window.gridMapping = {};
+            }
+        } catch(e) { window.gridMapping = {}; }
 
         try {
             const feedResp = await fetch(`data/feed.json?t=${Date.now()}`);
@@ -452,7 +472,9 @@ window.switchTab = function(tab) {
             (tab === 'suspicious' && t.textContent.includes('Підозрілі')) ||
             (tab === 'archive' && t.textContent.includes('Архів відключень')) ||
             (tab === 'msg_archive' && t.textContent.includes('Архів повідомлень')) ||
-            (tab === 'raw' && t.textContent.includes('Сирі дані'))
+            (tab === 'raw' && t.textContent.includes('Сирі дані')) ||
+            (tab === 'rules_audit' && t.textContent === 'Ревізія правил') ||
+            (tab === 'substations' && t.textContent === 'ТП та Мережа')
         );
     });
     renderTab(tab);
@@ -469,6 +491,8 @@ function renderTab(tab) {
     else if (tab === 'archive') renderArchive(container);
     else if (tab === 'msg_archive') renderMsgArchive(container);
     else if (tab === 'raw') renderRaw(container);
+    else if (tab === 'rules_audit') renderRulesAudit(container);
+    else if (tab === 'substations') renderSubstations(container);
 }
 
 function getFeedContent(type) {
@@ -1275,6 +1299,7 @@ function renderStreets(container) {
                 <li style="display:flex; justify-content:space-between; align-items:center; padding: 8px 10px; border-bottom: 1px solid rgba(220,53,69,0.05); font-size: 14px; color: var(--danger);">
                     <strong style="max-width: 50%; word-break: break-all;">${escapeHtml(street)}${origSettSuffix}</strong>
                     <div style="display:flex; gap: 5px;">
+                        <button onclick="window.checkOsmStreetInline('${escapeHtml(selectedSettlement).replace(/'/g, "\\'")}', '${escapeHtml(street).replace(/'/g, "\\'")}', this)" class="btn" style="padding:4px 8px; font-size:12px; background:#17a2b8; border:none; color:#fff; cursor:pointer;" title="Перевірити на карті (🌐)">🌐</button>
                         ${buttonsHtml}
                     </div>
                 </li>`;
@@ -2898,7 +2923,8 @@ window.openModerationModal = function(settlement, street, initialHousesArray, is
             <p style="font-size:11px; margin:0; color:var(--secondary-text, #666);">Населений пункт: <strong>${escapeHtml(settlement)}</strong></p>
             <div>
                 <label style="font-weight:bold; font-size:13px; display:block; margin-bottom:5px;">Назва вулиці:</label>
-                <input type="text" id="modStreetName" value="${escapeHtml(targetNamePrefill)}" style="width:100%; padding:8px; border-radius:4px; border:1px solid var(--border, #ccc); background:var(--bg, #fff); color:var(--text, #333);">
+                <input type="text" id="modStreetName" value="${escapeHtml(targetNamePrefill)}" oninput="window.checkFuzzyMatchSuggestion(this.value)" style="width:100%; padding:8px; border-radius:4px; border:1px solid var(--border, #ccc); background:var(--bg, #fff); color:var(--text, #333);">
+                <div id="modFuzzySuggestion" style="font-size: 12px; margin-top: 4px; display: none; color: var(--secondary-text);"></div>
             </div>
             <div>
                 <label style="font-weight:bold; font-size:13px; display:block; margin-bottom:5px;">Номери будинків (через кому):</label>
@@ -2918,6 +2944,7 @@ window.openModerationModal = function(settlement, street, initialHousesArray, is
     
     document.body.appendChild(modalDiv);
     window.refreshAiStatus();
+    window.checkFuzzyMatchSuggestion(targetNamePrefill);
 }
 
 window.closeModModal = function() {
@@ -3369,6 +3396,469 @@ window.editDoubtfulStreet = async function(street) {
     const doubtfulHouses = getDoubtfulHousesForStreet(selectedSettlement, street);
     window.openModerationModal(selectedSettlement, street, doubtfulHouses, false, street, selectedSettlement);
 };
+
+
+function renderRulesAudit(container) {
+    container.innerHTML = `
+        <div style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0;">🔍 Ревізія правил автокорекції</h3>
+            <button class="btn btn-primary" onclick="window.runRulesAudit()" style="background-color: var(--secondary); padding: 8px 16px; font-weight: bold;">🔍 Запустити аудит</button>
+        </div>
+        <div id="rulesAuditResults">
+            <p style="color:var(--secondary-text);">Натисніть кнопку вище, щоб проаналізувати правила на наявність застарілих або непотрібних записів.</p>
+        </div>
+    `;
+}
+
+window.runRulesAudit = function() {
+    const resultsContainer = document.getElementById('rulesAuditResults');
+    if (!resultsContainer) return;
+    
+    resultsContainer.innerHTML = '⏳ Аналіз правил...';
+    
+    setTimeout(() => {
+        let auditReport = [];
+        // Loop over corrections
+        for (const sett in streetCorrections) {
+            if (sett === "Пісочниця") {
+                const sandboxRules = streetCorrections[sett];
+                for (const street in sandboxRules) {
+                    const rule = sandboxRules[street];
+                    
+                    // Перевіряємо чи є ця вулиця вже офіційною в якомусь селі
+                    let isAlreadyOfficial = false;
+                    let officialInSett = "";
+                    for (const s_name in officialStreets) {
+                        if (officialStreets[s_name] && officialStreets[s_name][street]) {
+                            isAlreadyOfficial = true;
+                            officialInSett = s_name;
+                            break;
+                        }
+                    }
+                    
+                    if (isAlreadyOfficial) {
+                        auditReport.push({
+                            settlement: sett,
+                            street: street,
+                            rule: rule,
+                            issue: `Вулиця вже є офіційною у <strong>${escapeHtml(officialInSett)}</strong>`,
+                            redundant: true
+                        });
+                    }
+                }
+            } else {
+                const rules = streetCorrections[sett];
+                for (const street in rules) {
+                    const rule = rules[street];
+                    // Перевіряємо чи є вулиця вже у білому списку цього ж села
+                    if (officialStreets[sett] && officialStreets[sett][street]) {
+                        auditReport.push({
+                            settlement: sett,
+                            street: street,
+                            rule: rule,
+                            issue: `Вулиця вже офіційно зареєстрована у цьому ж селі/місті`,
+                            redundant: true
+                        });
+                    }
+                }
+            }
+        }
+        
+        if (auditReport.length === 0) {
+            resultsContainer.innerHTML = '<div style="color:#28a745; font-weight:bold; padding: 15px; background:rgba(40,167,69,0.05); border:1px solid #28a745; border-radius:4px;">✅ Всі чинні правила автокорекції є актуальними! Застарілих чи зайвих правил не знайдено.</div>';
+            return;
+        }
+        
+        let html = `
+            <div style="margin-bottom: 15px; color: var(--secondary-text); font-size:13px;">Знайдено ${auditReport.length} потенційно зайвих або дублюючих правил. Ви можете безпечно видалити їх, щоб очистити базу.</div>
+            <div style="overflow-x: auto;">
+                <table style="width:100%; border-collapse:collapse; background:var(--bg); border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+                    <thead>
+                        <tr style="background:rgba(0,0,0,0.03); border-bottom:1px solid var(--border); text-align:left;">
+                            <th style="padding:10px;">Джерело</th>
+                            <th style="padding:10px;">Вулиця</th>
+                            <th style="padding:10px;">Дія правила</th>
+                            <th style="padding:10px;">Проблема / Опис</th>
+                            <th style="padding:10px; text-align:right;">Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            auditReport.forEach((item, idx) => {
+                html += `
+                    <tr style="border-bottom:1px solid var(--border);">
+                        <td style="padding:10px; font-weight:bold;">${escapeHtml(item.settlement)}</td>
+                        <td style="padding:10px;">${escapeHtml(item.street)}</td>
+                        <td style="padding:10px;"><code style="background:rgba(0,0,0,0.05); padding:2px 4px; border-radius:3px; font-size:12px;">${escapeHtml(JSON.stringify(item.rule))}</code></td>
+                        <td style="padding:10px; color:var(--danger);">${item.issue}</td>
+                        <td style="padding:10px; text-align:right;">
+                            <button class="btn btn-danger" onclick="window.deleteAuditRule('${escapeHtml(item.settlement)}', '${escapeHtml(item.street)}', ${idx})" style="padding: 4px 8px; font-size:12px;">🗑️ Видалити</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table></div>';
+            resultsContainer.innerHTML = html;
+    }, 400);
+}
+
+window.deleteAuditRule = async function(settlement, street, idx) {
+    if (!confirm(`Ви дійсно хочете видалити правило для вулиці "${street}" у "${settlement}"?`)) {
+        return;
+    }
+    
+    if (streetCorrections[settlement] && streetCorrections[settlement][street]) {
+        delete streetCorrections[settlement][street];
+        if (Object.keys(streetCorrections[settlement]).length === 0) {
+            delete streetCorrections[settlement];
+        }
+        
+        const jsonStr = JSON.stringify(streetCorrections, null, 2);
+        try {
+            const resp = await fetch(`${API_BASE}/api/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filePath: "data/street_corrections.json", content: jsonStr })
+            });
+            if (resp.ok) {
+                alert("Правило успішно видалено!");
+                window.runRulesAudit();
+            } else {
+                alert("Помилка збереження файлу!");
+            }
+        } catch (e) {
+            alert("Помилка з'єднання: " + e);
+        }
+    }
+}
+
+function renderSubstations(container) {
+    let settlementOptions = '<option value="">-- Оберіть населений пункт --</option>';
+    const sortedSettlements = (window.settlementsList || []).map(s => `${s.prefix} ${s.name}`).sort();
+    const list = sortedSettlements.length > 0 ? sortedSettlements : Object.keys(officialStreets).sort();
+    
+    list.forEach(s => {
+        settlementOptions += `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`;
+    });
+
+    container.innerHTML = `
+        <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:20px; margin-top:15px;">
+            <div class="card" style="padding: 15px; background: var(--bg); border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); height:fit-content;">
+                <h3 style="margin-top:0;">🔗 Додати зв'язок ТП ➔ Адреси</h3>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <div>
+                        <label style="font-weight:bold; display:block; margin-bottom:4px; font-size:13px;">Населений пункт:</label>
+                        <select id="tpSettlementSelect" onchange="window.updateTpStreetsDropdown()" style="width:100%; padding:8px; border-radius:4px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;">
+                            ${settlementOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-weight:bold; display:block; margin-bottom:4px; font-size:13px;">Назва ТП / КТП / Фідер:</label>
+                        <input type="text" id="tpNameInput" placeholder="Наприклад: ТП-214, КТП-33" style="width:100%; padding:8px; border-radius:4px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;">
+                    </div>
+                    <div>
+                        <label style="font-weight:bold; display:block; margin-bottom:4px; font-size:13px;">Вулиця (з реєстру):</label>
+                        <select id="tpStreetSelect" style="width:100%; padding:8px; border-radius:4px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;">
+                            <option value="">-- Спершу оберіть населений пункт --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-weight:bold; display:block; margin-bottom:4px; font-size:13px;">Номери будинків (опціонально, через кому):</label>
+                        <input type="text" id="tpHousesInput" placeholder="Наприклад: 1, 2, 3-9, 12" style="width:100%; padding:8px; border-radius:4px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;">
+                    </div>
+                    <button class="btn btn-primary" onclick="window.saveSubstationLink()" style="margin-top:10px; width:100%;">💾 Зберегти зв'язок</button>
+                </div>
+            </div>
+            
+            <div class="card" style="padding: 15px; background: var(--bg); border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <h3 style="margin-top:0;">📋 Карта мережі підстанцій (ТП)</h3>
+                <div id="tpGridList" style="max-height: 450px; overflow-y: auto; padding-right: 5px;">
+                    <p style="color:var(--secondary-text);">Завантаження карти мережі...</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    window.updateTpStreetsDropdown = function() {
+        const settSelect = document.getElementById('tpSettlementSelect');
+        const streetSelect = document.getElementById('tpStreetSelect');
+        if (!settSelect || !streetSelect) return;
+        
+        const settlement = settSelect.value;
+        if (!settlement || !officialStreets[settlement]) {
+            streetSelect.innerHTML = '<option value="">-- Оберіть населений пункт --</option>';
+            return;
+        }
+        
+        let options = '<option value="">-- Оберіть вулицю --</option>';
+        const streets = Object.keys(officialStreets[settlement]).sort();
+        streets.forEach(str => {
+            options += `<option value="${escapeHtml(str)}">${escapeHtml(str)}</option>`;
+        });
+        streetSelect.innerHTML = options;
+    }
+
+    window.renderTpGridList = function() {
+        const listContainer = document.getElementById('tpGridList');
+        if (!listContainer) return;
+        
+        const keys = Object.keys(window.gridMapping || {});
+        if (keys.length === 0) {
+            listContainer.innerHTML = '<p style="color:var(--secondary-text); font-size:13px;">База зв\'язків підстанцій порожня. Додайте перший зв\'язок ліворуч.</p>';
+            return;
+        }
+        
+        let html = '';
+        keys.sort().forEach(tp => {
+            const item = window.gridMapping[tp];
+            let settName = item.settlement || "Невідомий н.п.";
+            let streetsHtml = '';
+            for (const str in item.streets || {}) {
+                const houses = item.streets[str];
+                const housesStr = houses.length > 0 ? ` (буд. ${houses.join(', ')})` : ' (всі будинки)';
+                streetsHtml += `<div style="font-size:13px; padding: 2px 0 2px 15px; color:var(--text);">📍 ${escapeHtml(str)}${escapeHtml(housesStr)}</div>`;
+            }
+            
+            html += `
+                <div style="border-bottom:1px solid var(--border); padding: 10px 0; display:flex; flex-direction:column; gap:4px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong style="color:var(--primary); font-size:14px;">⚡ ${escapeHtml(tp)}</strong>
+                        <button class="btn" onclick="window.deleteTpMapping('${escapeHtml(tp)}')" style="padding:2px 8px; font-size:11px; background:rgba(220,53,69,0.06); color:var(--danger); border:1px solid var(--danger); border-radius:3px;">Видалити</button>
+                    </div>
+                    <div style="font-size:12px; color:var(--secondary-text);">Населений пункт: <strong>${escapeHtml(settName)}</strong></div>
+                    ${streetsHtml}
+                </div>
+            `;
+        });
+        
+        listContainer.innerHTML = html;
+    }
+
+    window.saveSubstationLink = async function() {
+        const settSelect = document.getElementById('tpSettlementSelect');
+        const tpInput = document.getElementById('tpNameInput');
+        const streetSelect = document.getElementById('tpStreetSelect');
+        const housesInput = document.getElementById('tpHousesInput');
+        
+        if (!settSelect || !tpInput || !streetSelect || !housesInput) return;
+        
+        const settlement = settSelect.value;
+        const tpName = tpInput.value.trim().toUpperCase();
+        const street = streetSelect.value;
+        const housesRaw = housesInput.value.trim();
+        
+        if (!settlement) { alert("Оберіть населений пункт!"); return; }
+        if (!tpName) { alert("Введіть назву ТП!"); return; }
+        if (!street) { alert("Оберіть вулицю!"); return; }
+        
+        let housesList = [];
+        if (housesRaw) {
+            housesList = housesRaw.split(',').map(h => h.trim()).filter(h => h.length > 0);
+        }
+        
+        if (!window.gridMapping) window.gridMapping = {};
+        if (!window.gridMapping[tpName]) {
+            window.gridMapping[tpName] = {
+                settlement: settlement,
+                streets: {}
+            };
+        }
+        
+        window.gridMapping[tpName].streets[street] = housesList;
+        
+        const jsonStr = JSON.stringify(window.gridMapping, null, 2);
+        try {
+            const resp = await fetch(`${API_BASE}/api/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filePath: "data/grid_mapping.json", content: jsonStr })
+            });
+            if (resp.ok) {
+                alert(`Зв'язок для ${tpName} успішно збережено!`);
+                tpInput.value = '';
+                housesInput.value = '';
+                window.renderTpGridList();
+            } else {
+                alert("Помилка збереження файлу!");
+            }
+        } catch (e) {
+            alert("Помилка з'єднання: " + e);
+        }
+    }
+
+    window.deleteTpMapping = async function(tp) {
+        if (!confirm(`Ви дійсно хочете видалити весь зв'язок для ${tp}?`)) return;
+        
+        if (window.gridMapping && window.gridMapping[tp]) {
+            delete window.gridMapping[tp];
+            
+            const jsonStr = JSON.stringify(window.gridMapping, null, 2);
+            try {
+                const resp = await fetch(`${API_BASE}/api/save`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filePath: "data/grid_mapping.json", content: jsonStr })
+                });
+                if (resp.ok) {
+                    alert("Зв'язок видалено!");
+                    window.renderTpGridList();
+                } else {
+                    alert("Помилка збереження!");
+                }
+            } catch (e) {
+                alert("Помилка з'єднання: " + e);
+            }
+        }
+    }
+
+    window.renderTpGridList();
+window.checkOsmStreetInline = async function(settlement, street, btn) {
+    btn.disabled = true;
+    btn.innerHTML = '⏳...';
+    try {
+        const cleanSett = settlement.replace(/^(с\.|м\.)\s*/, "").trim();
+        const q = `${street}, ${cleanSett}, Хмельницька область, Україна`;
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`;
+        
+        const resp = await fetch(url, {
+            headers: { 'User-Agent': 'StarokostiantynivOutageMonitor/1.0' }
+        });
+        if (resp.ok) {
+            const data = await resp.json();
+            if (data.length > 0) {
+                const lat = data[0].lat;
+                const lon = data[0].lon;
+                
+                const parent = btn.parentElement.parentElement;
+                const badge = document.createElement('span');
+                badge.className = 'badge';
+                badge.style.background = '#28a745';
+                badge.style.color = '#fff';
+                badge.style.marginLeft = '10px';
+                badge.style.fontSize = '11px';
+                badge.style.padding = '4px 6px';
+                badge.style.borderRadius = '3px';
+                badge.style.whiteSpace = 'nowrap';
+                badge.innerHTML = `🌐 На карті (${parseFloat(lat).toFixed(4)}, ${parseFloat(lon).toFixed(4)})`;
+                
+                btn.replaceWith(badge);
+                
+                if (!officialStreets[settlement] || !officialStreets[settlement][street]) {
+                    const wlBtn = document.createElement('button');
+                    wlBtn.className = 'btn';
+                    wlBtn.style.padding = '4px 8px';
+                    wlBtn.style.fontSize = '11px';
+                    wlBtn.style.background = '#28a745';
+                    wlBtn.style.color = '#fff';
+                    wlBtn.style.border = 'none';
+                    wlBtn.style.marginLeft = '5px';
+                    wlBtn.style.cursor = 'pointer';
+                    wlBtn.innerHTML = '➕ Обілити';
+                    wlBtn.onclick = async () => {
+                        if (!officialStreets[settlement]) officialStreets[settlement] = {};
+                        officialStreets[settlement][street] = {
+                            type: "вулиця",
+                            houses: [],
+                            lat: parseFloat(lat),
+                            lon: parseFloat(lon),
+                            blacklist: []
+                        };
+                        const jsonStr = JSON.stringify(officialStreets, null, 2);
+                        await fetch(`${API_BASE}/api/save`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ filePath: "data/clean_official_streets.json", content: jsonStr })
+                        });
+                        alert(`Вулицю "${street}" обілено та додано координати!`);
+                        window.renderTab(currentTab);
+                    };
+                    parent.querySelector('div').appendChild(wlBtn);
+                }
+            } else {
+                btn.innerHTML = '❓ Не знайдено';
+                btn.style.background = '#dc3545';
+            }
+        } else {
+            btn.innerHTML = '⚠️ Помилка';
+            btn.disabled = false;
+        }
+    } catch (err) {
+        btn.innerHTML = '⚠️ Помилка';
+        btn.disabled = false;
+    }
+function getLevenshteinDistance(a, b) {
+    const matrix = [];
+    for (let i = 0; i <= b.length; i++) {
+        matrix[i] = [i];
+    }
+    for (let j = 0; j <= a.length; j++) {
+        matrix[0][j] = j;
+    }
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1, // substitution
+                    matrix[i][j - 1] + 1,     // insertion
+                    matrix[i - 1][j] + 1      // deletion
+                );
+            }
+        }
+    }
+    return matrix[b.length][a.length];
+}
+
+function getSimilarity(a, b) {
+    const distance = getLevenshteinDistance(a, b);
+    const maxLength = Math.max(a.length, b.length);
+    if (maxLength === 0) return 1.0;
+    return 1.0 - distance / maxLength;
+}
+
+function findBestFuzzyMatch(rawName, list, threshold = 0.85) {
+    if (!rawName || !list || list.length === 0) return null;
+    let bestMatch = null;
+    let maxSim = 0;
+    const cleanRaw = rawName.toLowerCase().replace(/^(вул\.|пров\.|пл\.|с\.|м\.)\s*/, "").trim();
+    
+    for (const item of list) {
+        const cleanItem = item.toLowerCase().replace(/^(вул\.|пров\.|пл\.|с\.|м\.)\s*/, "").trim();
+        const sim = getSimilarity(cleanRaw, cleanItem);
+        if (sim > maxSim) {
+            maxSim = sim;
+            bestMatch = item;
+        }
+    }
+    if (maxSim >= threshold) {
+        return { name: bestMatch, similarity: maxSim };
+    }
+    return null;
+}
+
+window.checkFuzzyMatchSuggestion = function(val) {
+    const suggestionDiv = document.getElementById('modFuzzySuggestion');
+    if (!suggestionDiv) return;
+    
+    const settlement = window.currentModSettlement;
+    const officialList = Object.keys(officialStreets[settlement] || {}).sort();
+    
+    if (val.trim().length < 3 || officialList.length === 0) {
+        suggestionDiv.style.display = 'none';
+        return;
+    }
+    
+    const best = findBestFuzzyMatch(val, officialList, 0.85);
+    if (best && best.name.toLowerCase() !== val.trim().toLowerCase()) {
+        suggestionDiv.innerHTML = `💡 Можливо, ви мали на увазі: <a href="#" onclick="document.getElementById('modStreetName').value = '${escapeHtml(best.name).replace(/'/g, "\\'")}'; document.getElementById('modFuzzySuggestion').style.display='none'; return false;" style="color:#4a6cf7; text-decoration:underline; font-weight:bold;">${escapeHtml(best.name)}</a>? (схожість: ${Math.round(best.similarity * 100)}%)`;
+        suggestionDiv.style.display = 'block';
+    } else {
+        suggestionDiv.style.display = 'none';
+    }
+}
 
 if (typeof ADMIN_HASH === 'undefined') {
     app.innerHTML = '<p style="color:red;">Помилка: auth_config.js не налаштовано. Запустіть formatter.py для ініціалізації.</p>';

@@ -25,8 +25,8 @@ except AttributeError:
 # ------------------------------------------------------------
 # 1. Завантаження довідника населених пунктів
 # ------------------------------------------------------------
-with open("data/villages.json", "r", encoding="utf-8") as f:
-    villages = json.load(f)
+with open("data/settlements.json", "r", encoding="utf-8") as f:
+    settlements = json.load(f)
 
 def write_update_log(entry):
     log_path = "data/update_log.json"
@@ -45,7 +45,7 @@ def write_update_log(entry):
     except Exception as err:
         print(f"Помилка запису логу: {err}")
 
-def extract_settlement(city_text, villages_list):
+def extract_settlement(city_text, settlements_list):
     text = city_text.strip()
     hromada_match = re.search(r'\((.*?)\)', text)
     if not hromada_match:
@@ -58,17 +58,21 @@ def extract_settlement(city_text, villages_list):
         return None
         
     name_part = text.split('(')[0].strip()
+    normalized_name_part = name_part.lower().strip()
     
-    # Видаляємо префікси м., с., смт. на початку кожного населеного пункту в списку (якщо є розділювачі)
-    # Але для надійності будемо шукати назви сіл як цілі слова у всьому name_part
+    # Шукаємо точний збіг серед аліасів
+    for s in settlements_list:
+        for alias in s.get("aliases", []):
+            if normalized_name_part == alias:
+                return f"{s['prefix']} {s['name']}".strip()
+                
+    # Якщо точного збігу немає, шукаємо входження назви як окремого слова
     matched = []
-    normalized_name_part = name_part.lower()
-    for v in villages_list:
-        v_norm = v.lower()
-        # Шукаємо назву села як ціле слово з межами слів для уникнення хибних часткових збігів
-        pattern = r'(?<![a-zA-Zа-яА-ЯіІїЇєЄґҐ])' + re.escape(v_norm) + r'(?![a-zA-Zа-яА-ЯіІїЇєЄґҐ])'
+    for s in settlements_list:
+        name_lower = s["name"].lower()
+        pattern = r'(?<![a-zA-Zа-яА-ЯіІїЇєЄґҐ])' + re.escape(name_lower) + r'(?![a-zA-Zа-яА-ЯіІїЇєЄґҐ])'
         if re.search(pattern, normalized_name_part):
-            matched.append(v)
+            matched.append(f"{s['prefix']} {s['name']}".strip())
             
     if not matched:
         return None
@@ -143,7 +147,7 @@ try:
                 continue
 
             city_text = city_tag.get_text(strip=True)
-            settlement = extract_settlement(city_text, villages)
+            settlement = extract_settlement(city_text, settlements)
             if not settlement:
                 i += 1
                 continue
@@ -249,7 +253,7 @@ try:
                 continue
 
             city_text = city_tag.get_text(strip=True)
-            settlement = extract_settlement(city_text, villages)
+            settlement = extract_settlement(city_text, settlements)
             if not settlement:
                 i += 1
                 continue
@@ -407,22 +411,42 @@ try:
                     expanded.add(cleaned)
         return list(expanded)
 
-    def is_technical_object(street_name):
-        if not street_name:
-            return False
-        name_lower = street_name.lower().strip()
-        # Паттерни для КТП, ТП, ЗТП, ПЛ, КЛ, ПС, фідерів, опор тощо
-        tech_patterns = [
-            r"\b(к?тп|зтп|пс|пл|кл)\b[- ]?\d+",  # КТП-12, ТП 5, ПЛ-10
-            r"\b(опора|оп)\b[- ]?\d+",           # опора 12, оп. 45
-            r"\b(фідер|трансформатор)\b",       # фідер, трансформатор
-            r"\b[а-яа-я\d]+-\d+кв\b",            # Л-10кВ, ПЛ-10кВ
-            r"\b(ктп|зтп|тп|пс|пл|кл)\b$"        # поодинокі абревіатури в кінці
+    def extract_substations_and_clean(street_name, houses_str):
+        substations = []
+        
+        # 1. Шукаємо ТП в назві вулиці
+        clean_street = street_name
+        if street_name:
+            for match in re.finditer(r"\b(к?тп|зтп|пс|пл|кл)\b[- ]?\d+", street_name, re.IGNORECASE):
+                substations.append(match.group().strip().upper())
+            clean_street = re.sub(r"\s*\(?(к?тп|зтп|пс|пл|кл)[- ]?\d+\)?\s*", "", street_name, flags=re.IGNORECASE)
+            clean_street = clean_street.strip(" ,()").strip()
+            
+        # 2. Шукаємо ТП в списку будинків
+        clean_houses = houses_str
+        if houses_str:
+            for match in re.finditer(r"\b(к?тп|зтп|пс|пл|кл)\b[- ]?\d+", houses_str, re.IGNORECASE):
+                substations.append(match.group().strip().upper())
+            clean_houses = re.sub(r"\s*\(?(к?тп|зтп|пс|пл|кл)[- ]?\d+\)?\s*", "", houses_str, flags=re.IGNORECASE)
+            clean_houses = re.sub(r",\s*,", ",", clean_houses)
+            clean_houses = clean_houses.strip(" ,()").strip()
+            
+        unique_subs = sorted(list(set(substations)))
+        
+        is_pure_tech = False
+        if not clean_street or clean_street.lower() in ["фідер", "трансформатор", "лінія", "стовп", "опора", "оп"]:
+            is_pure_tech = True
+            
+        other_tech_patterns = [
+            r"\b(опора|оп)\b[- ]?\d+",
+            r"\b(фідер|трансформатор)\b",
+            r"\b[а-яа-я\d]+-\d+кв\b"
         ]
-        for pattern in tech_patterns:
-            if re.search(pattern, name_lower):
-                return True
-        return False
+        for pat in other_tech_patterns:
+            if re.search(pat, street_name, re.IGNORECASE):
+                is_pure_tech = True
+                
+        return clean_street, clean_houses, unique_subs, is_pure_tech
 
     def apply_street_corrections(records):
         official_streets_path = "data/clean_official_streets.json"
@@ -482,16 +506,25 @@ try:
             
             all_streets_set = list(dict.fromkeys(streets + list(s_det_map.keys())))
             
+            # Ініціалізуємо список підстанцій
+            rec["substations"] = rec.get("substations", [])
+            
             for s in all_streets_set:
                 s_det = s_det_map.get(s)
+                raw_houses = s_det.get("houses", "") if s_det else ""
                 
-                # Перевіряємо чи є назва технічним об'єктом обленерго (КТП, ТП, опора тощо)
-                if is_technical_object(s):
-                    # Технічні об'єкти ігноруємо, вони не є житловими вулицями
+                # Витягуємо ТП та чистимо назву вулиці та номери будинків
+                clean_s, clean_houses, unique_subs, is_pure_tech = extract_substations_and_clean(s, raw_houses)
+                
+                if unique_subs:
+                    rec["substations"] = sorted(list(set(rec["substations"] + unique_subs)))
+                    
+                if is_pure_tech:
                     corrected_count += 1
                     continue
                     
-                houses_str = s_det.get("houses", "") if s_det else ""
+                s = clean_s
+                houses_str = clean_houses
                 
                 # Пошук правил для вулиці у всіх розпарсених кандидатах населених пунктів
                 rule = None

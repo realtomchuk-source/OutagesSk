@@ -1,0 +1,185 @@
+Total rules in Sandbox: 61
+
+Street: 'вул. автодорога (Городище-Рівне-Старокостянтинів) - Попівці'
+  Rule: {'action': 'delete', 'timestamp': '2026-06-24T11:33:25.151Z'}
+----------------------------------------
+Street: 'вул. Автодорога Житомир-Чернівці-Тереблеча'
+  Rule: {'action': 'delete', 'timestamp': '2026-06-24T11:33:34.379Z'}
+----------------------------------------
+Street: 'вул. Південна 12'
+  Rule: {'action': 'rename', 'target': 'вул. Південна', 'timestamp': '2026-06-24T11:33:57.283Z'}
+----------------------------------------
+Street: 'вул. Вільшана'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Великий Чернятин'], 'target_street': 'вул. Вільшана', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Гагаріна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_street': 'вул. Гагаріна', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Газопровідна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Веснянка'], 'target_street': 'вул. Газопровідна', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Грінчуків'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Лажева'], 'target_street': 'вул. Грінчуків', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Діброва'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Малий Чернятин'], 'target_street': 'вул. Діброва', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Колгоспна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_street': 'вул. Колгоспна', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Кривоноса'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_street': 'вул. Кривоноса', 'timestamp': '2026-06-29T12:07:46.250Z'}
+----------------------------------------
+Street: 'вул. Полісся'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Лажева'], 'target_street': 'вул. Полісся', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Пригонова'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Великий Чернятин'], 'target_street': 'вул. Пригонова', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Південна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_street': 'вул. Південна', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Фермська'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_street': 'вул. Фермська', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'вул. Ясельна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Малий Чернятин'], 'target_street': 'вул. Ясельна', 'timestamp': '2026-06-24T13:08:18.307230Z'}
+----------------------------------------
+Street: 'пров. Сонячний'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Берегова', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Польова'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Великі Мацевичі'], 'target_settlement': 'с. Великі Мацевичі', 'target_street': 'вул. Польова', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Центральна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Капустин'], 'target_settlement': 'с. Капустин', 'target_street': 'вул. Центральна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Приймацька'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Чумацька', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Лісова'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Великий Чернятин'], 'target_settlement': 'с. Великий Чернятин', 'target_street': 'вул. Лісова', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Зарічна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Капустин'], 'target_settlement': 'с. Капустин', 'target_street': 'вул. Зарічна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Садова'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Волиця-Керекешина'], 'target_settlement': 'с. Волиця-Керекешина', 'target_street': 'вул. Садова', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Комсомольська'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Демківці'], 'target_settlement': 'с. Демківці', 'target_street': 'вул. Подільська', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Лесі Украінки'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Баглаї'], 'target_settlement': 'с. Баглаї', 'target_street': 'вул. Лесі Українки', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Миру'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Ємці'], 'target_settlement': 'с. Ємці', 'target_street': 'вул. Миру', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Шевченка'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Григорівка'], 'target_settlement': 'с. Григорівка', 'target_street': 'вул. Шевченка', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'пров. Миру'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'пров. Миру', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Шкільна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Росолівці'], 'target_settlement': 'с. Росолівці', 'target_street': 'вул. Шкільна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Корольова'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Пашківці'], 'target_settlement': 'с. Пашківці', 'target_street': 'вул. Корольова', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'пров. Залізничний'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Григорівка'], 'target_settlement': 'с. Григорівка', 'target_street': 'вул. Залізнична', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Пришкільна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Шкільна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Ветеранів'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Пашківці'], 'target_settlement': 'с. Пашківці', 'target_street': 'вул. Травнева', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Молодіжна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Молодіжна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Хмельницького Богдана'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Хмельницького', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Підлісна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Підлісна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Дружби'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Капустин'], 'target_settlement': 'с. Капустин', 'target_street': 'вул. Дружби', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'пров. 1 Кривоноса'
+  Rule: {'action': 'rename', 'target': 'пров. Кривоноса', 'timestamp': '2026-06-29T11:59:00.446Z'}
+----------------------------------------
+Street: 'пров. Кривоноса'
+  Rule: {'action': 'rename', 'target': 'вул. Кривоноса', 'timestamp': '2026-06-29T12:02:39.998Z'}
+----------------------------------------
+Street: 'вул. Автодорога'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Авіаторів', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Пятихатки'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Баглаї'], 'target_settlement': 'с. Баглаї', 'target_street': 'вул. Лесі Українки', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'пров. Шевченка'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Григорівка'], 'target_settlement': 'с. Григорівка', 'target_street': 'вул. Шевченка', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Вишнева'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Григорівка'], 'target_settlement': 'с. Григорівка', 'target_street': 'вул. Вишнева', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Набережна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Великий Чернятин'], 'target_settlement': 'с. Великий Чернятин', 'target_street': 'вул. Набережна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Поштова'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Сахнівці'], 'target_settlement': 'с. Сахнівці', 'target_street': 'вул. Поштова', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'пров. Садовий'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Капустин'], 'target_settlement': 'с. Капустин', 'target_street': 'пров. Садовий', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Бабака Петра'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Костянець'], 'target_settlement': 'с. Костянець', 'target_street': 'вул. Петра Бабака', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Кобеева'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Кобєєва', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Центральний'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Баглаї'], 'target_settlement': 'с. Баглаї', 'target_street': 'вул. Центральна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'пров. Центральний'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Григорівка'], 'target_settlement': 'с. Григорівка', 'target_street': 'пров. Центральний', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Калинова'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Оксамитова', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Героїв України'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Воронківці'], 'target_settlement': 'с. Воронківці', 'target_street': 'вул. Героїв України', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. автодорога місцевого значення С 231-422/11-25'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Попівці'], 'target_settlement': 'с. Попівці', 'target_street': 'вул. Заводська', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'пров. Весняний'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Григорівка'], 'target_settlement': 'с. Григорівка', 'target_street': 'пров. Центральний', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Ланковецька'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Кам’янецька', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Оболоня'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Великі Мацевичі'], 'target_settlement': 'с. Великі Мацевичі', 'target_street': 'вул. Яблунева', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Хмельницького'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Сахнівці'], 'target_settlement': 'с. Сахнівці', 'target_street': 'вул. Хмельницького', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Мирна'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Воронківці'], 'target_settlement': 'с. Воронківці', 'target_street': 'вул. Мирна', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Козацька'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Оріхівка'], 'target_settlement': 'с. Оріхівка', 'target_street': 'вул. Козацька', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Шемчука'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Григорівка'], 'target_settlement': 'с. Григорівка', 'target_street': 'вул. Шевченка', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'пров. Слави'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['с. Капустин'], 'target_settlement': 'с. Капустин', 'target_street': 'пров. Садовий', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------
+Street: 'вул. Кругова'
+  Rule: {'action': 'move_to_settlement', 'target_settlements': ['м. Старокостянтинів'], 'target_settlement': 'м. Старокостянтинів', 'target_street': 'вул. Круча', 'auto': True, 'timestamp': '2026-06-26T20:12:00Z'}
+----------------------------------------

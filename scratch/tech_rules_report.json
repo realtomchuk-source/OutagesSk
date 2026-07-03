@@ -1,0 +1,92 @@
+[
+  {
+    "settlement": "с. Попівці",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:00.843227Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Радківці",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:08.689341Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Самчики",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:40:16.869085Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Сахнівці",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:05.474103Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Капустин",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:45.329415Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Пашківці",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:53.937282Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Хутори",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:11.917810Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Грибенинка",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:19.947560Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Демківці",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:30.077767Z",
+      "auto": true
+    }
+  },
+  {
+    "settlement": "с. Жабче",
+    "street": "вул. Климбівка",
+    "rule": {
+      "action": "unverified",
+      "timestamp": "2026-06-24T16:39:38.941609Z",
+      "auto": true
+    }
+  }
+]

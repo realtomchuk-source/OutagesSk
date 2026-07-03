@@ -14,20 +14,21 @@ def normalize_street_name(name):
 def route_sandbox():
     archive_path = "data/archive.json"
     snapshot_path = "data/outages_snapshot.json"
-    villages_path = "data/villages.json"
+    settlements_path = "data/settlements.json"
     clean_streets_path = "data/clean_official_streets.json"
     corrections_path = "data/street_corrections.json"
     
     # 1. Load files
-    if not os.path.exists(archive_path) or not os.path.exists(villages_path) or not os.path.exists(clean_streets_path):
+    if not os.path.exists(archive_path) or not os.path.exists(settlements_path) or not os.path.exists(clean_streets_path):
         print("Required files not found.")
         return
         
     with open(archive_path, "r", encoding="utf-8") as f:
         archive = json.load(f)
         
-    with open(villages_path, "r", encoding="utf-8") as f:
-        villages = json.load(f)
+    with open(settlements_path, "r", encoding="utf-8") as f:
+        settlements_data = json.load(f)
+        villages = [s["name"] for s in settlements_data]
         
     with open(clean_streets_path, "r", encoding="utf-8") as f:
         clean_streets = json.load(f)
