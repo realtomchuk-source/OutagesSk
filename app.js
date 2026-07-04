@@ -3714,6 +3714,8 @@ function renderSubstations(container) {
     }
 
     window.renderTpGridList();
+}
+
 window.checkOsmStreetInline = async function(settlement, street, btn) {
     btn.disabled = true;
     btn.innerHTML = '⏳...';
@@ -3788,6 +3790,8 @@ window.checkOsmStreetInline = async function(settlement, street, btn) {
         btn.innerHTML = '⚠️ Помилка';
         btn.disabled = false;
     }
+}
+
 function getLevenshteinDistance(a, b) {
     const matrix = [];
     for (let i = 0; i <= b.length; i++) {
