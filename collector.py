@@ -451,7 +451,7 @@ try:
     def apply_street_corrections(records):
         official_streets_path = "data/clean_official_streets.json"
         corrections_path = "data/street_corrections.json"
-        districts_path = "data/districts.json"
+        settlements_path = "data/settlements.json"
         
         from geocoder import OSMGeocoder
         geocoder = OSMGeocoder()
@@ -464,13 +464,13 @@ try:
             except Exception as e:
                 print(f"[ERROR] Не вдалося завантажити clean_official_streets.json: {e}")
                 
-        districts_data = {}
-        if os.path.exists(districts_path):
+        settlements_data = []
+        if os.path.exists(settlements_path):
             try:
-                with open(districts_path, "r", encoding="utf-8") as f:
-                    districts_data = json.load(f)
+                with open(settlements_path, "r", encoding="utf-8") as f:
+                    settlements_data = json.load(f)
             except Exception as e:
-                print(f"[ERROR] Не вдалося завантажити districts.json: {e}")
+                print(f"[ERROR] Не вдалося завантажити settlements.json: {e}")
                 
         corrections_data = {}
         if os.path.exists(corrections_path):
@@ -897,8 +897,10 @@ try:
                     if sett_clean in ["Старокостянтинів", "м. Старокостянтинів", "Старокостянтинівська громада"]:
                         is_community = True
                     else:
-                        for villages in districts_data.values():
-                            if any(v.lower().replace(" ", "") == sett_clean.lower().replace(" ", "") for v in villages):
+                        for s_item in settlements_data:
+                            aliases = s_item.get("aliases", [])
+                            name_variants = [s_item["name"]] + aliases
+                            if any(n.lower().replace(" ", "") == sett_clean.lower().replace(" ", "") for n in name_variants):
                                 is_community = True
                                 break
                                 
