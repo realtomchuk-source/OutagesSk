@@ -1736,6 +1736,16 @@
       "target_street": "вул. Центральна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Цвіточна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Квіткова",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2426,6 +2436,11 @@
     "пров. Садовий": {
       "action": "unverified",
       "timestamp": "2026-07-01T22:57:01.101958Z",
+      "auto": true
+    },
+    "вул. Квіткова": {
+      "action": "unverified",
+      "timestamp": "2026-07-05T18:25:26.793668Z",
       "auto": true
     }
   },
