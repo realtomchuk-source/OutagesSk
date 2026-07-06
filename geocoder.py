@@ -9,10 +9,15 @@ class OSMGeocoder:
         self.cache_path = cache_path
         self.cache = {}
         self.load_cache()
-        # z.overpass-api.de - єдине дзеркало, яке стабільно працює для України
-        self.overpass_url = "https://z.overpass-api.de/api/interpreter"
+        # Список дзеркал Overpass API для підвищення стійкості
+        self.overpass_urls = [
+            "https://overpass-api.de/api/interpreter",
+            "https://overpass.openstreetmap.fr/api/interpreter",
+            "https://overpass.kumi.systems/api/interpreter",
+            "https://z.overpass-api.de/api/interpreter"
+        ]
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "User-Agent": "OutagesSkParser/1.0 (contact: realtomchuk-source/OutagesSk)",
             "Accept": "application/json"
         }
         
@@ -81,41 +86,37 @@ node["name"="{sett_formatted}"]["place"~"city|town|village|hamlet"]->.center;
 way(around.center:{radius})["highway"]["name"~"{street_clean}",i];
 out tags;"""
 
-        attempts = 3
         result = False
         success = False
 
-        for attempt in range(attempts):
-            print(f"[GEOCODER] Запит (Спроба {attempt+1}/{attempts}) до {self.overpass_url}: '{street_name}' у радіусі {radius}м від '{sett_formatted}'...")
+        for url in self.overpass_urls:
+            print(f"[GEOCODER] Запит до {url}: '{street_name}' у радіусі {radius}м від '{sett_formatted}'...")
             
             try:
-                # Пауза перед запитом
-                time.sleep(2.0)
-                response = requests.get(self.overpass_url, params={"data": query}, headers=self.headers, timeout=20)
+                # Пауза перед запитом, щоб не перевантажувати сервери
+                time.sleep(1.0)
+                response = requests.get(url, params={"data": query}, headers=self.headers, timeout=15)
                 
                 if response.status_code == 200:
                     data = response.json()
                     elements = data.get("elements", [])
                     if elements:
                         result = True
-                        print(f"[GEOCODER] ЗНАЙДЕНО в OSM: '{street_name}' у '{sett_formatted}'")
+                        print(f"[GEOCODER] ЗНАЙДЕНО в OSM: '{street_name}' у '{sett_formatted}' (через {url})")
                     else:
                         result = False
-                        print(f"[GEOCODER] НЕ знайдено в OSM: '{street_name}' у '{sett_formatted}'")
+                        print(f"[GEOCODER] НЕ знайдено в OSM: '{street_name}' у '{sett_formatted}' (через {url})")
                     success = True
                     break
                 elif response.status_code == 429:
-                    print(f"[GEOCODER] [ПОПЕРЕДЖЕННЯ] Сервер повернув 429 (ліміт запитів). Очікуємо 5 секунд перед повтором...")
-                    time.sleep(5.0)
+                    print(f"[GEOCODER] [ПОПЕРЕДЖЕННЯ] Сервер {url} повернув 429 (ліміт запитів). Спробуємо наступне дзеркало...")
                 else:
-                    print(f"[GEOCODER] [ПОПЕРЕДЖЕННЯ] Сервер повернув статус {response.status_code}. Очікуємо 3 секунди...")
-                    time.sleep(3.0)
+                    print(f"[GEOCODER] [ПОПЕРЕДЖЕННЯ] Сервер {url} повернув статус {response.status_code}. Спробуємо наступне дзеркало...")
             except Exception as e:
-                print(f"[GEOCODER] [ERROR] Помилка запиту: {e}. Очікуємо 3 секунди...")
-                time.sleep(3.0)
+                print(f"[GEOCODER] [ERROR] Помилка запиту до {url}: {e}. Спробуємо наступне дзеркало...")
 
         if not success:
-            print(f"[GEOCODER] [ERROR] Усі спроби геокодування для '{street_name}' у '{sett_formatted}' завершилися невдачею.")
+            print(f"[GEOCODER] [ERROR] Усі сервери геокодування для '{street_name}' у '{sett_formatted}' відповіли помилкою або таймаутом.")
             return False
 
         # Зберігаємо тільки успішні відповіді в кеш
