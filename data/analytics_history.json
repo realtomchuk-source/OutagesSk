@@ -6,6 +6,13 @@
       "emergency_count": 23,
       "planned_count": 182,
       "total_hours": 1684.2
+    },
+    {
+      "week_end_date": "2026-07-06",
+      "total_outages": 275,
+      "emergency_count": 34,
+      "planned_count": 241,
+      "total_hours": 2173.9
     }
   ]
 }
