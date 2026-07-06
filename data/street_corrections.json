@@ -1761,6 +1761,16 @@
       "target_street": "Никанора Фесуна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Карєрна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Красносілка"
+      ],
+      "target_settlement": "с. Красносілка",
+      "target_street": "вул. Кар'єрна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2761,6 +2771,11 @@
     "вул. Карєрна": {
       "action": "unverified",
       "timestamp": "2026-07-06T16:50:49.534247Z",
+      "auto": true
+    },
+    "вул. Кар'єрна": {
+      "action": "unverified",
+      "timestamp": "2026-07-06T23:00:19.420349Z",
       "auto": true
     }
   },
