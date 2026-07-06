@@ -1746,6 +1746,16 @@
       "target_street": "вул. Квіткова",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Фесуна Ніканора": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Решнівка"
+      ],
+      "target_settlement": "с. Решнівка",
+      "target_street": "Никанора Фесуна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
