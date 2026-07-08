@@ -1771,6 +1771,16 @@
       "target_street": "вул. Кар'єрна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Травнева": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Пашківці"
+      ],
+      "target_settlement": "с. Пашківці",
+      "target_street": "вул. Травнева",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2788,6 +2798,13 @@
     "вул. Лісова": {
       "action": "unverified",
       "timestamp": "2026-07-06T16:50:53.546443Z",
+      "auto": true
+    }
+  },
+  "с. Гнатки": {
+    "вул. Травнева": {
+      "action": "unverified",
+      "timestamp": "2026-07-08T20:32:16.155176Z",
       "auto": true
     }
   }
