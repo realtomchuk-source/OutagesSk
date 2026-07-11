@@ -269,6 +269,11 @@
       "target": "пров. Праці",
       "timestamp": "2026-06-29T21:13:45.917727Z",
       "auto": true
+    },
+    "вул. Пашковецька": {
+      "action": "unverified",
+      "timestamp": "2026-07-12T00:27:45.289657Z",
+      "auto": true
     }
   },
   "с. Волиця-Керекешина": {
@@ -423,6 +428,11 @@
     "вул. Хмельницького": {
       "action": "unverified",
       "timestamp": "2026-06-24T16:40:33.453058Z",
+      "auto": true
+    },
+    "вул. Новики": {
+      "action": "unverified",
+      "timestamp": "2026-07-12T00:27:45.861327Z",
       "auto": true
     }
   },
@@ -1781,6 +1791,16 @@
       "target_street": "вул. Травнева",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "урочище Новики, №1": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Новики",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2807,5 +2827,6 @@
       "timestamp": "2026-07-08T20:32:16.155176Z",
       "auto": true
     }
-  }
+  },
+  "с. Березівка": {}
 }
