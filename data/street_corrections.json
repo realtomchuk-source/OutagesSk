@@ -1856,6 +1856,16 @@
       "target_street": "вул. Молодіжна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Перемоги 2Б": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Перемоги",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {

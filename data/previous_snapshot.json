@@ -1090,32 +1090,90 @@
     "substations": []
   },
   {
+    "settlement": "с. Бутівці",
+    "type": "Планові",
+    "created_date": "12.07.2026",
+    "start_datetime": "12.07.202608:36",
+    "end_datetime": "12.07.202609:15",
+    "streets": [
+      "вул. Перемоги"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Перемоги",
+        "houses": "3, 21"
+      }
+    ],
+    "substations": []
+  },
+  {
     "settlement": "м. Старокостянтинів",
     "type": "Планові",
     "created_date": "12.07.2026",
     "start_datetime": "12.07.202608:36",
     "end_datetime": "12.07.202609:15",
     "streets": [
-      "вул. Перемоги",
-      "пров. Перемоги 2Б",
-      "вул. Молодіжна"
+      "вул. Перемоги"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Перемоги",
+        "houses": "1"
+      }
+    ],
+    "substations": [],
+    "original_settlement": "м. Старокостянтинів (припущено за оригінальним селом)"
+  },
+  {
+    "settlement": "с. Малий Чернятин",
+    "type": "Планові",
+    "created_date": "12.07.2026",
+    "start_datetime": "12.07.202608:36",
+    "end_datetime": "12.07.202609:15",
+    "streets": [
+      "вул. Перемоги"
     ],
     "streets_detailed": [
       {
         "name": "вул. Перемоги",
         "houses": "3"
-      },
+      }
+    ],
+    "substations": []
+  },
+  {
+    "settlement": "с. Баглаї",
+    "type": "Планові",
+    "created_date": "12.07.2026",
+    "start_datetime": "12.07.202608:36",
+    "end_datetime": "12.07.202609:15",
+    "streets": [
+      "вул. Молодіжна"
+    ],
+    "streets_detailed": [
       {
-        "name": "пров. Перемоги 2Б",
-        "houses": "1"
-      },
+        "name": "вул. Молодіжна",
+        "houses": "8"
+      }
+    ],
+    "substations": []
+  },
+  {
+    "settlement": "с. Березне",
+    "type": "Планові",
+    "created_date": "12.07.2026",
+    "start_datetime": "12.07.202608:36",
+    "end_datetime": "12.07.202609:15",
+    "streets": [
+      "вул. Молодіжна"
+    ],
+    "streets_detailed": [
       {
         "name": "вул. Молодіжна",
         "houses": "17, 21"
       }
     ],
-    "substations": [],
-    "original_settlement": "м. Старокостянтинів"
+    "substations": []
   },
   {
     "settlement": "м. Старокостянтинів",
