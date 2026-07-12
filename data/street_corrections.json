@@ -274,6 +274,11 @@
       "action": "unverified",
       "timestamp": "2026-07-12T00:27:45.289657Z",
       "auto": true
+    },
+    "пров. Перемоги 2Б": {
+      "action": "unverified",
+      "timestamp": "2026-07-12T09:38:42.691141Z",
+      "auto": true
     }
   },
   "с. Волиця-Керекешина": {
@@ -1799,6 +1804,56 @@
       ],
       "target_settlement": "м. Старокостянтинів",
       "target_street": "вул. Новики",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. 1 Перемоги": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Бутівці"
+      ],
+      "target_settlement": "с. Бутівці",
+      "target_street": "вул. Перемоги",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. 2 Перемоги": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів (припущено за оригінальним селом)"
+      ],
+      "target_settlement": "м. Старокостянтинів (припущено за оригінальним селом)",
+      "target_street": "пров. Перемоги 2Б",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. 3 Перемоги": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Малий Чернятин"
+      ],
+      "target_settlement": "с. Малий Чернятин",
+      "target_street": "вул. Перемоги",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Молодіжний 1": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Баглаї"
+      ],
+      "target_settlement": "с. Баглаї",
+      "target_street": "вул. Молодіжна",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. Молодіжний 2": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Березне"
+      ],
+      "target_settlement": "с. Березне",
+      "target_street": "вул. Молодіжна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
     }
