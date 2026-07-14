@@ -1907,6 +1907,36 @@
       "target_street": "вул. Франка",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "алея Хохтіф": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Європейська",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. 4 Кривоноса": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Малий Чернятин"
+      ],
+      "target_settlement": "с. Малий Чернятин",
+      "target_street": "вул. Кривоноса",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "пров. 5 Кривоноса": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "с. Малий Чернятин"
+      ],
+      "target_settlement": "с. Малий Чернятин",
+      "target_street": "вул. Кривоноса",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
