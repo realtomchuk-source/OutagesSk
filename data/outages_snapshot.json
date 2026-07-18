@@ -105,27 +105,14 @@
     "start_datetime": "18.07.202607:11",
     "end_datetime": "18.07.202614:00",
     "streets": [
-      "вул. Польова"
+      "вул. Польова",
+      "вул. Центральна"
     ],
     "streets_detailed": [
       {
         "name": "вул. Польова",
         "houses": "1, 2, 6, 8, 12, 14, 18, 22, 24, 26"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці"
-  },
-  {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "18.07.2026",
-    "start_datetime": "18.07.202607:11",
-    "end_datetime": "18.07.202614:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
+      },
       {
         "name": "вул. Центральна",
         "houses": "1, 48"
