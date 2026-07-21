@@ -1,5 +1,10 @@
 {
   "м. Старокостянтинів": {
+    "вул. Фермська": {
+      "action": "delete",
+      "comment": "Вулиця Фермська/Фермерська не існує в м. Старокостянтинів. Помилкова назва з сайту обленерго.",
+      "timestamp": "2026-07-16T15:40:00.000000Z"
+    },
     "б. Острозького": {
       "action": "rename",
       "target": "вул. Острозького",
@@ -272,29 +277,13 @@
     },
     "вул. Пашковецька": {
       "action": "unverified",
-      "timestamp": "2026-07-12T00:27:45.289657Z",
-      "auto": true
-    },
-    "пров. Перемоги 2Б": {
-      "action": "unverified",
-      "timestamp": "2026-07-12T09:38:42.691141Z",
-      "auto": true
-    },
-    "вул. Яснозірна": {
-      "action": "unverified",
-      "timestamp": "2026-07-14T18:27:50.821529Z",
+      "timestamp": "2026-07-16T15:33:30.119904Z",
       "auto": true
     },
     "пров. Квітковий": {
       "action": "rename",
       "target": "пров. Вишневий",
-      "timestamp": "2026-07-15T00:04:41.374955Z",
-      "auto": true
-    },
-    "вул. 2 Житомирська": {
-      "action": "rename",
-      "target": "вул. Житомирська",
-      "timestamp": "2026-07-19T22:08:56.490207Z",
+      "timestamp": "2026-07-16T15:33:31.824397Z",
       "auto": true
     }
   },
@@ -452,9 +441,9 @@
       "timestamp": "2026-06-24T16:40:33.453058Z",
       "auto": true
     },
-    "вул. Новики": {
+    "урочище Новики, №1": {
       "action": "unverified",
-      "timestamp": "2026-07-12T00:27:45.861327Z",
+      "timestamp": "2026-07-16T15:33:36.974204Z",
       "auto": true
     }
   },
@@ -1088,11 +1077,6 @@
       "action": "unverified",
       "timestamp": "2026-06-24T16:38:03.834657Z",
       "auto": true
-    },
-    "вул. Набережна": {
-      "action": "unverified",
-      "timestamp": "2026-07-06T16:50:54.494062Z",
-      "auto": true
     }
   },
   "с. Пашківці": {
@@ -1206,14 +1190,8 @@
   },
   "Пісочниця": {
     "вул. автодорога (Городище-Рівне-Старокостянтинів) - Попівці": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Попівці"
-      ],
-      "target_settlement": "с. Попівці",
-      "target_street": "вул. Лесі Українки",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
+      "action": "delete",
+      "timestamp": "2026-06-24T11:33:25.151Z"
     },
     "вул. Автодорога Житомир-Чернівці-Тереблеча": {
       "action": "delete",
@@ -1305,12 +1283,9 @@
       "timestamp": "2026-06-24T13:08:18.307230Z"
     },
     "вул. Фермська": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "м. Старокостянтинів"
-      ],
-      "target_street": "вул. Фермська",
-      "timestamp": "2026-06-24T13:08:18.307230Z"
+      "action": "delete",
+      "comment": "Вулиця Фермська/Фермерська не існує в м. Старокостянтинів. Помилкова назва з сайту обленерго.",
+      "timestamp": "2026-07-14T21:40:00.000000Z"
     },
     "вул. Ясельна": {
       "action": "move_to_settlement",
@@ -1799,176 +1774,6 @@
       "target_street": "Никанора Фесуна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "вул. Карєрна": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Красносілка"
-      ],
-      "target_settlement": "с. Красносілка",
-      "target_street": "вул. Кар'єрна",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "вул. Травнева": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Пашківці"
-      ],
-      "target_settlement": "с. Пашківці",
-      "target_street": "вул. Травнева",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "урочище Новики, №1": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "м. Старокостянтинів"
-      ],
-      "target_settlement": "м. Старокостянтинів",
-      "target_street": "вул. Новики",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "пров. 1 Перемоги": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Бутівці"
-      ],
-      "target_settlement": "с. Бутівці",
-      "target_street": "вул. Перемоги",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "пров. 2 Перемоги": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "м. Старокостянтинів (припущено за оригінальним селом)"
-      ],
-      "target_settlement": "м. Старокостянтинів (припущено за оригінальним селом)",
-      "target_street": "пров. Перемоги 2Б",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "пров. 3 Перемоги": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Малий Чернятин"
-      ],
-      "target_settlement": "с. Малий Чернятин",
-      "target_street": "вул. Перемоги",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "пров. Молодіжний 1": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Баглаї"
-      ],
-      "target_settlement": "с. Баглаї",
-      "target_street": "вул. Молодіжна",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "пров. Молодіжний 2": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Березне"
-      ],
-      "target_settlement": "с. Березне",
-      "target_street": "вул. Молодіжна",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "пров. Перемоги 2Б": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "м. Старокостянтинів"
-      ],
-      "target_settlement": "м. Старокостянтинів",
-      "target_street": "вул. Перемоги",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "вул. Річна": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "м. Старокостянтинів"
-      ],
-      "target_settlement": "м. Старокостянтинів",
-      "target_street": "вул. Зарічна",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "вул. Озерна": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Радківці"
-      ],
-      "target_settlement": "с. Радківці",
-      "target_street": "вул. Яснозірна",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "вул. Франка": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Лажева"
-      ],
-      "target_settlement": "с. Лажева",
-      "target_street": "вул. Франка",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "алея Хохтіф": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "м. Старокостянтинів"
-      ],
-      "target_settlement": "м. Старокостянтинів",
-      "target_street": "вул. Європейська",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "пров. 4 Кривоноса": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Малий Чернятин"
-      ],
-      "target_settlement": "с. Малий Чернятин",
-      "target_street": "вул. Кривоноса",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "пров. 5 Кривоноса": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Малий Чернятин"
-      ],
-      "target_settlement": "с. Малий Чернятин",
-      "target_street": "вул. Кривоноса",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "вул. 227км а/д Васьковичи-Порубне": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "с. Григорівка"
-      ],
-      "target_settlement": "с. Григорівка",
-      "target_street": "вул. Залізнична",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
-    },
-    "вул. 1 Житомирська": {
-      "action": "move_to_settlement",
-      "target_settlements": [
-        "м. Старокостянтинів"
-      ],
-      "target_settlement": "м. Старокостянтинів",
-      "target_street": "вул. Європейська",
-      "auto": true,
-      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2360,11 +2165,6 @@
       "action": "rename",
       "target": "вул. Коцюбинського",
       "timestamp": "2026-06-24T17:23:45.924795Z",
-      "auto": true
-    },
-    "вул. Яснозірна": {
-      "action": "unverified",
-      "timestamp": "2026-07-14T18:27:49.997459Z",
       "auto": true
     }
   },
@@ -2866,6 +2666,11 @@
       "action": "unverified",
       "timestamp": "2026-07-01T11:12:56.874822Z",
       "auto": true
+    },
+    "пров. Шевченка": {
+      "action": "unverified",
+      "timestamp": "2026-07-16T15:33:34.027965Z",
+      "auto": true
     }
   },
   "с. Ємці": {
@@ -2913,18 +2718,7 @@
   },
   "с. Нападівка": {},
   "с. Лажева": {},
-  "с. Воронківці": {
-    "вул. Польова": {
-      "action": "unverified",
-      "timestamp": "2026-07-17T22:08:20.618574Z",
-      "auto": true
-    },
-    "вул. Центральна": {
-      "action": "unverified",
-      "timestamp": "2026-07-18T09:06:51.877911Z",
-      "auto": true
-    }
-  },
+  "с. Воронківці": {},
   "с. Костянець": {
     "вул. Миру": {
       "action": "unverified",
@@ -2961,64 +2755,28 @@
       "action": "unverified",
       "timestamp": "2026-07-03T10:31:04.885481Z",
       "auto": true
-    },
-    "вул. Василишина імені": {
-      "action": "rename",
-      "target": "вул. Василишина",
-      "timestamp": "2026-07-06T16:50:50.390750Z",
-      "auto": true
-    },
-    "вул. Центральна": {
-      "action": "unverified",
-      "timestamp": "2026-07-06T16:50:51.072957Z",
-      "auto": true
     }
   },
   "с. Степок": {},
-  "с. Решнівка": {
-    "вул. Центральна": {
-      "action": "unverified",
-      "timestamp": "2026-07-13T20:58:52.868431Z",
-      "auto": true
-    }
-  },
-  "с. Ланок": {
-    "вул. Дорожна": {
-      "action": "unverified",
-      "timestamp": "2026-07-06T16:50:48.819265Z",
-      "auto": true
-    },
-    "вул. Карєрна": {
-      "action": "unverified",
-      "timestamp": "2026-07-06T16:50:49.534247Z",
-      "auto": true
-    },
-    "вул. Кар'єрна": {
-      "action": "unverified",
-      "timestamp": "2026-07-06T23:00:19.420349Z",
-      "auto": true
-    }
-  },
-  "с. Караїмівка": {
-    "вул. Караїмівка": {
-      "action": "unverified",
-      "timestamp": "2026-07-06T16:50:52.020192Z",
-      "auto": true
-    },
-    "вул. Лісова": {
-      "action": "unverified",
-      "timestamp": "2026-07-06T16:50:53.546443Z",
-      "auto": true
-    }
-  },
   "с. Гнатки": {
     "вул. Травнева": {
       "action": "unverified",
-      "timestamp": "2026-07-08T20:32:16.155176Z",
+      "timestamp": "2026-07-16T15:33:35.438249Z",
       "auto": true
     }
   },
-  "с. Березівка": {},
   "с. Загірне": {},
-  "с. Партинці": {}
+  "с. Партинці": {},
+  "с. Решнівка": {
+    "вул. Річна": {
+      "action": "unverified",
+      "timestamp": "2026-07-16T15:33:38.317781Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-07-16T15:33:41.678514Z",
+      "auto": true
+    }
+  }
 }

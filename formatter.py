@@ -912,6 +912,221 @@ def get_grouped_outages(items):
     return grouped
 
 # ------------------------------------------------------------
+# Генерація текстових файлів для Telegram-бота (data/tg_posts/)
+# ------------------------------------------------------------
+UKR_DAYS = {
+    0: "понеділок", 1: "вівторок", 2: "середа", 3: "четвер",
+    4: "п'ятниця", 5: "субота", 6: "неділя"
+}
+
+def generate_tg_post_file(items, target_date, output_path, districts_map):
+    """Генерує текстовий файл зі структурованими даними для бота-публікатора.
+    
+    Args:
+        items: список записів відключень на цільову дату
+        target_date: об'єкт date
+        output_path: шлях до вихідного файлу (data/tg_posts/today.txt або tomorrow.txt)
+        districts_map: словник {settlement_name: district_name}
+    """
+    now_kyiv = get_kyiv_now()
+    date_str = target_date.strftime("%d.%m.%Y")
+    day_name = UKR_DAYS.get(target_date.weekday(), "")
+    
+    # Групуємо відключення — той самий групувальник, що для feed та TG
+    grouped = get_grouped_outages(items)
+    
+    # Розділяємо на аварійні та планові
+    emergency_groups = {}
+    planned_groups = {}
+    for key, streets_dict in grouped.items():
+        typ, settlement, time_range = key
+        if "Аварійні" in typ:
+            emergency_groups[key] = streets_dict
+        else:
+            planned_groups[key] = streets_dict
+    
+    # Формуємо хеш поточних даних для відстеження змін
+    data_for_hash = json.dumps(
+        {str(k): {sn: sorted(list(hs)) for sn, hs in v.items()} for k, v in grouped.items()},
+        sort_keys=True, ensure_ascii=False
+    )
+    current_hash = hashlib.md5(data_for_hash.encode("utf-8")).hexdigest()
+    
+    # Читаємо попередній файл для визначення статусу та історії оновлень
+    first_seen_time = now_kyiv.strftime("%H:%M")
+    update_times = []
+    previous_hash = None
+    
+    if os.path.exists(output_path):
+        try:
+            with open(output_path, "r", encoding="utf-8") as f:
+                old_content = f.read()
+            # Витягуємо метадані з попереднього файлу
+            hash_match = re.search(r"Хеш даних: ([a-f0-9]+)", old_content)
+            if hash_match:
+                previous_hash = hash_match.group(1)
+            first_match = re.search(r"Перша фіксація даних: (\d{2}:\d{2})", old_content)
+            if first_match:
+                first_seen_time = first_match.group(1)
+            updates_match = re.search(r"Історія оновлень: (.+)", old_content)
+            if updates_match:
+                update_times = [t.strip() for t in updates_match.group(1).split(",") if t.strip()]
+        except Exception:
+            pass
+    
+    # Визначаємо статус
+    if previous_hash is None:
+        status = "НОВИЙ"
+    elif previous_hash == current_hash:
+        status = "БЕЗ ЗМІН"
+    else:
+        status = "ОНОВЛЕНО"
+        update_times.append(now_kyiv.strftime("%H:%M"))
+    
+    # Якщо немає відключень взагалі
+    if not grouped:
+        lines = []
+        lines.append("=" * 44)
+        lines.append("ДАНІ ПРО ВІДКЛЮЧЕННЯ ЕЛЕКТРОЕНЕРГІЇ")
+        lines.append(f"Дата: {date_str} ({day_name})")
+        lines.append("Джерело: АТ «Хмельницькобленерго»")
+        lines.append(f"Останнє оновлення: {now_kyiv.strftime('%H:%M')}")
+        lines.append(f"Перша фіксація даних: {first_seen_time}")
+        lines.append(f"Статус: {status}")
+        lines.append(f"Хеш даних: {current_hash}")
+        if update_times:
+            lines.append(f"Історія оновлень: {', '.join(update_times)}")
+        lines.append("=" * 44)
+        lines.append("")
+        lines.append("Відключень не зафіксовано.")
+        lines.append("")
+        lines.append("=" * 44)
+        lines.append("КІНЕЦЬ ДОКУМЕНТУ")
+        lines.append("Кількість населених пунктів: 0")
+        lines.append("Кількість записів (аварійні): 0")
+        lines.append("Кількість записів (планові): 0")
+        lines.append("=" * 44)
+        
+        if status == "БЕЗ ЗМІН":
+            return  # Не перезаписуємо файл якщо даних не було і нічого не змінилось
+            
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, "w", encoding="utf-8", newline="\n") as f:
+            f.write("\n".join(lines) + "\n")
+        return
+    
+    # Функція для формування блоку відключень
+    def format_outage_block(groups_dict):
+        """Формує текстовий блок для групи відключень (аварійних або планових)."""
+        block_lines = []
+        all_settlements = set()
+        
+        # Сортуємо: місто першим, потім алфавітно
+        sorted_keys = sorted(groups_dict.keys(), key=lambda k: (
+            0 if "Старокостянтинів" in k[1] else 1, k[1], k[2]
+        ))
+        
+        # Групуємо по округах
+        district_groups = {}
+        for k in sorted_keys:
+            typ, settlement, time_range = k
+            all_settlements.add(settlement)
+            clean_sett = re.sub(r"^(с\.|м\.|c\.|m\.)\s*", "", settlement.strip()).strip()
+            if clean_sett == "Старокостянтинів":
+                district_name = "Місто Старокостянтинів"
+            else:
+                district_name = districts_map.get(clean_sett, districts_map.get(settlement, "Невідомий округ"))
+            
+            if district_name not in district_groups:
+                district_groups[district_name] = []
+            district_groups[district_name].append(k)
+        
+        # Порядок округів: місто першим
+        district_order = sorted(district_groups.keys(), key=lambda d: (
+            0 if "Місто" in d else 1, d
+        ))
+        
+        for district_name in district_order:
+            block_lines.append(f"[{district_name}]")
+            for k in district_groups[district_name]:
+                typ, settlement, time_range = k
+                streets_dict = groups_dict[k]
+                block_lines.append(f"{settlement} | {time_range}")
+                
+                for s_name in sorted(streets_dict.keys()):
+                    houses_set = streets_dict[s_name]
+                    if houses_set:
+                        sorted_houses = sorted(
+                            list(houses_set),
+                            key=lambda x: (int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 9999, x)
+                        )
+                        block_lines.append(f"- {s_name}: буд. {', '.join(sorted_houses)}")
+                    else:
+                        block_lines.append(f"- {s_name}: (усі будинки)")
+                
+                block_lines.append("")  # Порожній рядок між записами
+        
+        return block_lines, all_settlements
+    
+    # Формуємо документ
+    lines = []
+    
+    # === ЗАГОЛОВОК ===
+    lines.append("=" * 44)
+    lines.append("ДАНІ ПРО ВІДКЛЮЧЕННЯ ЕЛЕКТРОЕНЕРГІЇ")
+    lines.append(f"Дата: {date_str} ({day_name})")
+    lines.append("Джерело: АТ «Хмельницькобленерго»")
+    lines.append(f"Останнє оновлення: {now_kyiv.strftime('%H:%M')}")
+    lines.append(f"Перша фіксація даних: {first_seen_time}")
+    lines.append(f"Статус: {status}")
+    lines.append(f"Хеш даних: {current_hash}")
+    if update_times:
+        lines.append(f"Історія оновлень: {', '.join(update_times)}")
+    lines.append("=" * 44)
+    lines.append("")
+    
+    all_settlements = set()
+    
+    # === АВАРІЙНІ ===
+    lines.append("--- АВАРІЙНІ ЗНЕСТРУМЛЕННЯ ---")
+    lines.append("")
+    if emergency_groups:
+        emergency_lines, emergency_settlements = format_outage_block(emergency_groups)
+        lines.extend(emergency_lines)
+        all_settlements.update(emergency_settlements)
+    else:
+        lines.append("Аварійних знеструмлень не зафіксовано.")
+        lines.append("")
+    
+    # === ПЛАНОВІ ===
+    lines.append("--- ПЛАНОВІ ЗНЕСТРУМЛЕННЯ ---")
+    lines.append("")
+    if planned_groups:
+        planned_lines, planned_settlements = format_outage_block(planned_groups)
+        lines.extend(planned_lines)
+        all_settlements.update(planned_settlements)
+    else:
+        lines.append("Планових знеструмлень не передбачено.")
+        lines.append("")
+    
+    # === ФУТЕР ===
+    lines.append("=" * 44)
+    lines.append("КІНЕЦЬ ДОКУМЕНТУ")
+    lines.append(f"Кількість населених пунктів: {len(all_settlements)}")
+    lines.append(f"Кількість записів (аварійні): {len(emergency_groups)}")
+    lines.append(f"Кількість записів (планові): {len(planned_groups)}")
+    lines.append("=" * 44)
+    
+    # Зберігаємо (або пропускаємо якщо без змін)
+    if status == "БЕЗ ЗМІН":
+        return
+    
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"[SUCCESS] {output_path} збережено (статус: {status})")
+
+# ------------------------------------------------------------
 def group_streets_by_prefix(items, separator="; "):
     known_prefixes = ["вул. ", "пров. ", "пл. ", "проїзд ", "бульвар ", "автодорога "]
     groups = {}
@@ -1188,6 +1403,13 @@ if __name__ == "__main__":
     if day_after_tomorrow_day and day_after_tomorrow_day["actual_content"]:
         feed_tomorrow_parts.append(day_after_tomorrow_day["actual_content"])
     feed_tomorrow_content = " | ".join(feed_tomorrow_parts) if feed_tomorrow_parts else "[ЗАВТРА] Інформація про відключення відсутня."
+
+    # ------------------------------------------------------------
+    # Генерація текстових файлів для Telegram-бота (data/tg_posts/)
+    # ------------------------------------------------------------
+    TG_POSTS_DIR = os.getenv("TG_POSTS_DIR", "data/tg_posts")
+    generate_tg_post_file(items_today, today, os.path.join(TG_POSTS_DIR, "today.txt"), districts)
+    generate_tg_post_file(items_tomorrow, tomorrow, os.path.join(TG_POSTS_DIR, "tomorrow.txt"), districts)
 
 # ------------------------------------------------------------
 # Завантаження messages.json для Кешування
