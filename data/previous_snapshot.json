@@ -177,6 +177,23 @@
     "substations": []
   },
   {
+    "settlement": "с. Красносілка",
+    "type": "Планові",
+    "created_date": "08.07.2026",
+    "start_datetime": "27.07.202609:00",
+    "end_datetime": "27.07.202617:00",
+    "streets": [
+      "вул. Молодіжна"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Молодіжна",
+        "houses": "14"
+      }
+    ],
+    "substations": []
+  },
+  {
     "settlement": "м. Старокостянтинів",
     "type": "Планові",
     "created_date": "21.07.2026",
@@ -871,23 +888,6 @@
     ],
     "substations": [],
     "original_settlement": "с. Грибенинка"
-  },
-  {
-    "settlement": "с. Красносілка",
-    "type": "Планові",
-    "created_date": "08.07.2026",
-    "start_datetime": "27.07.202609:00",
-    "end_datetime": "27.07.202617:00",
-    "streets": [
-      "вул. Молодіжна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Молодіжна",
-        "houses": "14"
-      }
-    ],
-    "substations": []
   },
   {
     "settlement": "с. Малий Чернятин",
