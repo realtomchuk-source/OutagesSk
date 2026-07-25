@@ -2798,6 +2798,11 @@
       "action": "unverified",
       "timestamp": "2026-07-16T15:33:41.678514Z",
       "auto": true
+    },
+    "вул. Заставна": {
+      "action": "unverified",
+      "timestamp": "2026-07-25T09:19:46.859690Z",
+      "auto": true
     }
   },
   "с. Березне": {
@@ -2819,6 +2824,18 @@
     "вул. Незалежності": {
       "action": "unverified",
       "timestamp": "2026-07-25T00:05:43.867010Z",
+      "auto": true
+    }
+  },
+  "с. Киселі": {
+    "вул. Незалежності": {
+      "action": "unverified",
+      "timestamp": "2026-07-25T09:19:46.481917Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-07-25T09:19:46.681167Z",
       "auto": true
     }
   }
