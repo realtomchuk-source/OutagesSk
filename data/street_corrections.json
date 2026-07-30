@@ -1097,6 +1097,11 @@
       "action": "unverified",
       "timestamp": "2026-06-24T16:38:03.834657Z",
       "auto": true
+    },
+    "вул. Набережна": {
+      "action": "unverified",
+      "timestamp": "2026-07-30T22:27:40.901317Z",
+      "auto": true
     }
   },
   "с. Пашківці": {
@@ -2786,6 +2791,16 @@
       "action": "unverified",
       "timestamp": "2026-07-03T10:31:04.885481Z",
       "auto": true
+    },
+    "вул. Василишина імені": {
+      "action": "unverified",
+      "timestamp": "2026-07-30T22:27:36.093670Z",
+      "auto": true
+    },
+    "вул. Центральна": {
+      "action": "unverified",
+      "timestamp": "2026-07-30T22:27:40.288732Z",
+      "auto": true
     }
   },
   "с. Степок": {},
@@ -2862,6 +2877,30 @@
     "вул. Шевченка": {
       "action": "unverified",
       "timestamp": "2026-07-27T22:29:59.004838Z",
+      "auto": true
+    }
+  },
+  "с. Караїмівка": {
+    "вул. Караїмівка": {
+      "action": "unverified",
+      "timestamp": "2026-07-30T22:27:40.472497Z",
+      "auto": true
+    },
+    "вул. Лісова": {
+      "action": "unverified",
+      "timestamp": "2026-07-30T22:27:40.686389Z",
+      "auto": true
+    }
+  },
+  "с. Ланок": {
+    "вул. Дорожна": {
+      "action": "unverified",
+      "timestamp": "2026-07-30T22:27:41.087669Z",
+      "auto": true
+    },
+    "вул. Карєрна": {
+      "action": "unverified",
+      "timestamp": "2026-07-30T22:27:41.291191Z",
       "auto": true
     }
   }
