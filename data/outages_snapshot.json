@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "settlement": "м. Старокостянтинів",
+    "type": "Планові",
+    "created_date": "07.08.2026",
+    "start_datetime": "07.08.202616:00",
+    "end_datetime": "07.08.202622:00",
+    "streets": [
+      "вул. Квіткова"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Квіткова",
+        "houses": "4"
+      }
+    ],
+    "substations": []
+  }
+]
