@@ -961,16 +961,22 @@ def generate_tg_post_file(items, target_date, output_path, districts_map):
         try:
             with open(output_path, "r", encoding="utf-8") as f:
                 old_content = f.read()
-            # Витягуємо метадані з попереднього файлу
-            hash_match = re.search(r"Хеш даних: ([a-f0-9]+)", old_content)
-            if hash_match:
-                previous_hash = hash_match.group(1)
-            first_match = re.search(r"Перша фіксація даних: (\d{2}:\d{2})", old_content)
-            if first_match:
-                first_seen_time = first_match.group(1)
-            updates_match = re.search(r"Історія оновлень: (.+)", old_content)
-            if updates_match:
-                update_times = [t.strip() for t in updates_match.group(1).split(",") if t.strip()]
+            # Перевіряємо чи дата попереднього файлу збігається з поточною цільовою датою
+            old_date_match = re.search(r"Дата: (\d{2}\.\d{2}\.\d{4})", old_content)
+            old_file_date = old_date_match.group(1) if old_date_match else None
+            
+            if old_file_date == date_str:
+                # Та сама доба — зберігаємо метадані
+                hash_match = re.search(r"Хеш даних: ([a-f0-9]+)", old_content)
+                if hash_match:
+                    previous_hash = hash_match.group(1)
+                first_match = re.search(r"Перша фіксація даних: (\d{2}:\d{2})", old_content)
+                if first_match:
+                    first_seen_time = first_match.group(1)
+                updates_match = re.search(r"Історія оновлень: (.+)", old_content)
+                if updates_match:
+                    update_times = [t.strip() for t in updates_match.group(1).split(",") if t.strip()]
+            # Якщо дата інша — залишаємо значення за замовчуванням (скидання історії)
         except Exception:
             pass
     
