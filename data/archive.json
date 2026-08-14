@@ -11796,26 +11796,6 @@
   },
   {
     "settlement": "с. Великі Мацевичі",
-    "type": "Аварійні",
-    "created_date": "05.07.2026",
-    "start_datetime": "05.07.202616:54",
-    "end_datetime": "05.07.202620:00",
-    "streets": [
-      "вул. Квіткова"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Квіткова",
-        "houses": "4"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T18:25:23.159267",
-    "last_seen_at": "2026-07-05T18:25:23.159296"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
     "type": "Планові",
     "created_date": "02.07.2026",
     "start_datetime": "07.07.202610:00",
@@ -12363,25 +12343,6 @@
     "original_settlement": "с. Круча",
     "first_seen_at": "2026-07-05T18:25:23.159951",
     "last_seen_at": "2026-07-05T20:22:05.044289"
-  },
-  {
-    "settlement": "м. Старокостянтинів",
-    "type": "Аварійні",
-    "created_date": "05.07.2026",
-    "start_datetime": "05.07.202616:54",
-    "end_datetime": "05.07.202620:00",
-    "streets": [
-      "вул. Квіткова"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Квіткова",
-        "houses": "4"
-      }
-    ],
-    "substations": [],
-    "first_seen_at": "2026-07-05T20:22:05.044208",
-    "last_seen_at": "2026-07-05T22:29:39.811875"
   },
   {
     "settlement": "с. Костянець",
@@ -82735,7 +82696,7 @@
     ],
     "substations": [],
     "first_seen_at": "2026-08-13T10:25:10.329568",
-    "last_seen_at": "2026-08-14T16:02:33.811631"
+    "last_seen_at": "2026-08-14T17:49:02.760420"
   },
   {
     "settlement": "с. Великі Мацевичі",
@@ -83933,7 +83894,7 @@
     ],
     "substations": [],
     "first_seen_at": "2026-08-14T10:22:14.554984",
-    "last_seen_at": "2026-08-14T16:02:33.811644"
+    "last_seen_at": "2026-08-14T17:49:02.760438"
   },
   {
     "settlement": "с. Великі Мацевичі",
