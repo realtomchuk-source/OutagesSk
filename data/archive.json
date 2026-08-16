@@ -1,42 +1,5 @@
 [
   {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "first_seen_at": "2026-07-02T17:06:46.061907",
-    "last_seen_at": "2026-07-03T13:45:52.799887",
-    "original_settlement": "с. Великі Мацевичі"
-  },
-  {
-    "settlement": "с. Пашківці",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Травнева"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Травнева",
-        "houses": "1, 3, 4, 5, 7, 9, 10, 11, 12, 15"
-      }
-    ],
-    "first_seen_at": "2026-07-02T17:06:46.061914",
-    "last_seen_at": "2026-07-05T22:29:39.812116"
-  },
-  {
     "settlement": "с. Немирівка",
     "type": "Планові",
     "created_date": "30.06.2026",
@@ -1187,25 +1150,6 @@
     "last_seen_at": "2026-07-06T11:26:53.785112"
   },
   {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "original_settlement": "Великі Мацевичі",
-    "first_seen_at": "2026-07-03T15:39:36.661777",
-    "last_seen_at": "2026-07-03T15:39:36.661778"
-  },
-  {
     "settlement": "с. Хутори",
     "type": "Планові",
     "created_date": "30.06.2026",
@@ -1281,25 +1225,6 @@
     "original_settlement": "Хутори",
     "first_seen_at": "2026-07-03T16:09:00.162403",
     "last_seen_at": "2026-07-03T17:12:28.149658"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "original_settlement": "Великі Мацевичі",
-    "first_seen_at": "2026-07-03T16:09:00.162608",
-    "last_seen_at": "2026-07-03T16:09:00.162609"
   },
   {
     "settlement": "с. Радківці",
@@ -1392,25 +1317,6 @@
     "original_settlement": "Круча",
     "first_seen_at": "2026-07-03T16:09:00.162797",
     "last_seen_at": "2026-07-03T17:12:28.149946"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "original_settlement": "Великі Мацевичі",
-    "first_seen_at": "2026-07-03T17:12:28.149602",
-    "last_seen_at": "2026-07-03T17:12:28.149603"
   },
   {
     "settlement": "с. Хутори",
@@ -1532,26 +1438,6 @@
     "original_settlement": "Круча",
     "first_seen_at": "2026-07-03T17:12:28.149947",
     "last_seen_at": "2026-07-04T13:32:24.266851"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-04T13:05:33.857608",
-    "last_seen_at": "2026-07-04T13:05:33.857610"
   },
   {
     "settlement": "с. Великі Мацевичі",
@@ -2301,26 +2187,6 @@
     "settlement": "с. Великі Мацевичі",
     "type": "Планові",
     "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-04T13:32:24.266625",
-    "last_seen_at": "2026-07-04T13:32:24.266626"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
     "start_datetime": "09.07.202610:00",
     "end_datetime": "09.07.202617:00",
     "streets": [
@@ -2516,26 +2382,6 @@
     "original_settlement": "с. Круча",
     "first_seen_at": "2026-07-04T13:32:24.266859",
     "last_seen_at": "2026-07-04T13:49:19.331490"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-04T13:49:19.331279",
-    "last_seen_at": "2026-07-04T13:49:19.331280"
   },
   {
     "settlement": "с. Великі Мацевичі",
@@ -2821,26 +2667,6 @@
     "settlement": "с. Великі Мацевичі",
     "type": "Планові",
     "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-04T16:34:49.285308",
-    "last_seen_at": "2026-07-04T16:34:49.285309"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
     "start_datetime": "09.07.202610:00",
     "end_datetime": "09.07.202617:00",
     "streets": [
@@ -3036,26 +2862,6 @@
     "original_settlement": "с. Круча",
     "first_seen_at": "2026-07-04T16:34:49.285550",
     "last_seen_at": "2026-07-04T18:17:23.373093"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-04T18:17:23.372878",
-    "last_seen_at": "2026-07-04T18:17:23.372879"
   },
   {
     "settlement": "с. Великі Мацевичі",
@@ -3261,26 +3067,6 @@
     "settlement": "с. Великі Мацевичі",
     "type": "Планові",
     "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-04T20:16:21.743267",
-    "last_seen_at": "2026-07-04T20:16:21.743269"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
     "start_datetime": "09.07.202610:00",
     "end_datetime": "09.07.202617:00",
     "streets": [
@@ -3481,26 +3267,6 @@
     "settlement": "с. Великі Мацевичі",
     "type": "Планові",
     "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-04T22:23:20.329028",
-    "last_seen_at": "2026-07-04T22:23:20.329029"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
     "start_datetime": "09.07.202610:00",
     "end_datetime": "09.07.202617:00",
     "streets": [
@@ -3696,26 +3462,6 @@
     "original_settlement": "с. Круча",
     "first_seen_at": "2026-07-04T22:23:20.329263",
     "last_seen_at": "2026-07-05T00:09:03.004148"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T00:09:03.003908",
-    "last_seen_at": "2026-07-05T00:09:03.003909"
   },
   {
     "settlement": "с. Великі Мацевичі",
@@ -3964,26 +3710,6 @@
     "substations": [],
     "first_seen_at": "2026-07-05T00:42:00.055231",
     "last_seen_at": "2026-07-06T11:26:53.785151"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T00:42:00.055361",
-    "last_seen_at": "2026-07-05T00:42:00.055362"
   },
   {
     "settlement": "с. Радківці",
@@ -4454,26 +4180,6 @@
     "last_seen_at": "2026-07-05T13:24:46.732786"
   },
   {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T02:11:00.149974",
-    "last_seen_at": "2026-07-05T02:11:00.149975"
-  },
-  {
     "settlement": "с. Радківці",
     "type": "Планові",
     "created_date": "01.07.2026",
@@ -4692,26 +4398,6 @@
     "original_settlement": "с. Круча",
     "first_seen_at": "2026-07-05T02:11:00.150362",
     "last_seen_at": "2026-07-05T06:10:11.982940"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T06:10:11.982552",
-    "last_seen_at": "2026-07-05T06:10:11.982553"
   },
   {
     "settlement": "с. Радківці",
@@ -5057,26 +4743,6 @@
     "settlement": "с. Великі Мацевичі",
     "type": "Планові",
     "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T10:38:07.756988",
-    "last_seen_at": "2026-07-05T10:38:07.756989"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
     "start_datetime": "09.07.202610:00",
     "end_datetime": "09.07.202617:00",
     "streets": [
@@ -5384,26 +5050,6 @@
     "last_seen_at": "2026-07-06T11:26:53.784933"
   },
   {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T13:24:46.732934",
-    "last_seen_at": "2026-07-05T13:24:46.732935"
-  },
-  {
     "settlement": "с. Радківці",
     "type": "Планові",
     "created_date": "01.07.2026",
@@ -5622,26 +5268,6 @@
     "original_settlement": "с. Круча",
     "first_seen_at": "2026-07-05T13:24:46.733304",
     "last_seen_at": "2026-07-05T16:41:59.363655"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T16:41:59.363248",
-    "last_seen_at": "2026-07-05T16:41:59.363249"
   },
   {
     "settlement": "с. Радківці",
@@ -5922,26 +5548,6 @@
     "original_settlement": "с. Круча",
     "first_seen_at": "2026-07-05T16:41:59.363656",
     "last_seen_at": "2026-07-05T18:25:23.159949"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T18:25:23.159501",
-    "last_seen_at": "2026-07-05T18:25:23.159502"
   },
   {
     "settlement": "с. Радківці",
@@ -6334,26 +5940,6 @@
     "last_seen_at": "2026-07-05T22:29:39.811957"
   },
   {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T20:22:05.044437",
-    "last_seen_at": "2026-07-05T20:22:05.044438"
-  },
-  {
     "settlement": "с. Радківці",
     "type": "Планові",
     "created_date": "30.06.2026",
@@ -6634,26 +6220,6 @@
     "last_seen_at": "2026-07-06T11:10:39.629613"
   },
   {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Ветеранів"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Ветеранів",
-        "houses": "1, 3, 4, 5, 7, 9, 10, 11, 12, 15"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-05T22:29:39.812112",
-    "last_seen_at": "2026-07-06T11:10:39.629271"
-  },
-  {
     "settlement": "с. Радківці",
     "type": "Планові",
     "created_date": "30.06.2026",
@@ -6822,26 +6388,6 @@
     "original_settlement": "с. Хутори",
     "first_seen_at": "2026-07-05T22:29:39.812423",
     "last_seen_at": "2026-07-06T11:10:39.629836"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Ветеранів"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Ветеранів",
-        "houses": "1, 3, 4, 5, 7, 9, 10, 11, 12, 15"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-06T11:10:39.629273",
-    "last_seen_at": "2026-07-06T11:26:53.784747"
   },
   {
     "settlement": "с. Великі Мацевичі",
@@ -7202,26 +6748,6 @@
     "original_settlement": "с. Круча",
     "first_seen_at": "2026-07-06T11:26:53.784710",
     "last_seen_at": "2026-07-06T11:26:53.784712"
-  },
-  {
-    "settlement": "с. Великі Мацевичі",
-    "type": "Планові",
-    "created_date": "02.07.2026",
-    "start_datetime": "07.07.202610:00",
-    "end_datetime": "07.07.202617:00",
-    "streets": [
-      "вул. Центральна"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Центральна",
-        "houses": "16 блок 3"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Великі Мацевичі",
-    "first_seen_at": "2026-07-06T11:26:53.784749",
-    "last_seen_at": "2026-07-06T11:26:53.784750"
   },
   {
     "settlement": "с. Великі Мацевичі",
@@ -78187,7 +77713,7 @@
     ],
     "substations": [],
     "first_seen_at": "2026-08-15T09:34:48.309115",
-    "last_seen_at": "2026-08-16T09:36:50.916539"
+    "last_seen_at": "2026-08-16T11:27:29.841953"
   },
   {
     "settlement": "с. Красносілка",
@@ -78271,7 +77797,7 @@
     ],
     "substations": [],
     "first_seen_at": "2026-08-16T09:36:50.916553",
-    "last_seen_at": "2026-08-16T09:36:50.916577"
+    "last_seen_at": "2026-08-16T11:27:29.841983"
   },
   {
     "settlement": "с. Грибенинка",
@@ -78309,28 +77835,28 @@
     "start_datetime": "17.08.202609:00",
     "end_datetime": "17.08.202617:00",
     "streets": [
-      "вул. Польова",
-      "вул. Франка",
-      "вул. Центральна"
+      "вул. Коцюбинського",
+      "вул. Перемоги",
+      "вул. Шевченка"
     ],
     "streets_detailed": [
       {
-        "name": "вул. Польова",
-        "houses": "1"
+        "name": "вул. Коцюбинського",
+        "houses": "2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 30"
       },
       {
-        "name": "вул. Франка",
-        "houses": "1"
+        "name": "вул. Перемоги",
+        "houses": "1, 2, 5, 7, 12, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 9/1"
       },
       {
-        "name": "вул. Центральна",
-        "houses": "1, 16, 55"
+        "name": "вул. Шевченка",
+        "houses": "2, 6, 7, 8, 10, 11, 12, 13, 17, 18, 19, 20, 22, 24, 26, 27, 28, 2а, 30, 32, 34, 35, 36, 37, 38, 39, 40, 41, 43, 47, 49, 51, 53, 59, 61, 63, 65, 67, 69, 71, 38а, 16/3, 18/1, 20/1, 20/2, 49/1, 49/2, оп.2"
       }
     ],
     "substations": [],
     "original_settlement": "с. Грибенинка",
     "first_seen_at": "2026-08-16T09:36:50.916562",
-    "last_seen_at": "2026-08-16T09:36:50.916563"
+    "last_seen_at": "2026-08-16T11:27:29.841970"
   },
   {
     "settlement": "с. Самчики",
@@ -78354,7 +77880,7 @@
     ],
     "substations": [],
     "first_seen_at": "2026-08-16T09:36:50.916566",
-    "last_seen_at": "2026-08-16T09:36:50.916567"
+    "last_seen_at": "2026-08-16T11:27:29.841977"
   },
   {
     "settlement": "с. Сахнівці",
@@ -78438,6 +77964,85 @@
     ],
     "substations": [],
     "first_seen_at": "2026-08-16T09:36:50.916568",
-    "last_seen_at": "2026-08-16T09:36:50.916569"
+    "last_seen_at": "2026-08-16T11:27:29.841981"
+  },
+  {
+    "settlement": "с. Грибенинка",
+    "type": "Планові",
+    "created_date": "30.07.2026",
+    "start_datetime": "17.08.202609:00",
+    "end_datetime": "17.08.202617:00",
+    "streets": [
+      "вул. Польова",
+      "вул. Франка",
+      "вул. Центральна"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Польова",
+        "houses": "1"
+      },
+      {
+        "name": "вул. Франка",
+        "houses": "1"
+      },
+      {
+        "name": "вул. Центральна",
+        "houses": "1, 16, 55"
+      }
+    ],
+    "substations": [],
+    "original_settlement": "с. Грибенинка",
+    "first_seen_at": "2026-08-16T11:27:29.841972",
+    "last_seen_at": "2026-08-16T11:27:29.841973"
+  },
+  {
+    "settlement": "с. Хижники",
+    "type": "Планові",
+    "created_date": "13.08.2026",
+    "start_datetime": "17.08.202610:00",
+    "end_datetime": "17.08.202617:00",
+    "streets": [
+      "вул. Доброчаєвої",
+      "вул. Технічна",
+      "вул. Центральна"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Доброчаєвої",
+        "houses": "1, 3, 5, 6, 7, 8, 10, 12, 15, 23, 25, 27, 29, 31, 33"
+      },
+      {
+        "name": "вул. Технічна",
+        "houses": "1/1"
+      },
+      {
+        "name": "вул. Центральна",
+        "houses": "1, 2, 4, 5, 6, 7, 8, 10, 11, 12, 13, 16, 18, 20, 60"
+      }
+    ],
+    "substations": [],
+    "first_seen_at": "2026-08-16T11:27:29.841985",
+    "last_seen_at": "2026-08-16T11:27:29.841986"
+  },
+  {
+    "settlement": "с. Хижники",
+    "type": "Планові",
+    "created_date": "13.08.2026",
+    "start_datetime": "17.08.202610:00",
+    "end_datetime": "17.08.202617:00",
+    "streets": [
+      "вул. Доброчаєвої Дарини"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Доброчаєвої Дарини",
+        "houses": "2, 19"
+      }
+    ],
+    "substations": [],
+    "original_settlement": "с. Хижники",
+    "first_seen_at": "2026-08-16T11:27:29.841988",
+    "last_seen_at": "2026-08-16T11:27:29.841989"
   }
 ]
