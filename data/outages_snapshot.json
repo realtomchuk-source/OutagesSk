@@ -86,9 +86,9 @@
   {
     "settlement": "м. Старокостянтинів",
     "type": "Планові",
-    "created_date": "03.08.2026",
-    "start_datetime": "18.08.202609:00",
-    "end_datetime": "18.08.202620:00",
+    "created_date": "18.08.2026",
+    "start_datetime": "18.08.202620:00",
+    "end_datetime": "18.08.202622:00",
     "streets": [
       "вул. Ізяславська"
     ],
