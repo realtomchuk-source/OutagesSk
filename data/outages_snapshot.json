@@ -577,6 +577,40 @@
     "substations": []
   },
   {
+    "settlement": "с. Решнівка",
+    "type": "Планові",
+    "created_date": "19.08.2026",
+    "start_datetime": "24.08.202609:39",
+    "end_datetime": "24.08.202616:39",
+    "streets": [
+      "вул. Вишнева"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Вишнева",
+        "houses": "1"
+      }
+    ],
+    "substations": []
+  },
+  {
+    "settlement": "с. Решнівка",
+    "type": "Планові",
+    "created_date": "19.08.2026",
+    "start_datetime": "24.08.202609:43",
+    "end_datetime": "24.08.202616:43",
+    "streets": [
+      "вул. Зарічна"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Зарічна",
+        "houses": "1, 4, 5, 6, 7, 10, 12, 13, 17, 19, 20, 21, 23, 26, 27, 28, 30, 34, 43, 47, 10/1"
+      }
+    ],
+    "substations": []
+  },
+  {
     "settlement": "с. Самчики",
     "type": "Планові",
     "created_date": "13.08.2026",
