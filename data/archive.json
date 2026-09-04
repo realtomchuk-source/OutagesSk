@@ -28183,45 +28183,6 @@
     "last_seen_at": "2026-07-27T01:35:59.030679"
   },
   {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Незалежності"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Незалежності",
-        "houses": "61"
-      }
-    ],
-    "substations": [],
-    "first_seen_at": "2026-07-27T01:35:59.030456",
-    "last_seen_at": "2026-07-27T01:35:59.030468"
-  },
-  {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Незалежності"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Незалежності",
-        "houses": "61"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-07-27T01:35:59.030471",
-    "last_seen_at": "2026-07-27T02:02:04.265510"
-  },
-  {
     "settlement": "с. Іршики",
     "type": "Планові",
     "created_date": "24.07.2026",
@@ -28830,26 +28791,6 @@
     "original_settlement": "с. Писарівка",
     "first_seen_at": "2026-07-27T01:35:59.030681",
     "last_seen_at": "2026-07-27T02:02:04.265738"
-  },
-  {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Незалежності"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Незалежності",
-        "houses": "61"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-07-27T02:02:04.265523",
-    "last_seen_at": "2026-07-27T05:49:34.902105"
   },
   {
     "settlement": "м. Старокостянтинів",
@@ -29462,26 +29403,6 @@
     "last_seen_at": "2026-07-27T05:49:34.902319"
   },
   {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Незалежності"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Незалежності",
-        "houses": "61"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-07-27T05:49:34.902115",
-    "last_seen_at": "2026-07-27T10:33:07.797928"
-  },
-  {
     "settlement": "м. Старокостянтинів",
     "type": "Планові",
     "created_date": "22.07.2026",
@@ -30090,26 +30011,6 @@
     "original_settlement": "с. Писарівка",
     "first_seen_at": "2026-07-27T05:49:34.902321",
     "last_seen_at": "2026-07-27T10:33:07.798017"
-  },
-  {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Незалежності"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Незалежності",
-        "houses": "61"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-07-27T10:33:07.797940",
-    "last_seen_at": "2026-07-27T14:23:28.081873"
   },
   {
     "settlement": "с. Волиця-Керекешина",
@@ -30722,26 +30623,6 @@
     "last_seen_at": "2026-07-27T14:23:28.082109"
   },
   {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Незалежності"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Незалежності",
-        "houses": "61"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-07-27T14:23:28.081887",
-    "last_seen_at": "2026-07-27T17:33:49.278000"
-  },
-  {
     "settlement": "м. Старокостянтинів",
     "type": "Планові",
     "created_date": "22.07.2026",
@@ -31350,26 +31231,6 @@
     "original_settlement": "с. Писарівка",
     "first_seen_at": "2026-07-27T14:23:28.082129",
     "last_seen_at": "2026-07-27T17:33:49.278087"
-  },
-  {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Незалежності"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Незалежності",
-        "houses": "61"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-07-27T17:33:49.278012",
-    "last_seen_at": "2026-07-27T20:46:12.625330"
   },
   {
     "settlement": "с. Іршики",
@@ -32685,26 +32546,6 @@
     "last_seen_at": "2026-07-27T22:29:56.424218"
   },
   {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Незалежності"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Незалежності",
-        "houses": "61"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-07-27T20:46:12.625332",
-    "last_seen_at": "2026-07-27T22:29:56.424223"
-  },
-  {
     "settlement": "с. Грибенинка",
     "type": "Аварійні",
     "created_date": "27.07.2026",
@@ -33970,26 +33811,6 @@
     "original_settlement": "с. Волиця-Керекешина",
     "first_seen_at": "2026-07-27T22:29:56.424219",
     "last_seen_at": "2026-07-27T22:29:56.424220"
-  },
-  {
-    "settlement": "с. Воронківці",
-    "type": "Аварійні",
-    "created_date": "27.07.2026",
-    "start_datetime": "27.07.202600:33",
-    "end_datetime": "27.07.202610:00",
-    "streets": [
-      "вул. Польова"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Польова",
-        "houses": "6а"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-07-27T22:29:56.424225",
-    "last_seen_at": "2026-07-27T22:29:56.424226"
   },
   {
     "settlement": "с. Грибенинка",
