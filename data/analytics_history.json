@@ -76,6 +76,13 @@
       "emergency_count": 9,
       "planned_count": 85,
       "total_hours": 786.7
+    },
+    {
+      "week_end_date": "2026-09-14",
+      "total_outages": 154,
+      "emergency_count": 6,
+      "planned_count": 148,
+      "total_hours": 1238.2
     }
   ]
 }
