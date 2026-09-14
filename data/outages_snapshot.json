@@ -124,23 +124,6 @@
     "settlement": "м. Старокостянтинів",
     "type": "Планові",
     "created_date": "10.09.2026",
-    "start_datetime": "14.09.202610:00",
-    "end_datetime": "14.09.202617:00",
-    "streets": [
-      "вул. Квіткова"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Квіткова",
-        "houses": "4"
-      }
-    ],
-    "substations": []
-  },
-  {
-    "settlement": "м. Старокостянтинів",
-    "type": "Планові",
-    "created_date": "10.09.2026",
     "start_datetime": "15.09.202610:00",
     "end_datetime": "15.09.202617:00",
     "streets": [
@@ -170,47 +153,6 @@
       }
     ],
     "substations": []
-  },
-  {
-    "settlement": "с. Капустин",
-    "type": "Планові",
-    "created_date": "02.09.2026",
-    "start_datetime": "14.09.202609:00",
-    "end_datetime": "14.09.202617:00",
-    "streets": [
-      "вул. Польова"
-    ],
-    "streets_detailed": [
-      {
-        "name": "вул. Польова",
-        "houses": "1, 2, 4, 6, 7, 10, 12, 15, 16, 18, 24, 26, 29, 30, 31, 32, 60, 15/1"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Капустин"
-  },
-  {
-    "settlement": "м. Старокостянтинів",
-    "type": "Планові",
-    "created_date": "02.09.2026",
-    "start_datetime": "14.09.202609:00",
-    "end_datetime": "14.09.202617:00",
-    "streets": [
-      "пров. 1-й Польовий",
-      "пров. 2-й Польовий"
-    ],
-    "streets_detailed": [
-      {
-        "name": "пров. 1-й Польовий",
-        "houses": "5, 7, 1/4"
-      },
-      {
-        "name": "пров. 2-й Польовий",
-        "houses": "1, 2, 3, 6"
-      }
-    ],
-    "substations": [],
-    "original_settlement": "с. Капустин"
   },
   {
     "settlement": "с. Капустин",
