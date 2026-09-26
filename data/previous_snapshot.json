@@ -43,5 +43,50 @@
     ],
     "substations": [],
     "original_settlement": "с. Раштівка"
+  },
+  {
+    "settlement": "с. Раштівка",
+    "type": "Планові",
+    "created_date": "17.09.2026",
+    "start_datetime": "27.09.202609:00",
+    "end_datetime": "27.09.202620:00",
+    "streets": [
+      "вул. Зарічна",
+      "вул. Польова",
+      "вул. Шкільна"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Зарічна",
+        "houses": "1, 4, 5, 6, 7, 8, 9, 13, 14, 15, 16, 17, 18"
+      },
+      {
+        "name": "вул. Польова",
+        "houses": "3, 7"
+      },
+      {
+        "name": "вул. Шкільна",
+        "houses": "1, 2, 4, 9"
+      }
+    ],
+    "substations": []
+  },
+  {
+    "settlement": "с. Раштівка",
+    "type": "Планові",
+    "created_date": "17.09.2026",
+    "start_datetime": "27.09.202609:00",
+    "end_datetime": "27.09.202620:00",
+    "streets": [
+      "вул. Центральна"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Центральна",
+        "houses": "1"
+      }
+    ],
+    "substations": [],
+    "original_settlement": "с. Раштівка"
   }
 ]
