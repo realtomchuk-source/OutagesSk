@@ -1,0 +1,81 @@
+name: Test Direct HTTP Request
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-direct-fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Python Version
+        run: python --version
+
+      - name: Test direct HTTP POST to hoe.com.ua
+        run: |
+          python -c '
+          import urllib.request
+          import urllib.parse
+          import json
+          import time
+          from datetime import datetime, timedelta
+
+          today = datetime.now().strftime("%d.%m.%Y")
+          tomorrow = (datetime.now() + timedelta(days=1)).strftime("%d.%m.%Y")
+          date_range = f"{today} - {tomorrow}"
+
+          print(f"[*] Testing from GitHub Runner...")
+          print(f"[*] Target DateRange: {date_range}")
+
+          url = "https://hoe.com.ua/shutdown/eventlist"
+          headers = {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+              "X-Requested-With": "XMLHttpRequest",
+              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+              "Referer": "https://hoe.com.ua/shutdown/all",
+              "Origin": "https://hoe.com.ua"
+          }
+
+          # 1. Test Planned (TypeId = 2, RemId = 12)
+          data_planned = urllib.parse.urlencode({
+              "TypeId": "2",
+              "PageNumber": "1",
+              "RemId": "12",
+              "DateRange": date_range
+          }).encode("utf-8")
+
+          req_planned = urllib.request.Request(url, data=data_planned, headers=headers)
+          t0 = time.time()
+          try:
+              with urllib.request.urlopen(req_planned, timeout=20) as resp:
+                  code = resp.getcode()
+                  content = resp.read().decode("utf-8", errors="replace")
+                  elapsed = time.time() - t0
+                  print(f"[+] PLANNED: HTTP {code} in {elapsed:.2f}s, Response length: {len(content)} chars")
+                  if "Старокостянтинів" in content or "таблиця" in content.lower() or "table" in content.lower():
+                      print("[+] PLANNED: Successful response contains expected content/table!")
+                  else:
+                      print("[?] PLANNED: Response received, but unexpected content snippet:")
+                      print(content[:300])
+          except Exception as e:
+              print(f"[-] PLANNED FAILED: {e}")
+
+          # 2. Test Emergency (TypeId = 1, RemId = 12)
+          data_emergency = urllib.parse.urlencode({
+              "TypeId": "1",
+              "PageNumber": "1",
+              "RemId": "12"
+          }).encode("utf-8")
+
+          req_emergency = urllib.request.Request(url, data=data_emergency, headers=headers)
+          t0 = time.time()
+          try:
+              with urllib.request.urlopen(req_emergency, timeout=20) as resp:
+                  code = resp.getcode()
+                  content = resp.read().decode("utf-8", errors="replace")
+                  elapsed = time.time() - t0
+                  print(f"[+] EMERGENCY: HTTP {code} in {elapsed:.2f}s, Response length: {len(content)} chars")
+                  if "table" in content.lower() or "alert" in content.lower():
+                      print("[+] EMERGENCY: Successful response contains expected content/table!")
+          except Exception as e:
+              print(f"[-] EMERGENCY FAILED: {e}")
+          '
