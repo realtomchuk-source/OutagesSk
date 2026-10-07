@@ -1,6 +1,9 @@
 name: Test Direct HTTP Request
 
 on:
+  push:
+    paths:
+      - '.github/workflows/test_direct_request.yml'
   workflow_dispatch:
 
 jobs:
