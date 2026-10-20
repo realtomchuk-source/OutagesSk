@@ -190,8 +190,12 @@ try:
     # ------------------------------------------------------------
     # 3. Обробка вкладки "Аварійні" (TypeId=1)
     # ------------------------------------------------------------
-    print("Обробляю аварійні відключення...")
-    emergency_html = fetch_shutdown_html(1)
+    today = datetime.now().strftime("%d.%m.%Y")
+    tomorrow = (datetime.now() + timedelta(days=1)).strftime("%d.%m.%Y")
+    date_range = f"{today} - {tomorrow}"
+
+    print(f"Обробляю аварійні відключення (період: {date_range})...")
+    emergency_html = fetch_shutdown_html(1, date_range=date_range)
 
     dump_filename = f"html_dumps/emergency_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
     with open(dump_filename, "w", encoding="utf-8") as f:
@@ -204,9 +208,6 @@ try:
     # ------------------------------------------------------------
     # 4. Обробка вкладки "Планові" (TypeId=2)
     # ------------------------------------------------------------
-    today = datetime.now().strftime("%d.%m.%Y")
-    tomorrow = (datetime.now() + timedelta(days=1)).strftime("%d.%m.%Y")
-    date_range = f"{today} - {tomorrow}"
     print(f"Обробляю планові відключення (період: {date_range})...")
 
     planned_html = fetch_shutdown_html(2, date_range=date_range)

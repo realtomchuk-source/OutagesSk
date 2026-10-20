@@ -34,7 +34,7 @@ def test():
     print(f"Тестуємо діапазон: {date_range}")
 
     print("Завантажуємо аварійні...")
-    em_html = fetch_html(1)
+    em_html = fetch_html(1, date_range=date_range)
     print(f"Аварійні отримано, розмір: {len(em_html)} симв.")
 
     print("Завантажуємо планові з діапазоном дат...")
