@@ -1,0 +1,80 @@
+name: GPV Schedule Monitor
+
+on:
+  schedule:
+    # Вечірній активний режим (19:00-23:45 за Києвом, з урахуванням UTC+2/UTC+3): кожні 15 хвилин
+    # Скрипт автоматично переходить у погодинний режим одразу після виявлення графіка на завтра
+    - cron: '*/15 16-21 * * *'
+    # Денний режим (07:00-18:00 за Києвом): 1 раз на годину
+    - cron: '0 4-15 * * *'
+    # Нічний режим: ротація доби о 00:05 за Києвом та нічна перевірка о 05:00 за Києвом (1 раз на 5 годин)
+    - cron: '5 21,22 * * *'
+    - cron: '0 2,3 * * *'
+  workflow_dispatch:
+
+env:
+  TZ: Europe/Kyiv
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  run-gpv-parser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install beautifulsoup4
+
+      - name: Run GPV Collector
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python gpv_collector.py --force
+          else
+            python gpv_collector.py
+          fi
+
+      - name: Check for changes in data/gpv
+        id: check_changes
+        run: |
+          git add data/gpv/
+          if git diff --cached --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "Змін у графіках ГПВ немає — коміт та деплой не потрібні."
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and Push changes
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update GPV hourly schedule"
+          git pull --rebase -Xtheirs origin main
+          git push
+
+      - name: Setup Pages
+        if: steps.check_changes.outputs.changed == 'true'
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        if: steps.check_changes.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        if: steps.check_changes.outputs.changed == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4
