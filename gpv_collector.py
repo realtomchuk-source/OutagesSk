@@ -484,13 +484,17 @@ def prune_history(history_days: dict, today_dt: datetime) -> dict:
 
 def should_skip_by_schedule(now_kyiv: datetime, force: bool = False) -> bool:
     """
-    Економія ресурсів при запусках за розкладом:
+    Економія ресурсів при запусках за розкладом на основі інтервалу від останньої реальної перевірки:
     1. Якщо файли today.json / tomorrow.json ще не існують або їх дата застаріла (настала нова доба) -> НЕ пропускаємо.
-    2. У вечірній активний період (19:00–23:59), коли cron запускає скрипт кожні 15 хвилин:
-       - якщо графік на завтра ще НЕ з'явився (status == 'waiting'), перевіряємо сайт кожні 15 хв;
-       - щойно графік на завтра вже знайдено (status != 'waiting'), пропускаємо проміжні запуски (:15, :30, :45)
-         і перевіряємо сайт лише раз на годину (на початку години, хвилини 00..10).
-    3. У нічний час (01:00–06:59 за Києвом) дозволяємо перевірку лише у вікні 05:00 (раз на 5 годин після 00:05).
+    2. Якщо в history.json відсутній запис last_checked_at або він застарілий -> НЕ пропускаємо.
+    3. Вдень (07:00–18:59): перевіряти сайт, якщо з моменту попередньої перевірки минуло >= 40 хвилин
+       (незалежно від затримок черги раннерів GitHub Actions).
+    4. Увечері (19:00–23:59):
+       - якщо графік на завтра ще очікується (status == 'waiting') -> перевіряти щоразу (кожні ~15 хв);
+       - щойно графік на завтра знайдено (status != 'waiting') -> переходити в погодинний режим (>= 45 хвилин).
+    5. Вночі (00:00–06:59):
+       - якщо настала нова доба (today != today_str) -> перевіряти обов'язково (ротація доби);
+       - протягом ночі перевіряти не частіше ніж 1 раз на 4 години (>= 240 хвилин).
     """
     if force:
         return False
@@ -500,36 +504,61 @@ def should_skip_by_schedule(now_kyiv: datetime, force: bool = False) -> bool:
 
     today_data = load_json_safe(TODAY_FILE, None)
     tomorrow_data = load_json_safe(TOMORROW_FILE, None)
+    history_doc = load_json_safe(HISTORY_FILE, {})
 
     if not today_data or not tomorrow_data:
         return False
     if today_data.get("date") != today_str or tomorrow_data.get("date") != tomorrow_str:
         return False
 
+    last_checked_iso = history_doc.get("last_checked_at")
+    if not last_checked_iso:
+        return False
+
+    try:
+        last_checked_dt = datetime.fromisoformat(last_checked_iso)
+        elapsed_minutes = (now_kyiv - last_checked_dt).total_seconds() / 60.0
+    except Exception:
+        return False
+
+    # Якщо з моменту останньої перевірки минуло менше 0 (збій годинника), дозволяємо запуск
+    if elapsed_minutes < 0:
+        return False
+
     hour = now_kyiv.hour
-    minute = now_kyiv.minute
 
-    # Нічний режим (00:00-06:59): працюємо о 00:00..00:19 (ротація доби) та о 05:00..05:19 (раз на 5 годин)
-    if hour == 0 and minute >= 20:
-        print(f"[SMART-SKIP] Нічний режим ({now_kyiv.strftime('%H:%M')}). Ротацію доби вже виконано.")
-        return True
-    if 1 <= hour <= 6 and (hour != 5 or minute >= 20):
-        print(f"[SMART-SKIP] Нічний режим ({now_kyiv.strftime('%H:%M')}). Перевірку пропущено для економії ресурсів.")
-        return True
-
-    # Денний режим (07:00-18:59): 1 раз на годину (на початку години)
-    if 7 <= hour <= 18 and minute >= 12:
-        print(f"[SMART-SKIP] Денний погодинний режим ({now_kyiv.strftime('%H:%M')}). Проміжний запуск пропущено.")
-        return True
-
-    # Вечірній режим (19:00-23:59): кожні 15 хв до появи графіка на завтра, потім — 1 раз на годину
-    if 19 <= hour <= 23 and minute >= 12:
-        if tomorrow_data.get("status") != "waiting":
+    # Нічний режим (00:00-06:59): перевіряємо не частіше ніж 1 раз на 4 години (>= 240 хв)
+    if 0 <= hour <= 6:
+        if elapsed_minutes < 240:
             print(
-                f"[SMART-SKIP] Графік на завтра ({tomorrow_str}) вже опубліковано "
-                f"(status='{tomorrow_data.get('status')}'). Перехід у погодинний режим."
+                f"[SMART-SKIP] Нічний режим ({now_kyiv.strftime('%H:%M')}). "
+                f"З останньої перевірки минуло {elapsed_minutes:.1f} хв (< 240 хв). Пропуск."
             )
             return True
+        return False
+
+    # Вечірній режим (19:00-23:59):
+    # якщо графіка на завтра ще немає — перевіряємо при кожному cron-запуску (кожні ~15 хв);
+    # якщо графік на завтра вже є — перевіряємо не частіше ніж 1 раз на годину (>= 45 хв).
+    if 19 <= hour <= 23:
+        if tomorrow_data.get("status") != "waiting":
+            if elapsed_minutes < 45:
+                print(
+                    f"[SMART-SKIP] Вечірній погодинний режим ({now_kyiv.strftime('%H:%M')}). "
+                    f"Графік на завтра вже є, з останньої перевірки минуло {elapsed_minutes:.1f} хв (< 45 хв). Пропуск."
+                )
+                return True
+        return False
+
+    # Денний режим (07:00-18:59): 1 раз на годину (інтервал >= 40 хвилин)
+    if 7 <= hour <= 18:
+        if elapsed_minutes < 40:
+            print(
+                f"[SMART-SKIP] Денний погодинний режим ({now_kyiv.strftime('%H:%M')}). "
+                f"З останньої перевірки минуло {elapsed_minutes:.1f} хв (< 40 хв). Проміжний запуск пропущено."
+            )
+            return True
+        return False
 
     return False
 
@@ -580,6 +609,7 @@ def run_collector(force: bool = False, html_path: str | None = None) -> int:
     # Очищуємо історію старше 39 днів
     history_days = prune_history(history_days, now_kyiv)
     history_doc = {
+        "last_checked_at": now_iso,
         "retention_days": HISTORY_RETENTION_DAYS,
         "days": history_days,
     }
