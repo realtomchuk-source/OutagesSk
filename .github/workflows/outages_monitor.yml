@@ -47,6 +47,9 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: python formatter.py
 
+      - name: Run GPV Collector (Hourly Schedule Sync)
+        run: python gpv_collector.py
+
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
