@@ -1,6 +1,23 @@
 [
   {
     "settlement": "м. Старокостянтинів",
+    "type": "Аварійні",
+    "created_date": "18.11.2026",
+    "start_datetime": "18.11.202620:52",
+    "end_datetime": "19.11.202602:52",
+    "streets": [
+      "вул. Франка"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Франка",
+        "houses": "43/1"
+      }
+    ],
+    "substations": []
+  },
+  {
+    "settlement": "м. Старокостянтинів",
     "type": "Планові",
     "created_date": "13.11.2026",
     "start_datetime": "19.11.202609:00",
