@@ -16066,7 +16066,7 @@
     ],
     "substations": [],
     "first_seen_at": "2026-11-24T16:33:24.133006",
-    "last_seen_at": "2026-11-25T05:39:16.606311"
+    "last_seen_at": "2026-11-25T06:30:50.040031"
   },
   {
     "settlement": "с. Воронківці",
@@ -16124,7 +16124,7 @@
     ],
     "substations": [],
     "first_seen_at": "2026-11-24T16:33:24.133039",
-    "last_seen_at": "2026-11-25T05:39:16.606320"
+    "last_seen_at": "2026-11-25T06:30:50.040040"
   },
   {
     "settlement": "с. Воронківці",
@@ -16153,6 +16153,26 @@
     "start_datetime": "25.11.202609:00",
     "end_datetime": "25.11.202618:00",
     "streets": [
+      "вул. Незалежності"
+    ],
+    "streets_detailed": [
+      {
+        "name": "вул. Незалежності",
+        "houses": "61"
+      }
+    ],
+    "substations": [],
+    "original_settlement": "с. Воронківці",
+    "first_seen_at": "2026-11-25T05:39:16.606315",
+    "last_seen_at": "2026-11-25T06:30:50.040034"
+  },
+  {
+    "settlement": "с. Воронківці",
+    "type": "Планові",
+    "created_date": "19.11.2026",
+    "start_datetime": "25.11.202609:00",
+    "end_datetime": "25.11.202618:00",
+    "streets": [
       "вул. Польова"
     ],
     "streets_detailed": [
@@ -16163,7 +16183,7 @@
     ],
     "substations": [],
     "original_settlement": "с. Воронківці",
-    "first_seen_at": "2026-11-25T05:39:16.606315",
-    "last_seen_at": "2026-11-25T05:39:16.606316"
+    "first_seen_at": "2026-11-25T06:30:50.040035",
+    "last_seen_at": "2026-11-25T06:30:50.040036"
   }
 ]
