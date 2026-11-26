@@ -18,17 +18,24 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  actions: read
+
+concurrency:
+  group: pages-and-data-sync
+  cancel-in-progress: false
 
 jobs:
   run-gpv-parser:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    outputs:
+      should_deploy: ${{ steps.check_changes.outputs.should_deploy }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -48,10 +55,17 @@ jobs:
         run: |
           git add data/gpv/
           if git diff --cached --quiet; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-            echo "Змін у графіках ГПВ немає — коміт та деплой не потрібні."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+              echo "Змін у графіках ГПВ немає, але ручний запуск — виконуємо деплой Pages."
+            else
+              echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+              echo "Змін у графіках ГПВ немає — коміт та деплой не потрібні."
+            fi
           else
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Commit and Push changes
@@ -63,17 +77,29 @@ jobs:
           git pull --rebase -Xtheirs origin main
           git push
 
+      - name: Prepare Pages directory
+        if: steps.check_changes.outputs.should_deploy == 'true'
+        run: rm -rf html_dumps __pycache__ scratch
+
       - name: Setup Pages
-        if: steps.check_changes.outputs.changed == 'true'
-        uses: actions/configure-pages@v4
+        if: steps.check_changes.outputs.should_deploy == 'true'
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
-        if: steps.check_changes.outputs.changed == 'true'
-        uses: actions/upload-pages-artifact@v3
+        if: steps.check_changes.outputs.should_deploy == 'true'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: '.'
 
+  deploy:
+    needs: run-gpv-parser
+    if: needs.run-gpv-parser.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
-        if: steps.check_changes.outputs.changed == 'true'
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -2,8 +2,19 @@ import json
 import os
 import sys
 from datetime import datetime, timedelta
-import google.generativeai as genai
 from dotenv import load_dotenv
+
+try:
+    from google import genai as google_genai
+    HAS_GOOGLE_GENAI = True
+except ImportError:
+    HAS_GOOGLE_GENAI = False
+
+try:
+    import google.generativeai as genai_legacy
+    HAS_GOOGLE_LEGACY = True
+except ImportError:
+    HAS_GOOGLE_LEGACY = False
 
 # Завантажуємо змінні оточення з .env
 load_dotenv()
@@ -163,8 +174,6 @@ def generate_weekly_report():
         save_report("Помилка генерації звіту: відсутній API ключ ШІ.", {})
         return
 
-    genai.configure(api_key=API_KEY)
-    
     prompt = f"""Напиши офіційне, але емпатичне щотижневе аналітичне зведення для Telegram-каналу громади.
 Використовуй ЛИШЕ ці математично точні дані, не вигадуй жодних цифр:
 {stats_text}
@@ -186,9 +195,36 @@ def generate_weekly_report():
     }
 
     try:
-        model = genai.GenerativeModel("gemini-2.5-flash")
-        response = model.generate_content(prompt)
-        report_text = response.text.strip()
+        report_text = None
+        last_err = None
+        for model_name in ("gemini-2.5-flash", "gemini-2.5-flash-lite"):
+            try:
+                if HAS_GOOGLE_GENAI:
+                    client = google_genai.Client(
+                        api_key=API_KEY,
+                        http_options={"timeout": 30_000},
+                    )
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt,
+                    )
+                elif HAS_GOOGLE_LEGACY:
+                    genai_legacy.configure(api_key=API_KEY)
+                    model = genai_legacy.GenerativeModel(model_name)
+                    response = model.generate_content(prompt, request_options={"timeout": 30.0})
+                else:
+                    raise RuntimeError("Не встановлено жодного SDK Gemini (google-genai)")
+
+                if response and response.text:
+                    report_text = response.text.strip()
+                    break
+            except Exception as model_err:
+                last_err = model_err
+                print(f"[WARN] Помилка ШІ ({model_name}): {model_err}")
+
+        if not report_text:
+            raise RuntimeError(last_err or "Порожня відповідь від ШІ")
+
         print("Звіт згенеровано успішно.")
         save_report(report_text, current_stats)
     except Exception as e:

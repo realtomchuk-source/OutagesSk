@@ -8,10 +8,16 @@ import sys
 import re
 
 try:
-    import google.generativeai as genai
-    HAS_GOOGLE_AI = True
+    from google import genai as google_genai
+    HAS_GOOGLE_GENAI = True
 except ImportError:
-    HAS_GOOGLE_AI = False
+    HAS_GOOGLE_GENAI = False
+
+try:
+    import google.generativeai as genai_legacy
+    HAS_GOOGLE_LEGACY = True
+except ImportError:
+    HAS_GOOGLE_LEGACY = False
 
 load_dotenv()
 
@@ -24,7 +30,7 @@ if not GOOGLE_API_KEY and not OPENROUTER_API_KEY:
     if __name__ == "__main__":
         sys.exit(1)
 
-GOOGLE_MODEL = "gemini-2.0-flash"
+GOOGLE_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
 OPENROUTER_MODEL = "google/gemini-2.5-flash"
 
 
@@ -32,15 +38,33 @@ OPENROUTER_MODEL = "google/gemini-2.5-flash"
 # Функція виклику ШІ
 # ------------------------------------------------------------
 def ask_ai(prompt):
-    if HAS_GOOGLE_AI and GOOGLE_API_KEY:
-        try:
-            genai.configure(api_key=GOOGLE_API_KEY)
-            model = genai.GenerativeModel(GOOGLE_MODEL)
-            response = model.generate_content(prompt, request_options={"timeout": 30.0})
-            return response.text.strip()
-        except Exception as e:
-            print(f"[WARN] Помилка Google AI: {e}")
-            print("Перемикаюсь на OpenRouter...")
+    if GOOGLE_API_KEY and (HAS_GOOGLE_GENAI or HAS_GOOGLE_LEGACY):
+        if HAS_GOOGLE_GENAI:
+            client = google_genai.Client(
+                api_key=GOOGLE_API_KEY,
+                http_options={"timeout": 30_000},
+            )
+            for model_name in GOOGLE_MODELS:
+                try:
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt,
+                    )
+                    if response and response.text:
+                        return response.text.strip()
+                except Exception as e:
+                    print(f"[WARN] Помилка Google AI ({model_name}): {e}")
+        elif HAS_GOOGLE_LEGACY:
+            genai_legacy.configure(api_key=GOOGLE_API_KEY)
+            for model_name in GOOGLE_MODELS:
+                try:
+                    model = genai_legacy.GenerativeModel(model_name)
+                    response = model.generate_content(prompt, request_options={"timeout": 30.0})
+                    if response and response.text:
+                        return response.text.strip()
+                except Exception as e:
+                    print(f"[WARN] Помилка Google AI legacy ({model_name}): {e}")
+        print("Перемикаюсь на OpenRouter...")
 
     if OPENROUTER_API_KEY:
         headers = {
