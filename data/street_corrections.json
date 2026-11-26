@@ -1839,6 +1839,16 @@
       "target_street": "Никанора Фесуна",
       "auto": true,
       "timestamp": "2026-06-26T20:12:00Z"
+    },
+    "вул. Дорожна": {
+      "action": "move_to_settlement",
+      "target_settlements": [
+        "м. Старокостянтинів"
+      ],
+      "target_settlement": "м. Старокостянтинів",
+      "target_street": "вул. Довженка",
+      "auto": true,
+      "timestamp": "2026-06-26T20:12:00Z"
     }
   },
   "с. Великий Чернятин": {
@@ -2947,6 +2957,11 @@
     "вул. Карєрна": {
       "action": "unverified",
       "timestamp": "2026-07-30T22:27:41.291191Z",
+      "auto": true
+    },
+    "вул. Довженка": {
+      "action": "unverified",
+      "timestamp": "2026-11-26T16:17:08.795106Z",
       "auto": true
     }
   }
